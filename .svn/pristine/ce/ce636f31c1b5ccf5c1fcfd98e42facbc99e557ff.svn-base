@@ -1,0 +1,190 @@
+	/* CSS 정리된 스타일 */
+	p { margin:0pt 0pt 8pt }
+	table { margin-top:0pt; margin-bottom:8pt }
+	/* Additional styles for table formatting and inputs */
+	.filebox .upload-name {
+		display: inline-block;
+		height: 40px;
+		padding: 0 10px;
+		vertical-align: middle;
+		border: 1px solid #dddddd;
+		width: 70%;
+		border-radius: 0.4rem;
+		color: #999999;
+	}
+	.filebox label {
+		display: inline-block;
+		padding: 9px 20px;
+		color: #fff;
+		vertical-align: middle;
+		text-align: center;
+		background-color: #88eb1e;
+		cursor: pointer;
+		width : 25%;
+		height: 40px;
+		margin-left: 5px;
+		margin-top: 5px;
+		border-radius: 0.4rem;
+	}
+	/* CSS 정리된 스타일 */
+
+	.table-area {
+		border:0.75pt solid #000000;
+		border-collapse:collapse;
+		margin:10px;
+		float: left;
+	}
+	.file-area {
+		width: 25%;
+		margin-left: 20px;
+		float: left;
+	}
+	.clearfix::after {
+		content: "";
+		clear: both;
+		display: table;
+	}
+	/* Additional styles for table formatting and inputs */
+	.filebox .upload-name {
+		display: inline-block;
+		height: 40px;
+		padding: 0 10px;
+		vertical-align: middle;
+		border: 1px solid #dddddd;
+		width: 70%;
+		border-radius: 0.4rem;
+		color: #999999;
+	}
+	.filebox label {
+		display: inline-block;
+		padding: 9px 20px;
+		color: #fff;
+		vertical-align: middle;
+		text-align: center;
+		background-color: #88eb1e;
+		cursor: pointer;
+		width : 25%;
+		height: 40px;
+		margin-left: 5px;
+		margin-top: 5px;
+		border-radius: 0.4rem;
+	}
+	.first-table{
+		width : 780px;
+		margin: 20px;
+	}
+
+	.col-table{
+		border:0.75pt solid #000000;
+		border-collapse:collapse;
+		width : 780px;
+		margin: 20px;
+	}
+
+	.col1{
+		width:64.85pt;
+		border-top:0.75pt solid #000000;
+		border-right:0.75pt solid #a0a0a0;
+		border-left:0.75pt solid #000000;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.col2{
+		width:77.25pt;
+		border-right:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+		background-color:#f3f3f3;
+	}
+
+	.col3{
+		width:158.55pt;
+		border-right:0.75pt solid #a0a0a0;
+		border-left:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.detail-col1{
+		width:48.05pt;
+		border-top:0.75pt solid #a0a0a0;
+		border-right:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.detail-col2{
+		width:90.9pt;
+		border-top:0.75pt solid #a0a0a0;
+		border-right:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.detail-col3{
+		width:87.15pt;
+		border-top:0.75pt solid #a0a0a0;
+		border-right:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.detail-col4{
+		width:80.55pt;
+		border-top:0.75pt solid #a0a0a0;
+		border-right:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.detail-col5{
+		width:85.3pt;
+		border-top:0.75pt solid #a0a0a0;
+		border-right:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.detail-col6{
+		width:78.7pt;
+		border-top:0.75pt solid #a0a0a0;
+		border-right:0.75pt solid #a0a0a0;
+		border-bottom:0.75pt solid #a0a0a0;
+		padding-right:0.22pt;
+		padding-left:0.22pt;
+		vertical-align:middle;
+	}
+
+	.font-malgungothic {
+		font-family: '맑은 고딕';
+	}
+
+	/* Style for the textarea */
+	textarea {
+		width: 100%; /* Make textarea take full width of the cell */
+		height: 100%; /* Adjust height as needed */
+		border: none; /* Remove border */
+		background-color: transparent; /* Make background transparent */
+		resize: none; /* Disable resizing */
+		overflow: hidden; /* Hide overflow */
+		text-align: center; /* Center-align text if needed */
+		padding: 0;
+		line-height: 1.2;
+	}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.config.security.UserRepository">
+
+    <select id="findByUserId" resultType="kr.co.amonsoft.config.security.UserEntity">
+        SELECT
+            u.user_id AS userId,
+            u.user_name AS username,
+            u.password AS password,
+            u.employment_status,
+            cd_detail.code_detail_name AS employmentStatusName,
+            u.position_code,
+            position_detail.code_detail_name AS positionName,
+            o.organization_name as organizationName,
+            o.organization_id,
+            u.role AS role
+        FROM user u
+        INNER JOIN organization o
+            ON u.organization_id = o.organization_id
+        LEFT JOIN common_code_detail cd_detail
+                  ON u.employment_status = cd_detail.code_detail_number
+                      AND cd_detail.code_number = 'COM04'
+        LEFT JOIN common_code_detail position_detail
+                  ON u.position_code = position_detail.code_detail_number
+                      AND position_detail.code_number = 'COM02'
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 모든정보 -->
+    <select id="findAllByUserId" resultType="kr.co.amonsoft.dto.com.UserEntityDTO">
+        SELECT m.user_name as userName
+             , m.user_id as userId
+             , m.employment_status as employmentStatus
+             , m.position_code as positionCode
+             , posi.code_detail_name as positionNm
+             , m.organization_id as organizationId
+             , org.code_detail_name as department
+             , m.job_start_date as jobStartDate
+             , m.job_end_date as jobEndDate
+             , m.phone_number as phoneNo
+             , m.address as address
+             , m.password as password
+             , rol.code_detail_name as roleNm
+        FROM user m
+       INNER JOIN common_code_detail org
+          ON m.organization_id = org.code_detail_number
+         AND org.code_number = 'COM01'
+       INNER JOIN common_code_detail posi
+          ON m.position_code = posi.code_detail_number
+         AND posi.code_number = 'COM02'
+       INNER JOIN common_code_detail rol
+          ON m.role = rol.code_detail_number
+         AND rol.code_number = 'COM03'
+       WHERE 1 = 1
+         AND m.user_id = #{userId}
+    </select>
+
+</mapper>

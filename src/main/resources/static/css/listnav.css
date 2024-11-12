@@ -1,0 +1,273 @@
+#noticeNav {
+    cursor: pointer;
+    margin-left: 20px;
+    margin-top: 20px;
+    align-content: center;
+    width: 98%;
+}
+
+button.headerBtn,
+button.writeSubmitBtn {
+    border-radius: 0.5rem;
+    border: 1px solid gray;
+    background: linear-gradient( to left ,#5bd3ff, #88eb1e );
+    margin-left: 75%;
+    width: 170px;
+    height: 45px;
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+
+button.headerBtn:hover,
+button.writeSubmitBtn:hover {
+    filter: brightness(90%);
+}
+
+i#icon{
+    color: white;
+    margin-right: 15px;
+}
+
+
+/* Model 시작 */
+div.modal{
+    min-height: 700px;
+    max-height: 850px;
+}
+
+input[name='subject']{
+    height: 50px;
+    width: 80%;
+    margin: 35px 10% 15px 10%;
+    font-size: 20pt;
+    font-weight: bold;
+    border: none;
+}
+
+input[name='subject']:focus {
+    outline: none;
+}
+
+textarea[name='content'] {
+    height: 400px;
+    width: 80%;
+    margin: 10px 10% 5px 10%;
+    border: 1px solid #dddddd;
+    border-radius: 0.4rem;
+}
+
+textarea#noticecontent:focus{
+    outline : 2px solid #66cc66;
+}
+
+div#attachArea {
+    width: 80%;
+    margin: 0 10% 15px 10%;
+}
+
+.filebox .upload-name {
+    display: inline-block;
+    height: 40px;
+    padding: 0 10px;
+    vertical-align: middle;
+    border: 1px solid #dddddd;
+    width: 70%;
+    border-radius: 0.4rem;
+    color: #999999;
+}
+
+.filebox .upload-name:focus {
+    outline : 2px solid #66cc66;
+}
+
+.filebox label {
+    display: inline-block;
+    padding: 9px 20px;
+    color: #fff;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #88eb1e;
+    cursor: pointer;
+    width : 25%;
+    height: 40px;
+    margin-left: 10px;
+    margin-top: 5px;
+    border-radius: 0.4rem;
+}
+
+.filebox input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
+
+.modal::-webkit-scrollbar {
+    width: 10px;
+}
+.modal::-webkit-scrollbar-thumb {
+    background-color: #ababab;
+    border-radius: 10px;
+}
+.modal::-webkit-scrollbar-track {
+    background-color: #dedfe0;
+    border-radius: 10px;
+}
+
+/* 받는 사람 */
+
+/* 받는 사람 드롭다운 시작 */
+
+div.sentPsnProf{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 40%;
+    text-align: center;
+    background-color: #757575;
+    color : white;
+    font-size: 12pt;
+    padding-top: 3px;
+}
+
+
+i.fa-user {
+    margin: auto;
+}
+
+button.dropdownBtn {
+    min-width: 22%;
+    max-width : 100%;
+    height : 40px;
+    margin-left : 10%;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 0.4rem;
+    border: none;
+}
+
+button.dropdownBtn:hover {
+    background-color: #dddddd;
+}
+
+
+/* 받는 사람 팝업 */
+
+div#choosePerson {
+    /* border:solid 2px green; */
+    min-height: 300px;
+    max-height: 400px;
+    width: 500px;
+    display: flex;
+    position: fixed;
+    top: 1000px;
+    left: 0px;
+    z-index: 1052;
+    background: white;
+    border-radius: 0.3rem;
+    color: black;
+    /* transition: all 0.5s; */
+    padding: 10px;
+}
+
+div#choosePerson.active {
+    top: 208px;
+    left: 654px;
+}
+
+div#choosePerson_outside {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1051;
+    display: none;
+}
+
+div#leftSide {
+    width: 50%;
+    max-height: 390px;
+    overflow: auto;
+
+}
+
+div#rightSide {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+div#rightTitle {
+    width: 100%;
+    height: 35px;
+    padding: 3px auto;
+}
+
+div#rightUp {
+
+    width: 100%;
+    height: 100%;
+    max-height: 390px;
+    overflow: auto;
+}
+
+div#rightDown {
+    width: 100%;
+    height: 45px;
+    padding: 3px 0px;
+}
+
+#leftSide::-webkit-scrollbar {
+    width: 10px;
+}
+#leftSide::-webkit-scrollbar-thumb {
+    background-color: #ababab;
+    border-radius: 10px;
+}
+#leftSide::-webkit-scrollbar-track {
+    background-color: #dedfe0;
+    border-radius: 10px;
+}
+
+
+label.person {
+    font-size: 11pt;
+    margin: auto 5px;
+}
+
+label.person:hover, span.arrow:hover {
+    cursor: pointer;
+}
+
+button#addPersonBtn {
+    display: inline-block;
+    color: #fff;
+    font-size: 11pt;
+    font-weight: bold;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #88eb1e;
+    border: none;
+    cursor: pointer;
+    width : 70%;
+    hight : 38px;
+    margin: 3px 15%;
+    border-radius: 0.4rem;
+}
+
+div.choosedPsn{
+    width: 100%;
+    border-radius: 0.4rem;
+    padding: 5px 5%;
+}
+
+div.choosedPsn:hover {
+    cursor: pointer;
+    background-color: #f9fafa;
+}

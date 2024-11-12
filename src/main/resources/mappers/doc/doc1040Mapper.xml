@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.doc.Doc1040Mapper">
+
+    <select id="getApprovalId" resultType="map">
+        SELECT CONCAT('amon-', DATE_FORMAT(NOW(), '%Y%m%d'), '-', 
+               IFNULL(MAX(CAST(SUBSTRING_INDEX(approval_id, '-', -1) AS UNSIGNED)) + 1, 1)) AS approval_id 
+		  FROM approval_request
+		 WHERE approval_id LIKE CONCAT('amon-', DATE_FORMAT(NOW(), '%Y%m%d'), '-%')
+    </select>
+
+	<insert id="insertDocumentApproval" useGeneratedKeys="true" keyProperty="docId">
+        INSERT INTO document
+        (
+             user_id
+            , doc_current_step
+            , total_step
+            , created_id
+            , created_date
+            , updated_id
+            , updated_date
+            , doc_type
+            , doc_title
+            , doc_status
+        )
+        VALUES ( #{userId}
+           , '1'
+           , '4'
+           , #{userId}
+           , DATE_FORMAT(NOW(), '%Y%m%d')
+           , #{userId}
+           , DATE_FORMAT(NOW(), '%Y%m%d')
+           , #{docType}
+           , #{docTitle}
+           , '01'
+       )
+    </insert>
+
+	<insert id="insertApprovalRequest">
+		INSERT INTO approval_request
+		     ( doc_id
+			 , approval_id
+			 , draft_date
+			 , department
+			 , drafter
+			 , approval_title
+			 , approval_content
+			 , instructions
+			 , remark
+			 , created_id
+			 , created_date
+			 , updated_id
+			 , updated_date)
+	  	VALUES 
+	  		 ( #{doc_id} 
+	  		 , #{approval_id}
+			 , #{draft_date}
+			 , #{department}
+			 , #{drafter}
+			 , #{approval_title}
+			 , #{approval_content}
+			 , #{instructions}
+			 , #{remark}
+			 , #{userId}
+			 , DATE_FORMAT(NOW(), '%Y%m%d')
+			 , #{userId}
+			 , DATE_FORMAT(NOW(), '%Y%m%d'))
+	</insert>
+	
+	<insert id="insertTransportExpense">
+		INSERT INTO transport_expense_detail
+		     ( doc_id
+			 , expense_date
+			 , vehicle_start
+			 , vehicle_end
+			 , vehicle_purpose
+			 , visit_description
+			 , expense_amount
+			 , remark
+			 , created_id
+			 , created_date
+			 , updated_id
+			 , updated_date )
+	  	VALUES 
+	  		 ( #{docId} 
+	  		 , #{expenseDate}
+			 , #{vehicleStart}
+			 , #{vehicleEnd}
+			 , #{vehiclePurpose}
+			 , #{visitDescription}
+			 , #{expenseAmount}
+			 , #{remark}
+			 , #{userId}
+			 , DATE_FORMAT(NOW(), '%Y%m%d')
+			 , #{userId}
+			 , DATE_FORMAT(NOW(), '%Y%m%d'))
+	</insert>
+	
+	<insert id="insertApprovalRequestStep">
+        INSERT 
+          INTO approval_step
+             ( doc_id
+             , step_no
+             , approver_id
+             , status
+             , created_id
+             , created_date
+             , updated_id
+             , updated_date)
+        VALUES 
+        	 ( #{docId}
+             , #{approvalStepNo}
+             , #{userId}
+             , '01'
+             , #{create_id}
+             , DATE_FORMAT(NOW(), '%Y%m%d')
+             , #{create_id}
+             , DATE_FORMAT(NOW(), '%Y%m%d')
+         )
+    </insert>
+    
+    <select id="findApprovalRequestDetailsByDocId" resultType="map">
+        SELECT doc_id
+             , approval_id
+             , draft_date
+             , department
+             , drafter
+             , approval_title
+             , approval_content
+             , instructions
+             , remark
+             , created_id
+             , created_date
+             , updated_id
+             , updated_date
+          FROM approval_request
+         WHERE doc_id = #{docId}
+    </select>
+    
+    <select id="findTransportExpenseDetailsByDocId" resultType="camelcasemap">
+        SELECT doc_id
+             , transport_expense_id
+             , expense_date
+             , vehicle_start
+             , vehicle_end
+             , vehicle_purpose
+             , visit_description
+             , expense_amount
+             , remark
+             , created_id
+             , created_date
+             , updated_id
+             , updated_date
+          FROM transport_expense_detail
+         WHERE doc_id = #{docId}
+    </select>
+    
+</mapper>

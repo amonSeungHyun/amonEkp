@@ -1,0 +1,57 @@
+Configuration:
+  status: warn
+
+  Properties:
+    Property:
+      - name: "pattern"
+        value: "[{%d{yyyy-MM-dd HH:mm:ss.SSS}}] %highlight{[%-5level]} [%C] %style{[%t]}{yellow} - %msg%n"
+      - name: "charset-UTF-8"
+        value: "UTF-8"
+
+  Appenders:
+    Console:
+      name: Console
+      target: SYSTEM_OUT
+      PatternLayout:
+        charset: ${charset-UTF-8}
+        pattern: ${pattern}
+        disableAnsi: false
+    RollingFile:
+      name: LogToRollingFile
+      fileName: logs/app.log
+      filePattern: "logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz"
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: 10MB
+      DefaultRollOverStrategy:
+        max: 10
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: Console
+
+    Logger:
+      - name: kr.co.amonsoft
+        level: DEBUG           # 프로젝트 개발 부분에 대한 자세한 로그
+      - name: org.springframework
+        level: INFO            # Spring 관련 주요 정보만 표시
+      - name: org.mybatis
+        level: DEBUG           # MyBatis 디버그 정보 필요할 때 유용
+      - name: org.mariadb
+        level: INFO            # DB 관련 로그는 INFO로만 기록
+      - name: com.zaxxer.hikari.HikariConfig
+        level: WARN            # HikariCP의 경고성 로그만 표시
+        Additivity: false
+      - name: com.zaxxer.hikari
+        level: WARN            # HikariCP의 상세한 연결 로그는 무시
+        Additivity: false
+      - name: net.sf.log4jdbc   # SQL 실행 관련 로그는 DEBUG로 추적 가능
+        level: DEBUG
+      - name: org.apache.ibatis.logging.LogFactory
+        level: INFO            # MyBatis 로깅은 필요할 때만 자세히
+
+  # 필요 시 추가 패키지에 대한 로그 설정

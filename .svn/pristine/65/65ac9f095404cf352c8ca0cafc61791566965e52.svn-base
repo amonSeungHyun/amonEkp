@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.doc.Doc1010Mapper">
+    <select id="findDocumentCreatorInfo" parameterType="BigInteger" resultType="camelcasemap">
+        SELECT u.user_name
+             , o.organization_name
+             , posi_detail.code_detail_name as positionName
+             , d.doc_status
+             , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
+        FROM user u
+        INNER JOIN document d
+          ON u.user_id = d.user_id
+        INNER JOIN organization o
+          ON u.organization_id = o.organization_id
+        INNER JOIN common_code_detail posi_detail
+           ON u.position_code = posi_detail.code_detail_number
+           AND posi_detail.code_number = 'COM02'
+        WHERE d.doc_id = #{docId}
+    </select>
+
+    <select id="findDocumentsUnderApproval" parameterType="String" resultType="camelcasemap">
+        SELECT d.created_date
+             , doctype.code_detail_name as docTypeName
+             , docstatus.code_detail_name as docStatusName
+             , d.doc_title
+             , d.doc_type
+             , d.doc_status
+             , d.doc_id
+        FROM document d
+        INNER JOIN common_code_detail doctype
+           ON d.doc_type = doctype.code_detail_number
+           AND doctype.code_number = 'APV02'
+        INNER JOIN common_code_detail docstatus
+           ON d.doc_status = docstatus.code_detail_number
+           AND docstatus.code_number = 'APV01'
+        WHERE d.user_id = #{userId}
+    </select>
+
+
+    <select id="findApprovalStepsByDocId" resultType="camelcasemap">
+        SELECT a.doc_id
+             , a.step_id
+             , a.step_no
+             , a.approver_id
+             , c.code_detail_name AS status_description
+             , a.created_id
+             , a.created_date
+             , a.updated_id
+             , a.updated_date
+        FROM approval_step a
+        LEFT JOIN common_code_detail c
+           ON a.status = c.code_detail_number
+           AND c.code_number = 'APV01' -- 결재 상태 공통코드
+        WHERE a.doc_id = #{docId}
+    </select>
+
+    <select id="findVacationDetailsByDocId" resultType="camelcasemap">
+        SELECT doc_id
+             , vacation_detail_id
+             , start_date
+             , end_date
+             , vacation_type
+             , emergency_contact
+             , personal_reason
+             , vacation_period
+             , created_id
+             , created_date
+             , updated_id
+             , updated_date
+        FROM vacation_detail
+        WHERE doc_id = #{docId}
+    </select>
+
+    <select id="findTeamLeadersByUserOrganization" parameterType="String" resultType="camelcasemap">
+        SELECT u.user_id
+             , u.user_name
+             , cd_detail.code_detail_name as employmentStatusName
+             , position_detail.code_detail_name as positionName
+        FROM user u
+         INNER JOIN user o
+                    ON u.organization_id = o.organization_id
+         LEFT JOIN common_code_detail cd_detail
+                   ON u.employment_status = cd_detail.code_detail_number
+                       AND cd_detail.code_number = 'COM04'
+         LEFT JOIN common_code_detail position_detail
+                   ON u.position_code = position_detail.code_detail_number
+                       AND position_detail.code_number = 'COM02'
+            WHERE o.user_id = #{userId}
+              AND u.role = '03'
+              AND cd_detail.code_detail_number = '01'
+    </select>
+
+
+    <insert id="insertApprovalStep">
+        INSERT INTO approval_step(
+              doc_id
+            , step_no
+            , approver_id
+            , status
+            , created_id
+            , created_date
+            , updated_id
+            , updated_date
+        ) VALUES (
+               #{docId}
+             , #{approvalStepNo}
+             , #{userId}
+             , '01'
+             , 'lee'
+             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+             , 'lee'
+             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+         )
+    </insert>
+
+    <insert id="insertDocument" useGeneratedKeys="true" keyProperty="docId">
+        INSERT INTO document
+        (
+             user_id
+            , doc_current_step
+            , total_step
+            , doc_type
+            , doc_title
+            , doc_status
+            , created_id
+            , created_date
+            , updated_id
+            , updated_date
+        )
+        VALUES ( #{userId}
+           , '1'
+           , '4'
+           , '01'
+           , '휴가계'
+           , '01'
+           , #{userId}
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+           , #{userId}
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+       )
+    </insert>
+
+
+
+    <insert id="insertVacationDetail">
+        INSERT INTO vacation_detail(
+                doc_id
+               , start_date
+               , end_date
+               , vacation_type
+               , emergency_contact
+               , personal_reason
+               , vacation_period
+               , created_id
+               , created_date
+               , updated_id
+               , updated_date
+        ) VALUES (
+                #{docId}
+               , #{startDate}
+               , #{endDate}
+               , #{vacationType}
+               , #{emergencyContact}
+               , #{personalReason}
+               , #{vacationPeriod}
+               , '관리자'
+               , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+               , '관리자'
+               , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+       )
+    </insert>
+
+    <update id="updateAnnualLeaveApprovalStep" parameterType="map">
+        UPDATE approval_step
+           SET status= #{status}
+         WHERE approver_id= #{approverId}
+          AND doc_id = #{docId}
+    </update>
+
+    <update id="updateDocumentCurrentStep" parameterType="int">
+        UPDATE document
+           SET doc_current_step = doc_current_step + 1
+         WHERE doc_id = #{docId}
+           AND doc_current_step <![CDATA[<]]> total_step;
+    </update>
+
+
+</mapper>

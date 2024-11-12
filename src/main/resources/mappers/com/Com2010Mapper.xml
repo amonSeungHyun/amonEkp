@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.com.Com2010Mapper">
+
+    <!-- 캘린더 조회 -->
+    <select id="selectCalendarList" resultType="kr.co.amonsoft.dto.com.CalendarListDTO">
+        SELECT
+            NULL AS birthday,
+            schedule_id AS schedule_no,
+            user_id AS fk_empno,
+            start_date,
+            end_date,
+            subject,
+            content,
+            color,
+            category,
+            organization_id AS fk_deptno,
+            participants AS joinuser,
+            place,
+            NULL AS name
+        FROM
+            amoncalendar
+        UNION ALL
+        SELECT
+            NULL AS birthday,        -- 생일 정보가 없으므로 NULL로 표시
+            NULL AS schedule_no,
+            user_id AS fk_empno,
+            NULL AS start_date,
+            NULL AS end_date,
+            NULL AS subject,
+            NULL AS content,
+            NULL AS color,
+            NULL AS category,
+            organization_id AS fk_deptno,
+            NULL AS joinuser,
+            NULL AS place,
+            user_name AS name
+        FROM
+            `user`
+    </select>
+
+</mapper>

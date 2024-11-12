@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.com.Com1010Mapper">
+
+    <select id="selectCom1010List" resultType="map">
+		SELECT 
+			board_number ,
+			COUNT(*) OVER() AS total_count ,
+			type ,
+			title ,
+			content ,
+			created_id ,
+			created_date ,
+			updated_id ,
+			updated_date
+		from
+			board
+	   where 1=1
+	   <if test="searchInput != null and searchInput != ''">
+		 <choose>
+            <when test="selected_type == '01'">
+                AND title LIKE CONCAT('%', #{searchInput}, '%')
+            </when>
+            <when test="selected_type == '02'">
+                AND content LIKE CONCAT('%', #{searchInput}, '%')
+            </when>
+            <when test="selected_type == '03'">
+                AND created_id LIKE CONCAT('%', #{searchInput}, '%')
+            </when>
+        </choose>
+	   </if>
+		order by
+			board_number
+    </select>
+    
+
+</mapper>

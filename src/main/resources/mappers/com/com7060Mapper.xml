@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.com.Com7060Mapper">
+
+    <insert id="insertMember" parameterType="map"><![CDATA[
+        INSERT INTO `user` (
+            user_name,
+            user_id,
+            password,
+            job_start_date,
+            job_end_date,
+            phone_number,
+            employment_status,
+            position_code,
+            created_id,
+            created_date,
+            updated_id,
+            updated_date,
+            organization_id,
+            role,
+            address,
+            address_details
+        ) VALUES (
+            #{name},
+            #{userId},
+            #{password},
+            #{hireDate},
+            #{quitDate},
+            #{phoneNo},
+            '01',
+            #{positionCode},
+            #{createdId},
+            #{currentDate},
+            #{createdId},
+            #{currentDate},
+            #{department},
+            #{role},
+            #{address},
+            #{addressDetails}
+         )
+    ]]></insert>
+
+    <!-- 같은 입사한날 카운트 -->
+    <select id="countUsersByStartDate" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM user
+        WHERE job_start_date = #{hireDate}
+    </select>
+
+    <!-- 구성원 수정 -->
+    <update id="updateMember" parameterType="map">
+        UPDATE `user`
+           SET
+                user_name = #{name},
+                job_start_date = #{hireDate},
+                job_end_date = #{quitDate},
+                phone_number = #{phoneNo},
+                organization_id = #{department},
+                position_code = #{positionCode},
+                role = #{role},
+                address = #{address},
+                address_details = #{addressDetails}
+         WHERE
+                user_id = #{userId};
+    </update>
+
+    <!-- 구성원 삭제 -->
+    <delete id="deleteMember" parameterType="Map">
+        DELETE FROM `user` WHERE user_id IN
+        <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <!-- 비밀번호 초기화 -->
+    <update id="resetPassword" parameterType="map">
+        UPDATE `user`
+        SET password = #{password}
+        WHERE user_id = #{userId}
+    </update>
+
+
+
+
+
+    <!-- ************************************** 공통 조회(부서, 직책, 권한) ******************************************************************** -->
+    <select id="departmentList" resultType="kr.co.amonsoft.dto.com.CommonDTO">
+        select ccd.code_detail_number as codeDetailNumber
+             , ccd.code_detail_name as codeDetailName
+        from common_code_detail ccd
+                 inner join common_code cc
+                            on ccd.code_number = cc.code_number
+        where 1 = 1
+          and ccd.code_number = 'COM01'
+        order by sort asc
+    </select>
+
+    <select id="positionList" resultType="kr.co.amonsoft.dto.com.CommonDTO">
+        select ccd.code_detail_number as codeDetailNumber
+             , ccd.code_detail_name as codeDetailName
+        from common_code_detail ccd
+                 inner join common_code cc
+                            on ccd.code_number = cc.code_number
+        where 1 = 1
+          and ccd.code_number = 'COM02'
+        order by sort asc
+    </select>
+
+    <select id="roleList" resultType="kr.co.amonsoft.dto.com.CommonDTO">
+        select ccd.code_detail_number as codeDetailNumber
+             , ccd.code_detail_name as codeDetailName
+        from common_code_detail ccd
+                 inner join common_code cc
+                            on ccd.code_number = cc.code_number
+        where 1 = 1
+          and ccd.code_number = 'COM03'
+        order by sort asc
+    </select>
+
+
+
+</mapper>

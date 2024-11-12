@@ -1,0 +1,121 @@
+/* 공통 스타일 */
+#contentList tbody tr:hover {
+    cursor: pointer;
+}
+
+.listRow {
+    padding: 18px;
+    margin-right: 3%;
+    margin-left: 3%;
+}
+
+#title {
+    /*cursor: pointer;*/
+    margin-left: 20px;
+    margin-top: 40px;
+    align-content: center;
+    width: 98%;
+}
+
+button.headerBtn,
+button.writeSubmitBtn {
+    border-radius: 0.5rem;
+    border: 1px solid gray;
+    background: linear-gradient(to left, #5bd3ff, #88eb1e);
+    margin-left: 75%;
+    width: 170px;
+    height: 45px;
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+
+button.headerBtn:hover,
+button.writeSubmitBtn:hover {
+    filter: brightness(90%);
+}
+
+/* 테이블 스타일 */
+table.table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border: 1px solid #dddddd;
+    text-align: center;
+    font-size: 14px;
+    padding: 8px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f9fafa;
+}
+
+/* 페이징 처리 */
+a {
+    text-decoration: none;
+}
+
+.container {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.pagination {
+    padding: 30px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    padding-top: 7px;
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.p12 a.last,
+.p12 .is-active {
+    border: 2px solid #2ecc71;
+    background-color: #2ecc71;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 50%;
+}
+
+.p12 a.box {
+    border: 2px solid #2ecc71;
+    color: #2ecc71;
+    font-weight: bold;
+    border-radius: 50%;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.btn_color {
+    height: 50px;
+    width: 100%;
+    border-radius: 10px;
+    color: white;
+    background-color: #07B419;
+}
+
+.input_modal,
+.choice_type {
+    width: 100%;
+    line-height: 30px;
+    border-radius: 10px;
+    padding: 5px;
+    border: solid 1px #d9d9d9;
+}
+
+.modal_title {
+    padding: 0 0 3px 5px;
+}

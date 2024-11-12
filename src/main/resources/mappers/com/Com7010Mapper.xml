@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.com.Com7010Mapper">
+
+    <select id="selectCom7010List" resultType="map">
+		SELECT * 
+		FROM (
+		    SELECT 
+		        ROW_NUMBER() OVER (ORDER BY cc.code_number, ccd.sort) AS rownum,
+		        cc.code_number,
+		        cc.code_name, 
+		        ccd.code_detail_number,
+		        ccd.code_detail_name,
+		        ccd.code_description,
+		        ccd.sort, 
+		        ccd.use_yn
+		    FROM 
+		        common_code cc
+		    JOIN 
+		        common_code_detail ccd ON cc.code_number = ccd.code_number
+		    WHERE 
+		        1=1
+		        <if test="code_number != null and code_number != ''">
+		            AND cc.code_number = #{code_number}
+		        </if>
+		        <if test="code_detail_name != null and code_detail_name != ''">
+		            AND ccd.code_detail_name LIKE CONCAT('%', #{code_detail_name}, '%')
+		        </if>
+		    ORDER BY 
+		        cc.code_number, ccd.sort
+		) AS SUB 
+		WHERE SUB.rownum BETWEEN #{startRow} AND #{endRow}		    
+    </select>
+    
+    <select id="selectCom7010Cnt" resultType="int">
+	    SELECT 
+	        COUNT(*) as total_count
+	    FROM 
+	        common_code cc
+	    JOIN 
+	        common_code_detail ccd ON cc.code_number = ccd.code_number
+	    WHERE 1=1
+	    <if test="code_number != null and code_number != ''">
+	        AND cc.code_number = #{code_number}
+	    </if>
+	    <if test="code_detail_name != null and code_detail_name != ''">
+	        AND ccd.code_detail_name LIKE CONCAT('%', #{code_detail_name}, '%')
+	    </if>
+	</select>
+    
+    <select id="selectCom7010Code" resultType="map">
+		SELECT 
+			cc.code_number,
+			cc.code_name
+		FROM 
+		    common_code cc
+		JOIN 
+		    common_code_detail ccd ON cc.code_number = ccd.code_number
+		GROUP by code_number 
+		ORDER BY 
+		    cc.code_number, ccd.sort
+    </select>
+    
+	<insert id="insertCom7010" parameterType="map">
+		INSERT INTO common_code (
+		    code_number,
+		    code_name,
+		    created_id,
+		    created_date
+		) VALUES (
+		    #{code_number},
+		    #{code_name},
+		    '세션추가필요',
+		    DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		)
+		ON DUPLICATE KEY UPDATE
+		    code_name = #{code_name},
+		    updated_id = '세션추가필요',
+		    updated_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+	</insert>   
+	 
+	<insert id="insertCom7010Detail" parameterType="map">
+		INSERT INTO common_code_detail (
+		    code_number,
+		    code_detail_number,
+		    code_detail_name,
+		    code_description,
+		    sort,
+		    use_yn,
+		    created_id,
+		    created_date
+		) VALUES (
+		    #{code_number},
+		    #{code_detail_number},
+		    #{code_detail_name},
+		    #{code_description},
+		    #{sort},
+		    'Y', 
+		    '세션추가필요',
+		    DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		)
+		ON DUPLICATE KEY UPDATE
+		    code_detail_name = #{code_detail_number},
+		    code_description = #{code_detail_name},
+		    sort = #{sort},
+		    use_yn = #{use_yn},
+		    updated_id = '세션추가필요',
+		    updated_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+	</insert>    
+    
+    <delete id="deleteCom7010" parameterType="String">
+        DELETE FROM common_code
+        WHERE code_number = #{codeNumber}
+    </delete>
+
+    <delete id="deleteCom7010Detail" parameterType="String">
+        DELETE FROM common_code_detail
+        WHERE code_number = #{codeNumber}
+          AND code_detail_number = #{codeDetailNumber}
+    </delete>
+</mapper>
