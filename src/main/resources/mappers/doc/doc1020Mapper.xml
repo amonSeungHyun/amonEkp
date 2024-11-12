@@ -235,13 +235,6 @@
 
     <update id="updateDocumentCurrentStep" parameterType="int">
         UPDATE document
-           SET doc_current_step = #{userStepNo} + 1
-         WHERE doc_id = #{docId}
-           AND doc_current_step <![CDATA[<]]> total_step;
-    </update>
-
-    <update id="updateDocumentCurrentStep" parameterType="int">
-        UPDATE document
            SET upda ted_id = #{approverId}
              , updated_date = DATE_FORMAT(NOW(), '%Y%m%d')
              , doc_status= '03'
