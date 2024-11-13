@@ -276,24 +276,6 @@
 	const CALENDAR_ID = 'ko.south_korea#holiday@group.v.calendar.google.com';
 	$(document).ready (function(){
 
-		$('#startDate, #endDate').daterangepicker({
-			singleDatePicker: false,  // 범위 선택을 위해 false로 설정
-			locale: {
-				format: 'YYYY-MM-DD',
-				separator: ' ~ ',
-				applyLabel: '적용',
-				cancelLabel: '취소',
-				daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
-				monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-				firstDay: 1
-			}
-		}, function(start, end) {
-			// daterangepicker의 콜백 함수에서 선택한 날짜 범위를 startDate와 endDate 필드에 설정
-			$('#startDate').val(start.format('YYYY-MM-DD'));
-			$('#endDate').val(end.format('YYYY-MM-DD'));
-			calculateDuration();  // 선택한 날짜 범위로 기간 계산
-		});
-
 		$("#file").on('change',function(){
 			var fileName = $("#file").val();
 			$(".upload-name").val(fileName);
@@ -527,7 +509,7 @@
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
 						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<a href="http://www.yesform.com/z_n/forms/search.php?mrown=IT&amp;free_search=&amp;focus_count=0&amp;focus_cus=0&amp;focus_prev=0&amp;is_show_lvch=1&amp;skwid=&amp;bq=%25C1%25F6%25C3%25E2%25B0%25E1%25C0%25C7%25BC%25AD%25C8%25C4%25BA%25B8%25C0%25DA%25C0%25CC%25B7%25C2%25BC%25AD&amp;isc=&amp;q=%C1%25F" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000">휴가계</span></strong></a>
+							<a href="#" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000">휴가계</span></strong></a>
 						</p>
 					</td>
 					<td class="col1">
@@ -546,7 +528,7 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<td class="col1">확인</td>
+					<td class="col1" style="text-align:center;color:red;">확인</td>
 					<td class="col1"></td>
 					<td class="col1"></td>
 					<td class="col1"></td>
@@ -603,8 +585,8 @@
 				<tr>
 					<td class="col2">기간</td>
 					<td colspan="3" class="duration-container">
-						<input type="text" class="input-field short daterange" id="startDate" name="startDate" value="${vacationDetails.startDate}" readonly> ~
-						<input type="text" class="input-field short daterange" id="endDate" name="endDate" value="${vacationDetails.endDate}" readonly>
+						<input type="text" class="input-field short" id="startDate" name="startDate" value="${vacationDetails.startDate}" readonly> ~
+						<input type="text" class="input-field short" id="endDate" name="endDate" value="${vacationDetails.endDate}" readonly>
 						<span>(<span id="duration">${vacationDetails.vacationPeriod}</span> 일간)</span>
 					</td>
 				</tr>
@@ -620,7 +602,7 @@
 				<tr>
 					<td class="col2">개인사유</td>
 					<td colspan="3">
-						<textarea class="input-field auto-expand" id="details" name="details" readonly>${vacationDetails.personalReason}</textarea>
+						<textarea class="input-field auto-expand" id="details" name="details" style="width:100%; resize:none; text-align:left;" readonly>${vacationDetails.personalReason}</textarea>
 					</td>
 				</tr>
 

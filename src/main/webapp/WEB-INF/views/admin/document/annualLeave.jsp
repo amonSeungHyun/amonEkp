@@ -266,52 +266,128 @@
 	.weekend a {
 		background-color: #e6e6e6 !important;
 	}
+
+	/* daterangepicker 내 특정 요일 스타일링 */
+	.daterangepicker .calendar-table th:nth-child(1), /* 일요일 */
+	.daterangepicker .calendar-table td.weekend:nth-child(1) { /* 일요일 */
+		color: red !important;
+	}
+
+	.daterangepicker .calendar-table th:nth-child(7), /* 토요일 */
+	.daterangepicker .calendar-table td.weekend:nth-child(7) { /* 토요일 */
+		color: blue !important;
+	}
+
+	/* 공휴일 스타일 추가 */
+	.daterangepicker td.active-holiday a {
+		background-color: #ffcccc !important;
+		color: #d9534f !important;
+	}
+
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 <script type="text/javascript">
-	let holidays = [];
-	const API_KEY = 'AIzaSyBbeKqVO3mATJcINNGJPyf1a-zrZmWtI0k'; // 여기에 Google API 키를 입력
-	const CALENDAR_ID = 'ko.south_korea#holiday@group.v.calendar.google.com';
-	$(document).ready (function(){
-		// Datepicker 한국어 설정
-		$.datepicker.regional['ko'] = {
-			closeText: '닫기',
-			prevText: '이전달',
-			nextText: '다음달',
-			currentText: '오늘',
-			monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-			dayNames: ['일','월','화','수','목','금','토'],
-			dayNamesShort: ['일','월','화','수','목','금','토'],
-			dayNamesMin: ['일','월','화','수','목','금','토'],
-			weekHeader: 'Wk',
-			dateFormat: 'yy.mm.dd',
-			firstDay: 0,
-			isRTL: false,
-			showMonthAfterYear: true,
-			yearSuffix: '년'
-		};
-		$.datepicker.setDefaults($.datepicker.regional['ko']);
+	// === 공휴일 추가 (연도별) ===
+	let holidays = [];		// 공휴일 저장 객체
 
-		// Datepicker 초기화
-		$("#startDate, #endDate").datepicker({
-			dateFormat: "yy.mm.dd",
-			beforeShowDay: function (date) {
-				const dateString = $.datepicker.formatDate('yy-mm-dd', date);
-				const holiday = holidays.find(h => h.date === dateString);
+	// 특정 연도의 공휴일 설정 함수
+	function setHolidaysForYear(year) {
+		console.log("year : ", year);
 
-				if (holiday) {
-					return [true, "holiday", holiday.name]; // 공휴일 강조
-				} else if (date.getDay() === 0 || date.getDay() === 6) { // 주말 강조
-					return [true, "weekend"];
-				}
-				return [true, ""];
-			},
-			onSelect: function () {
-				calculateDuration();
+		holidays[year] = [
+			year + "-01-01", // 신정
+			year + "-03-01", // 삼일절
+			year + "-05-05", // 어린이날
+			year + "-06-06", // 현충일
+			year + "-08-15", // 광복절
+			year + "-10-01", // 근로자의 날
+			year + "-10-03", // 개천절
+			year + "-10-09", // 한글날
+			year + "-12-25"  // 성탄절
+		];
+
+		// 설날 추가 (음력 1월 1일 기준으로 앞뒤 1일 포함하여 3일)
+		const lunarNewYear = lunarToSolar(`${year}-01-01`);
+		if (lunarNewYear) {
+			const lunarNewYearStart = new Date(lunarNewYear);
+			holidays[year].push(
+					formatDate(new Date(lunarNewYearStart.setDate(lunarNewYearStart.getDate() - 1))), // 설날 전날
+					formatDate(new Date(lunarNewYearStart.setDate(lunarNewYearStart.getDate() + 1))), // 설날 당일
+					formatDate(new Date(lunarNewYearStart.setDate(lunarNewYearStart.getDate() + 1)))  // 설날 다음날
+			);
+		}
+
+		// 추석 추가 (음력 8월 15일 기준으로 앞뒤 1일 포함하여 3일)
+		const chuseokDate = lunarToSolar(`${year}-08-15`);
+		if (chuseokDate) {
+			const chuseokStart = new Date(chuseokDate);
+			holidays[year].push(
+					formatDate(new Date(chuseokStart.setDate(chuseokStart.getDate() - 1))), // 추석 전날
+					formatDate(new Date(chuseokStart.setDate(chuseokStart.getDate() + 1))), // 추석 당일
+					formatDate(new Date(chuseokStart.setDate(chuseokStart.getDate() + 1)))  // 추석 다음날
+			);
+		}
+
+		// 대체 공휴일 추가: 휴일이 일요일인 경우 월요일을 추가
+		holidays[year].forEach(dateStr => {
+			const holidayDate = new Date(dateStr);
+			if (holidayDate.getDay() === 0) { // 일요일인지 확인
+				const substituteHoliday = new Date(holidayDate);
+				substituteHoliday.setDate(holidayDate.getDate() + 1); // 다음 날인 월요일로 설정
+				holidays[year].push(formatDate(substituteHoliday));
 			}
+		});
+
+	}
+	const currentYear = new Date().getFullYear();
+	console.log("currentYear : ", currentYear);
+	setHolidaysForYear(currentYear);
+
+	// 공휴일 데이터를 문자열 배열로 변환
+	const holidayDates = holidays[currentYear];
+
+	$(document).ready (function(){
+		console.log("holidayDates : ", holidayDates);
+		// daterangepicker를 startDate와 endDate 필드에 적용
+		$('#startDate').daterangepicker({
+			singleDatePicker: true,
+			autoUpdateInput: true,
+			autoApply: true,
+			locale: {
+				format: 'YYYY-MM-DD',
+				daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
+				monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+				firstDay: 0
+			},
+			isInvalidDate: function(date) {
+				return holidayDates.includes(date.format('YYYY-MM-DD'));
+			}
+		}).on('apply.daterangepicker', function() {
+			calculateDuration(); // startDate 변경 시 기간 계산
+		}).on('show.daterangepicker', function(event, picker) {
+			applyHolidayStyles(picker);
+		});
+
+		// endDate에 daterangepicker 적용
+		$('#endDate').daterangepicker({
+			singleDatePicker: true,
+			autoUpdateInput: true,
+			autoApply: true,
+			locale: {
+				format: 'YYYY-MM-DD',
+				daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
+				monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+				firstDay: 0
+			},
+			isInvalidDate: function(date) {
+				return holidayDates.includes(date.format('YYYY-MM-DD'));
+			}
+		}).on('apply.daterangepicker', function() {
+			calculateDuration(); // endDate 변경 시 기간 계산
+		}).on('show.daterangepicker', function(event, picker) {
+			applyHolidayStyles(picker);
 		});
 
 		$("#file").on('change',function(){
@@ -319,18 +395,35 @@
 			$(".upload-name").val(fileName);
 		});
 
-		$("input[name='annualLeave']").on("change", function() {
+		$("input[name='vacationType']").on("change", function() {
 			// 현재 선택한 체크박스를 제외하고 모두 해제
-			$("input[name='annualLeave']").not(this).prop("checked", false);
+			$("input[name='vacationType']").not(this).prop("checked", false);
 		});
 
-		$('input[name="annualLeave"]').on("change", function() {
+		$('input[name="vacationType"]').on("change", function() {
 			calculateDuration();
 		});
 
 		// 날짜를 선택할 때도 기간을 다시 계산
 		$('#startDate, #endDate').on("change", function() {
+			// 시작일과 종료일을 Date 객체로 변환하여 비교
+			const start = new Date(startDate);
+			const end = new Date(endDate);
+
+			// 시작일이 종료일보다 큰 경우 경고창 표시
+			if (start > end) {
+				alert("시작일은 종료일보다 클 수 없습니다.");
+				$("#duration").text(0);
+				return;
+			}
+
 			calculateDuration();
+
+		});
+
+		// daterangepicker가 열릴 때 공휴일 스타일 적용
+		$('#startDate, #endDate').on('show.daterangepicker', function (event, picker) {
+			applyHolidayStyles(picker);
 		});
 
 		// 텍스트 영역 높이 자동 조정
@@ -339,13 +432,37 @@
 			this.style.height = (this.scrollHeight) + 'px'; // 내용에 맞춰 높이 조정
 		});
 
-		loadHolidays().then(() => {
-			initializeDatepicker();
-		});
-		bindEvents();
 
+		bindEvents();
+		console.log("공휴일 : ", holidays);
 	});
 
+	function lunarToSolar(lunarDate) {
+		// 여기서 실제 변환 API 호출을 추가해야 합니다.
+		if (lunarDate.endsWith("-01-01")) {
+			return "2024-02-10"; // 예: 2024년 설날 날짜 (음력 1월 1일)
+		} else if (lunarDate.endsWith("-08-15")) {
+			return "2024-09-17"; // 예: 2024년 추석 날짜 (음력 8월 15일)
+		}
+		return null;
+	}
+
+	// 날짜 객체를 'YYYY-MM-DD' 형식 문자열로 변환하는 함수
+	function formatDate(date) {
+		return date.toISOString().split('T')[0];
+	}
+
+	function applyHolidayStyles() {
+		$('.daterangepicker td').each(function () {
+			const date = $(this).attr('data-title');
+			if (date) {
+				const formattedDate = moment(date, 'D-MMMM-YYYY').format('YYYY-MM-DD');
+				if (holidayDates.includes(formattedDate)) {
+					$(this).addClass('active-holiday');
+				}
+			}
+		});
+	}
 	function insertApprovalExpenseDetail() {
 		const approvalData = collectApprovalSteps();
 		const annualLeaveData = collectAnnualLeaveData();
@@ -393,7 +510,8 @@
 			startDate: $("#startDate").val(),
 			endDate: $("#endDate").val(),
 			emergencyContact: $("#emergencyContact").val(),
-			personalReason: $("#personalReason").val()
+			personalReason: $("#personalReason").val(),
+			vacationPeriod: $("#duration").text()
 		};
 		// data.push(rowData);
 		console.log(rowData); // Logs the list map structure to the console
@@ -404,99 +522,44 @@
 		const startDate = $("#startDate").val();
 		const endDate = $("#endDate").val();
 		const isHalfDay = $("#halfDay").is(":checked");
+		console.log("123", isHalfDay);
 
 		if (startDate && endDate) {
-			let duration = calculateWorkdaysExcludingHolidays(startDate, endDate);
+			let duration = "";
 
-			if (isHalfDay && duration === 1) {
-				duration = 0.5;
+			// 시작일과 종료일이 같을 경우
+			if (startDate === endDate) {
+				duration = isHalfDay ? 0.5 : 1;  // 반차 체크 시 0.5일, 그렇지 않으면 1일
+			} else {
+				// 시작일과 종료일이 다를 경우, 반차 체크는 무시하고 주말 제외 일수로 계산
+				duration = calculateWorkdaysExcludingWeekendsAndHolidays(startDate, endDate);
 			}
 
 			$("#duration").text(duration > 0 ? duration : 0);
 		}
 	}
 
-
-	// function calculateDuration() {
-	// 	const startDate = $("#startDate").val();
-	// 	const endDate = $("#endDate").val();
-	// 	const isHalfDay = $("#halfDay").is(":checked"); // 반차 여부 확인
-	//
-	// 	if (startDate && endDate) {
-	// 		const start = new Date(startDate);
-	// 		const end = new Date(endDate);
-	//
-	// 		// 날짜 차이 계산 (밀리초 단위에서 일 단위로 변환)
-	// 		let duration = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
-	//
-	// 		// 반차 선택 시 하루로 표시되는 경우 0.5일로 변경, 반차가 아닐 경우는 1일로 설정
-	// 		if (isHalfDay && duration === 1) {
-	// 			duration = 0.5;
-	// 		} else if (!isHalfDay && duration === 1) {
-	// 			duration = 1;
-	// 		}
-	//
-	// 		// 계산된 기간을 표시
-	// 		$("#duration").text(duration > 0 ? duration : 0);
-	// 	}
-	// }
-
-	function calculateWeekdays(startDate, endDate) {
+	// 공휴일 및 주말 제외 근무일 계산 함수
+	function calculateWorkdaysExcludingWeekendsAndHolidays(startDate, endDate) {
 		const start = new Date(startDate);
 		const end = new Date(endDate);
-		let weekdaysCount = 0;
+		let workdaysCount = 0;
 
 		while (start <= end) {
-			// 주말인지 확인 (토요일: 6, 일요일: 0)
 			const dayOfWeek = start.getDay();
-			if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-				weekdaysCount++;
+			const formattedDate = start.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
+			console.log("dayOfWeek : ", dayOfWeek);
+			console.log("formattedDate : ", formattedDate);
+
+			// 주말이 아니고 공휴일이 아닐 때만 근무일로 계산
+			if (dayOfWeek !== 0 && dayOfWeek !== 6 && !holidayDates.includes(formattedDate)) {
+				workdaysCount++;
 			}
 			start.setDate(start.getDate() + 1); // 다음 날로 이동
 		}
-
-		return weekdaysCount;
+		console.log("일간 : ", workdaysCount);
+		return workdaysCount;
 	}
-
-
-	// 공휴일을 서버에서 가져오는 함수
-	function loadHolidays() {
-		return fetch(`https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${API_KEY}`)
-				.then(response => response.json())
-				.then(data => {
-					if (data.items) {
-						holidays = data.items.map(event => ({
-							date: event.start.date,
-							name: event.summary
-						}));
-						console.log("Holidays loaded:", holidays); // 데이터 로드 확인용 콘솔 출력
-					} else {
-						console.error("No holiday data found");
-					}
-				})
-				.catch(error => console.error("Failed to fetch holidays:", error));
-	}
-
-	function initializeDatepicker() {
-		$("#startDate, #endDate").datepicker({
-			dateFormat: "yy.mm.dd",
-			beforeShowDay: function (date) {
-				const dateString = $.datepicker.formatDate('yy-mm-dd', date);
-				const holiday = holidays.find(h => h.date === dateString);
-
-				if (holiday) {
-					return [true, "holiday", holiday.name]; // 공휴일 클래스 추가 및 툴팁
-				} else if (date.getDay() === 0 || date.getDay() === 6) { // 주말
-					return [true, "weekend"];
-				}
-				return [true, ""];
-			},
-			onSelect: function () {
-				calculateDuration();
-			}
-		});
-	}
-
 
 	// 이벤트 바인딩 함수
 	function bindEvents() {
@@ -518,30 +581,7 @@
 			this.style.height = (this.scrollHeight) + 'px';
 		});
 	}
-	// 공휴일 및 주말 제외 근무일 계산 함수
-	function calculateWorkdaysExcludingHolidays(startDate, endDate) {
-		const start = new Date(startDate);
-		const end = new Date(endDate);
-		let workdaysCount = 0;
 
-		while (start <= end) {
-			const dayOfWeek = start.getDay();
-			const isHolidayFlag = isHoliday(start);
-
-			if (dayOfWeek !== 0 && dayOfWeek !== 6 && !isHolidayFlag) {
-				workdaysCount++;
-			}
-			start.setDate(start.getDate() + 1);
-		}
-
-		return workdaysCount;
-	}
-
-	// 특정 날짜가 공휴일인지 확인하는 함수
-	function isHoliday(date) {
-		const formattedDate = $.datepicker.formatDate('yy-mm-dd', date);
-		return holidays.some(holiday => holiday.date === formattedDate);
-	}
 
 </script>
 <div class="contai" style="overflow-x: hidden;">
@@ -570,7 +610,7 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<td class="col1">확인</td>
+					<td class="col1" style="text-align:center; color: red;">확인</td>
 					<td class="col1"></td>
 					<td class="col1"></td>
 					<td class="col1"></td>
@@ -622,8 +662,8 @@
 				<tr>
 					<td class="col2">기간</td>
 					<td colspan="3" class="duration-container">
-						<input type="text" class="input-field short" id="startDate" name="startDate" onchange="calculateDuration()" autocomplete="off"> ~
-						<input type="text" class="input-field short" id="endDate" name="endDate" onchange="calculateDuration()" autocomplete="off">
+						<input type="text" class="input-field short daterange" id="startDate" name="startDate" onchange="calculateDuration()" autocomplete="off"> ~
+						<input type="text" class="input-field short daterange" id="endDate" name="endDate" onchange="calculateDuration()" autocomplete="off">
 						<span>(<span id="duration">0</span> 일간)</span>
 					</td>
 				</tr>
