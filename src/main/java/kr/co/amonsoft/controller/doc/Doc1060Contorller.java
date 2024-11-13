@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import kr.co.amonsoft.service.apv.ApvCommonService;
+import kr.co.amonsoft.service.doc.DocCommonService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,13 +27,13 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class Doc1060Contorller {
 
-    private final Doc1020Service doc1020Service;
-    
+    private final DocCommonService docCommonService;
     private final Doc1060Service doc1060Service;
+    private final ApvCommonService apvCommonService;
     
     @GetMapping("/doc/doc1060")
     public String selectWrite(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-    	Map<String, Object> teamLeadersByUserOrganization = doc1020Service.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
+    	Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
         return "/admin/doc/doc1060";
     }
@@ -46,8 +48,8 @@ public class Doc1060Contorller {
     @GetMapping("/doc/doc1060View")
     public String doc1060View(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam BigInteger docId, Model model) {
     	model.addAttribute("docId", docId);
-    	List<Map<String,Object>> approvalSteps = doc1020Service.findApprovalStepsByDocId(docId);
-        Map<String,Object> documentCreatorInfo = doc1020Service.findDocumentCreatorInfo(docId);
+    	List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
+        Map<String,Object> documentCreatorInfo = apvCommonService.findDocumentCreatorInfo(docId);
         List<Map<String,Object>> transportExpenseDetails = doc1060Service.findTransportExpenseDetailsByDocId(docId);
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);

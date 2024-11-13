@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import kr.co.amonsoft.service.apv.ApvCommonService;
+import kr.co.amonsoft.service.doc.DocCommonService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,11 +31,12 @@ public class Doc1050Controller {
 	
     private final Doc1050Service doc1050Service;
     
-    private final Doc1020Service doc1020Service;
+    private final DocCommonService docCommonService;
+    private final ApvCommonService apvCommonService;
     
     @RequestMapping(value = "/doc/doc1050")
     public String doc1050( HttpServletRequest request,@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        Map<String, Object> teamLeadersByUserOrganization = doc1020Service.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
+        Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
         return "/admin/doc/doc1050";
     }
@@ -49,8 +52,8 @@ public class Doc1050Controller {
     @GetMapping("/doc/doc1050View")
     public String doc1050View(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam BigInteger docId, Model model) {
     	model.addAttribute("docId", docId);
-    	List<Map<String,Object>> approvalSteps = doc1020Service.findApprovalStepsByDocId(docId);
-        Map<String,Object> documentCreatorInfo = doc1020Service.findDocumentCreatorInfo(docId);
+    	List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
+        Map<String,Object> documentCreatorInfo = apvCommonService.findDocumentCreatorInfo(docId);
         List<Map<String,Object>> doc1050Details = doc1050Service.selectDoc1050(docId);
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);

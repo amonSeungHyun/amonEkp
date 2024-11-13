@@ -1,105 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.amonsoft.mapper.doc.Doc1020Mapper">
-    <select id="findCurrentStepNo" parameterType="BigInteger" resultType="camelcasemap">
-        SELECT doc_current_step
-          FROM document d
-        where doc_id = #{docId}
-    </select>
-
-    <select id="findStepNoByDocIdAndUserId" parameterType="map" resultType="camelcasemap">
-        SELECT step_no
-          FROM approval_step
-         WHERE doc_id = #{docId}
-           AND approver_id = #{userId}
-    </select>
-
-    <select id="findPendingApprovalDocuments" parameterType="String" resultType="camelcasemap">
-        SELECT d.doc_id
-             , d.doc_title
-             , d.doc_type
-             , d.doc_title
-             , doc_status.code_detail_name as docStatusName
-             , doc_type.code_detail_name as docTypeName
-             , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
-        FROM approval_step s
-        INNER JOIN document d
-               ON d.doc_id = s.doc_id
-        INNER JOIN common_code_detail doc_status
-               ON d.doc_status = doc_status.code_detail_number
-              AND doc_status.code_number = 'APV02'
-        INNER JOIN common_code_detail doc_type
-               ON d.doc_status = doc_type.code_detail_number
-              AND doc_type.code_number = 'APV01'
-        WHERE s.approver_id = #{userId}
-          AND s.step_no = (
-            SELECT MIN(s2.step_no)
-            FROM approval_step s2
-            WHERE s2.doc_id = s.doc_id
-              AND s2.status = '01' -- 대기중
-         )
-    </select>
-
-    <select id="findDocumentCreatorInfo" parameterType="BigInteger" resultType="camelcasemap">
-        SELECT u.user_name
-             , o.organization_name
-             , posi_detail.code_detail_name as positionName
-             , d.doc_status
-             , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
-        FROM user u
-        INNER JOIN document d
-          ON u.user_id = d.user_id
-        INNER JOIN organization o
-          ON u.organization_id = o.organization_id
-        INNER JOIN common_code_detail posi_detail
-           ON u.position_code = posi_detail.code_detail_number
-           AND posi_detail.code_number = 'COM02'
-        WHERE d.doc_id = #{docId}
-    </select>
-
-    <select id="findDocumentsUnderApproval" parameterType="String" resultType="camelcasemap">
-        SELECT d.created_date
-             , doctype.code_detail_name as docTypeName
-             , docstatus.code_detail_name as docStatusName
-             , d.doc_title
-             , d.doc_type
-             , d.doc_status
-             , d.doc_id
-        FROM document d
-        INNER JOIN common_code_detail doctype
-           ON d.doc_type = doctype.code_detail_number
-           AND doctype.code_number = 'APV02'
-        INNER JOIN common_code_detail docstatus
-           ON d.doc_status = docstatus.code_detail_number
-           AND docstatus.code_number = 'APV01'
-        WHERE d.user_id = #{userId}
-    </select>
-
-
-    <select id="findApprovalStepsByDocId" resultType="camelcasemap">
-        SELECT a.doc_id
-             , a.step_id
-             , a.step_no
-             , a.approver_id
-             , u.user_name
-             , a.status
-             , position_cd.code_detail_name as positionName
-             , c.code_detail_name AS status_description
-             , a.created_id
-             , a.created_date
-             , a.updated_id
-             , a.updated_date
-        FROM approval_step a
-        INNER JOIN user u
-            ON u.user_id = a.approver_id
-        INNER JOIN common_code_detail c
-           ON a.status = c.code_detail_number
-           AND c.code_number = 'APV01' -- 결재 상태 공통코드
-        INNER JOIN common_code_detail position_cd
-           ON u.position_code = position_cd.code_detail_number
-           AND position_cd.code_number = 'COM02'
-        WHERE a.doc_id = #{docId}
-    </select>
 
     <select id="findExpenseDetailsByDocId" resultType="camelcasemap">
         SELECT doc_id
@@ -119,30 +20,6 @@
         FROM expense_detail
         WHERE doc_id = #{docId}
     </select>
-
-    <select id="findTeamLeadersByUserOrganization" parameterType="String" resultType="camelcasemap">
-        SELECT u.user_id
-             , u.user_name
-             , cd_detail.code_detail_name as employmentStatusName
-             , position_detail.code_detail_name as positionName
-        FROM user u
-         INNER JOIN user o
-                    ON u.organization_id = o.organization_id
-         LEFT JOIN common_code_detail cd_detail
-                   ON u.employment_status = cd_detail.code_detail_number
-                       AND cd_detail.code_number = 'COM04'
-         LEFT JOIN common_code_detail position_detail
-                   ON u.position_code = position_detail.code_detail_number
-                       AND position_detail.code_number = 'COM02'
-            WHERE o.user_id = #{userId}
-              AND u.role = '03'
-              AND cd_detail.code_detail_number = '01'
-    </select>
-
-    <select id="findCompleteDocuments" resultType="camelcasemap">
-
-    </select>
-
 
     <insert id="insertApprovalStep">
         INSERT INTO approval_step(
@@ -226,18 +103,5 @@
        )
     </insert>
 
-    <update id="updateApprovalStatus" parameterType="map">
-        UPDATE approval_step
-           SET status= #{status}
-         WHERE approver_id= #{approverId}
-          AND doc_id = #{docId}
-    </update>
 
-    <update id="updateDocumentCurrentStep" parameterType="int">
-        UPDATE document
-           SET upda ted_id = #{approverId}
-             , updated_date = DATE_FORMAT(NOW(), '%Y%m%d')
-             , doc_status= '03'
-         WHERE doc_id= #{docId}
-    </update>
 </mapper>

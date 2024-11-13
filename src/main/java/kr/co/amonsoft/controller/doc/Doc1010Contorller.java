@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.print.Doc;
 import javax.servlet.http.HttpServletRequest;
 
+import kr.co.amonsoft.service.apv.ApvCommonService;
+import kr.co.amonsoft.service.doc.DocCommonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,50 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Doc1010Contorller {
 
-    private final Doc1020Service doc1020Service;
-    private static final Set<String> ALLOWED_ROLES = Set.of("01", "02", "03");
-
     private final Doc1010Service doc1010Service;
-
-    @GetMapping("/workflow/selectWrite")
-    public String selectWrite(HttpServletRequest request) {
-        return "/admin/jihee/content/selectWrite";
-    }
-
-    @RequestMapping(value = "/workflow/write")
-    public String writeWorkflow( HttpServletRequest request,@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        Map<String, Object> teamLeadersByUserOrganization = doc1020Service.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
-        model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
-        return "/admin/jihee/content/write";
-    }
-
-    @GetMapping("/workflow")
-    public String viewWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        List<Map<String, Object>> documentsUnderApproval = doc1020Service.findDocumentsUnderApproval(customUserDetails.getUserId());
-        String roleCode = customUserDetails.getRole();
-        if(ALLOWED_ROLES.contains(roleCode)){
-            model.addAttribute("documents", doc1020Service.findPendingApprovalDocuments(customUserDetails.getUserId()) );
-            model.addAttribute("role", roleCode);
-        }else{
-            model.addAttribute("documents", documentsUnderApproval);
-        }
-        return "/admin/jihee/content/document";
-    }
-
-    @ResponseBody
-    @GetMapping("/workflow/changeList")
-    public List<Map<String,Object>> viewWorkflowChangeList(@RequestParam String type,@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        String roleCode = customUserDetails.getRole();
-        if ("pending".equals(type) && Set.of("01", "02", "03").contains(roleCode)) {
-            // 승인 대기 문서 반환
-            return doc1020Service.findPendingApprovalDocuments(customUserDetails.getUserId());
-        } else if ("complete".equals(type)) {
-            return doc1020Service.findCompleteDocuments(customUserDetails.getUserId());
-        } else {
-            // 결재 진행 중 문서 반환
-            return doc1020Service.findDocumentsUnderApproval(customUserDetails.getUserId());
-        }
-    }
+    private final DocCommonService docCommonService;
+    private final ApvCommonService apvCommonService;
 
 
     /** ##########################################################################################################################
@@ -81,7 +43,7 @@ public class Doc1010Contorller {
      */
     @RequestMapping(value = "/admin/doc/annualLeave")
     public String annualLeave( HttpServletRequest request,@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        Map<String, Object> teamLeadersByUserOrganization = doc1010Service.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
+        Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
         return "/admin/document/annualLeave";
     }
@@ -95,9 +57,9 @@ public class Doc1010Contorller {
         log.info("휴가계 결재 화면 진입");
         log.info(docId.toString());
         log.info("##################################################");
-        List<Map<String,Object>> approvalSteps = doc1010Service.findApprovalStepsByDocId(docId);
+        List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
         Map<String,Object>  vacationDetails = doc1010Service.findVacationDetailsByDocId(docId);
-        Map<String,Object>  documentCreatorInfo = doc1010Service.findDocumentCreatorInfo(docId);
+        Map<String,Object>  documentCreatorInfo = apvCommonService.findDocumentCreatorInfo(docId);
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("vacationDetails", vacationDetails);

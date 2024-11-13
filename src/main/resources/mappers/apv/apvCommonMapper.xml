@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.apv.ApvCommonMapper">
+    <select id="findDocumentCreatorInfo" parameterType="BigInteger" resultType="camelcasemap">
+        SELECT u.user_name
+             , o.organization_name
+             , posi_detail.code_detail_name as positionName
+             , d.doc_status
+             , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
+        FROM user u
+        INNER JOIN document d
+          ON u.user_id = d.user_id
+        INNER JOIN organization o
+          ON u.organization_id = o.organization_id
+        INNER JOIN common_code_detail posi_detail
+           ON u.position_code = posi_detail.code_detail_number
+           AND posi_detail.code_number = 'COM02'
+        WHERE d.doc_id = #{docId}
+    </select>
+
+
+    <select id="findApprovalStepsByDocId" resultType="camelcasemap">
+        SELECT a.doc_id
+             , a.step_id
+             , a.step_no
+             , a.approver_id
+             , u.user_name
+             , a.status
+             , position_cd.code_detail_name as positionName
+             , c.code_detail_name AS status_description
+             , a.created_id
+             , a.created_date
+             , a.updated_id
+             , a.updated_date
+        FROM approval_step a
+        INNER JOIN user u
+           ON u.user_id = a.approver_id
+        INNER JOIN common_code_detail c
+           ON a.status = c.code_detail_number
+           AND c.code_number = 'APV01' -- 결재 상태 공통코드
+        INNER JOIN common_code_detail position_cd
+           ON u.position_code = position_cd.code_detail_number
+           AND position_cd.code_number = 'COM02'
+        WHERE a.doc_id = #{docId}
+    </select>
+
+    <select id="findCurrentStepNo" parameterType="BigInteger" resultType="camelcasemap">
+        SELECT doc_current_step
+        FROM document d
+        where doc_id = #{docId}
+    </select>
+
+    <select id="findStepNoByDocIdAndUserId" parameterType="map" resultType="camelcasemap">
+        SELECT step_no
+        FROM approval_step
+        WHERE doc_id = #{docId}
+          AND approver_id = #{userId}
+    </select>
+
+    <update id="updateApprovalStatus" parameterType="map">
+        UPDATE approval_step
+        SET status= #{status}
+        WHERE approver_id= #{approverId}
+          AND doc_id = #{docId}
+    </update>
+
+    <update id="updateDocumentCompletionStatus" parameterType="int">
+        UPDATE document
+        SET updated_id = #{approverId}
+          , updated_date = DATE_FORMAT(NOW(), '%Y%m%d')
+          , doc_status= '03'
+        WHERE doc_id= #{docId}
+    </update>
+
+
+</mapper>

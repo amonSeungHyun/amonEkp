@@ -482,20 +482,17 @@
 
 	function documentDetailView(docId, docType){
 
-		alert(docType);
-		alert(docId);
-
 		let docTypeCode = parseInt(docType);
 		// 상태 코드에 따른 파라미터 설정
-		if (docType === 1) {
+		if (docTypeCode === 1) {
 			fullUrl = "/approval/annualLeaveView?docId=" + docId;
-		} else if (docType === 2) {
+		} else if (docTypeCode === 2) {
 			fullUrl = "/approval/expenseDetailView?docId=" + docId;
-		} else if (docType === 3) {
+		} else if (docTypeCode === 3) {
 			fullUrl = "/doc/doc1040View?docId=" + docId;
-		} else if (docType === 5) {
+		} else if (docTypeCode === 5) {
 			fullUrl = "/doc/doc1050View?docId=" + docId;
-		} else if (docType === 6) {
+		} else if (docTypeCode === 6) {
 			fullUrl = "/doc/doc1060View?docId=" + docId;
 		} else {
 			// docType이 예상치 못한 값일 경우 기본 URL로 설정
@@ -592,7 +589,6 @@
 </div>
 </div>
 <!-- 모달창 끝 -->
-
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>

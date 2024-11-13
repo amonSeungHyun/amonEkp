@@ -61,20 +61,6 @@
 		$(document).on("click","button.btn_label",function(){
 			let selected = $(this).text();
 			let val = $(this).find("input.input_registValue").val();
-
-			// if($(this).hasClass("selectedDepartment")){
-			// 	console.log("부서 :", val);
-			// 	console.log("부서 :", selected);
-			// 	$(this).parent().parent().find("input.selected").val(val); // 전송을 위해 input 태그에 값 입력
-			// 	$(this).parent().parent().find("div.regist_value").text(selected);
-			// } else if($(this).hasClass("selectedPositionCode")){
-			// 	console.log("부서 :", val);
-			// 	console.log("부서 :", selected);
-			// 	$(this).parent().parent().find("input.selected").val(val); // 전송을 위해 input 태그에 값 입력
-			// 	$(this).parent().parent().find("div.regist_value").text(selected);
-			// } else{
-			// 	console.log("부서 :", val);
-			// 	console.log("부서 :", selected);
 				$(this).parent().parent().find("input.selected").val(val); // 전송을 위해 input 태그에 값 입력
 				$(this).parent().parent().find("div.regist_value").text(selected);
 			// }
@@ -201,11 +187,6 @@
 		searchWord = $('#searchWord').val(); // 검색어 가져오기
 		selectMemberList(searchDepart, searchPosition, searchWord); // 검색어를 인자로 전달하여 selectMemberList 호출
 	}
-
-
-
-
-
 
 
 	// ############################################ 구성원 추가하기 모달 #########################################################
@@ -967,11 +948,9 @@
 				</tr>
 				</thead>
 				<tbody>
-
 				</tbody>
 			</table>
 		</div>
-
 		<!-- 페이징 처리 -->
 		<div class="container">
 			<div id="pageNumDiv" class="pagination p12">

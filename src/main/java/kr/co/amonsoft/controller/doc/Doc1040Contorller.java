@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import kr.co.amonsoft.service.apv.ApvCommonService;
+import kr.co.amonsoft.service.doc.DocCommonService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,11 +31,12 @@ public class Doc1040Contorller {
 
     private final Doc1040Service doc1040Service;
 
-    private final Doc1020Service doc1020Service;
+    private final DocCommonService docCommonService;
+    private final ApvCommonService apvCommonService;
     
     @GetMapping("/doc/doc1040")
-    public String selectWrite(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-    	Map<String, Object> teamLeadersByUserOrganization = doc1020Service.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
+    public String selectWrite(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
+    	Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
         return "/admin/doc/doc1040";
     }
@@ -56,7 +59,7 @@ public class Doc1040Contorller {
     @GetMapping("/doc/doc1040View")
     public String approvalRequestDetailView(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam BigInteger docId, Model model) {
     	model.addAttribute("docId", docId);
-    	List<Map<String,Object>> approvalSteps = doc1020Service.findApprovalStepsByDocId(docId);
+    	List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
         Map<String,Object>  approvalRequestDetails = doc1040Service.findApprovalRequestDetailsByDocId(docId);
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("approvalRequestDetails", approvalRequestDetails);
@@ -71,12 +74,4 @@ public class Doc1040Contorller {
     	Map<String,Object> approvalRequestDetails = doc1040Service.findApprovalRequestDetailsByDocId(docId);
     	return approvalRequestDetails;
     }
-    /*
-    @GetMapping("/workflow")
-    public String viewWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        List<Map<String, Object>> documentsUnderApproval = doc1040Service.findDocumentsUnderApproval(customUserDetails.getUserId());
-        model.addAttribute("documents", documentsUnderApproval);
-        return "/admin/jihee/content/document";
-    }
-    */
 }

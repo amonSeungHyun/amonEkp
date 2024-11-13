@@ -15,17 +15,8 @@ public interface Doc1010Mapper {
 
     void insertVacationDetail(Map<String, Object> expenseDetail);
 
-    List<Map<String,Object>> findApprovalStepsByDocId(BigInteger  docId);
-
     Map<String,Object> findVacationDetailsByDocId(BigInteger docId);
 
     int updateAnnualLeaveApprovalStep(Map<String,Object> param);
 
-    int updateDocumentCurrentStep(int docId);
-
-    Map<String,Object> findTeamLeadersByUserOrganization(String userId);
-
-    List<Map<String,Object>> findDocumentsUnderApproval(String userId);
-
-    Map<String, Object> findDocumentCreatorInfo(BigInteger docId);
 }

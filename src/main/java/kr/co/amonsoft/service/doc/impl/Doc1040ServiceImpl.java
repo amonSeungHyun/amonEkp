@@ -85,33 +85,11 @@ public class Doc1040ServiceImpl implements Doc1040Service {
         return docId;
     }
 
-    @Override
-    public List<Map<String, Object>> findApprovalStepsByDocId(BigInteger docId) {
-        return doc1020Mapper.findApprovalStepsByDocId(docId);
-    }
+
 
     @Override
     public List<Map<String, Object>> findExpenseDetailsByDocId(BigInteger docId) {
         return doc1020Mapper.findExpenseDetailsByDocId(docId);
-    }
-
-    @Transactional
-    @Override
-    public int updateApprovalStatus(Map<String,Object> param) {
-        int approvalUpdateResult = doc1020Mapper.updateApprovalStatus(param);
-        int docId = Integer.parseInt(String.valueOf(param.get("docId")));
-        int stepUpdateResult = doc1020Mapper.updateDocumentCurrentStep(docId);
-        return (approvalUpdateResult > 0 && stepUpdateResult > 0) ? 1 : 0;
-    }
-
-    @Override
-    public Map<String, Object> findTeamLeadersByUserOrganization(String userId) {
-        return doc1020Mapper.findTeamLeadersByUserOrganization(userId);
-    }
-
-    @Override
-    public List<Map<String, Object>> findDocumentsUnderApproval(String userId) {
-        return doc1020Mapper.findDocumentsUnderApproval(userId);
     }
 
 

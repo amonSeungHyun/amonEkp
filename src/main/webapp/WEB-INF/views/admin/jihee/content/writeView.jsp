@@ -234,53 +234,7 @@
 		}
 	});
 
-	function updateApproveDocument() {
-		if(confirm("승인 하시겠습니까?")) {
-			$.ajax({
-				url: '/approval/updateApprovalStep', // 데이터를 보낼 서버의 URL로 변경
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					status : '03',
-					docId : $("#docId").val(),
-					approverId : $("#approverId").val(),
-					userStepNo : $("#userStepNo").val()
-				}),
-				success: function (docId) {
-					console.log('success');
-					$(location).attr("href", "/approval/expenseDetailView?docId=" + docId);
 
-				},
-				error: function (error) {
-					console.error('Error sending data:', error);
-				}
-			});
-		}
-	}
-
-	function updateRejectDocument() {
-		if(confirm("반려 하시겠습니까?")) {
-			$.ajax({
-				url: '/approval/updateApprovalStep', // 데이터를 보낼 서버의 URL로 변경
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					status : '04',
-					docId : $("#docId").val(),
-					approverId : "2000103001",
-					userStepNo : userStepNo
-				}),
-				success: function (docId) {
-					console.log('success');
-					$(location).attr("href", "/approval/expenseDetailView?docId=" + docId);
-
-				},
-				error: function (error) {
-					console.error('Error sending data:', error);
-				}
-			});
-		}
-	}
 
 </script>
 <div class="contai" style="overflow-x: hidden;">
@@ -290,6 +244,7 @@
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
 						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
+							<strong><span class="font-malgungothic" style="color:#000000">지출결의서</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -325,7 +280,6 @@
 						</c:if>
 					</c:forEach>
 				</tr>
-
 				<tr style="height:22.05pt">
 					<c:forEach var="approvalStep" items="${approvalSteps}" >
 						<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="${approvalStep.stepNo}" data-user-id="${approvalStep.approvalId}">${approvalStep.userName} / ${approvalStep.positionName}</td>

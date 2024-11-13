@@ -1,6 +1,7 @@
 package kr.co.amonsoft.service.doc.impl;
 
 import kr.co.amonsoft.config.security.CustomUserDetails;
+import kr.co.amonsoft.mapper.apv.ApvCommonMapper;
 import kr.co.amonsoft.mapper.doc.Doc1010Mapper;
 import kr.co.amonsoft.mapper.doc.Doc1020Mapper;
 import kr.co.amonsoft.service.doc.Doc1010Service;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class Doc1010ServiceImpl implements Doc1010Service {
 
     private final Doc1010Mapper doc1010Mapper;
+    private final ApvCommonMapper apvCommonMapper;
 
     @Override
     public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
@@ -57,10 +59,6 @@ public class Doc1010ServiceImpl implements Doc1010Service {
         return docId;
     }
 
-    @Override
-    public List<Map<String, Object>> findApprovalStepsByDocId(BigInteger docId) {
-        return doc1010Mapper.findApprovalStepsByDocId(docId);
-    }
 
     @Override
     public Map<String, Object> findVacationDetailsByDocId(BigInteger docId) {
@@ -72,23 +70,9 @@ public class Doc1010ServiceImpl implements Doc1010Service {
     public int updateAnnualLeaveApprovalStep(Map<String,Object> param) {
         int approvalUpdateResult = doc1010Mapper.updateAnnualLeaveApprovalStep(param);
         int docId = Integer.parseInt(String.valueOf(param.get("docId")));
-        int stepUpdateResult = doc1010Mapper.updateDocumentCurrentStep(docId);
+        int stepUpdateResult = apvCommonMapper.updateDocumentCurrentStep(docId);
         return (approvalUpdateResult > 0 && stepUpdateResult > 0) ? 1 : 0;
     }
 
-    @Override
-    public Map<String, Object> findTeamLeadersByUserOrganization(String userId) {
-        return doc1010Mapper.findTeamLeadersByUserOrganization(userId);
-    }
-
-    @Override
-    public List<Map<String, Object>> findDocumentsUnderApproval(String userId) {
-        return doc1010Mapper.findDocumentsUnderApproval(userId);
-    }
-
-    @Override
-    public Map<String, Object> findDocumentCreatorInfo(BigInteger docId) {
-        return doc1010Mapper.findDocumentCreatorInfo(docId);
-    }
 
 }

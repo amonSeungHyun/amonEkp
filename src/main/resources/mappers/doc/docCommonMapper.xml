@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.doc.DocCommonMapper">
+
+    <select id="findDocumentsUnderApproval" parameterType="String" resultType="camelcasemap">
+        SELECT d.created_date
+             , doctype.code_detail_name as docTypeName
+             , docstatus.code_detail_name as docStatusName
+             , d.doc_title
+             , d.doc_type
+             , d.doc_status
+             , d.doc_id
+        FROM document d
+        INNER JOIN common_code_detail doctype
+           ON d.doc_type = doctype.code_detail_number
+           AND doctype.code_number = 'APV02'
+        INNER JOIN common_code_detail docstatus
+           ON d.doc_status = docstatus.code_detail_number
+           AND docstatus.code_number = 'APV01'
+        WHERE d.user_id = #{userId}
+    </select>
+
+
+    <select id="findCompleteDocuments" parameterType="String" resultType="camelcasemap">
+        SELECT d.created_date
+             , doctype.code_detail_name as docTypeName
+             , docstatus.code_detail_name as docStatusName
+             , d.doc_title
+             , d.doc_type
+             , d.doc_status
+             , d.doc_id
+        FROM document d
+                 INNER JOIN common_code_detail doctype
+                            ON d.doc_type = doctype.code_detail_number
+                                AND doctype.code_number = 'APV02'
+                 INNER JOIN common_code_detail docstatus
+                            ON d.doc_status = docstatus.code_detail_number
+                                AND docstatus.code_number = 'APV01'
+        WHERE d.user_id = #{userId}
+          AND d.doc_status = '03'
+    </select>
+
+    <select id="findPendingApprovalDocuments" parameterType="String" resultType="camelcasemap">
+        SELECT d.doc_id
+             , d.doc_title
+             , d.doc_type
+             , d.doc_title
+             , doc_status.code_detail_name as docStatusName
+             , doc_type.code_detail_name as docTypeName
+             , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
+        FROM approval_step s
+                 INNER JOIN document d
+                            ON d.doc_id = s.doc_id
+                 INNER JOIN common_code_detail doc_status
+                            ON d.doc_status = doc_status.code_detail_number
+                                AND doc_status.code_number = 'APV02'
+                 INNER JOIN common_code_detail doc_type
+                            ON d.doc_status = doc_type.code_detail_number
+                                AND doc_type.code_number = 'APV01'
+        WHERE s.approver_id = #{userId}
+          AND s.step_no = (
+            SELECT MIN(s2.step_no)
+            FROM approval_step s2
+            WHERE s2.doc_id = s.doc_id
+              AND s2.status = '01' -- 대기중
+        )
+    </select>
+
+    <select id="findTeamLeadersByUserOrganization" parameterType="String" resultType="camelcasemap">
+        SELECT u.user_id
+             , u.user_name
+             , cd_detail.code_detail_name as employmentStatusName
+             , position_detail.code_detail_name as positionName
+        FROM user u
+                 INNER JOIN user o
+                            ON u.organization_id = o.organization_id
+                 LEFT JOIN common_code_detail cd_detail
+                           ON u.employment_status = cd_detail.code_detail_number
+                               AND cd_detail.code_number = 'COM04'
+                 LEFT JOIN common_code_detail position_detail
+                           ON u.position_code = position_detail.code_detail_number
+                               AND position_detail.code_number = 'COM02'
+        WHERE o.user_id = #{userId}
+          AND u.role = '03'
+          AND cd_detail.code_detail_number = '01'
+    </select>
+
+
+</mapper>

@@ -7,16 +7,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import kr.co.amonsoft.dto.com.MemberListDTO;
+import kr.co.amonsoft.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.co.amonsoft.Pager;
 import kr.co.amonsoft.service.com.Com7010Service;
 
 @Controller
@@ -34,26 +34,18 @@ public class Com7010Controller {
     @ResponseBody
     @RequestMapping(value = "/amonsoft/controller/com/selectCom7010List")
     public Map<String, Object> selectCom7010List(@RequestBody Map<String, Object> param) throws Exception {
+
     	
-    	int pageNum = param.get("pageNum") != null ? Integer.parseInt(param.get("pageNum").toString()) : 1;
-        int pageSize = param.get("pageSize") != null ? Integer.parseInt(param.get("pageSize").toString()) : 5;
-        
-    	List<Map<String, Object>> resultList = new ArrayList<>();
-    	
-    	int totalCnt = com7010Service.selectCom7010Cnt(param); 
-    	int blockSize = 5; 
-    	
-    	Pager pager = new Pager(pageNum, totalCnt, pageSize, blockSize);
-    	
-        Map<String, Object> pageMap = new HashMap<>(param); 
-        pageMap.put("startRow", pager.getStartRow());
-        pageMap.put("endRow", pager.getEndRow());
-        
-		resultList = com7010Service.selectCom7010List(pageMap);
-		
+    	int totalCnt = com7010Service.selectCom7010Cnt(param);
+
+        Map<String, Object> pagingParams = PageUtil.getPagingParams(param, totalCnt);
+        param.putAll(pagingParams);
+
+        List<Map<String,Object>> resultList =  com7010Service.selectCom7010List(param);
+
 		Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("resultList", resultList);
-        resultMap.put("pager", pager);
+        resultMap.put("pager", pagingParams);
     	
         return resultMap;
     }

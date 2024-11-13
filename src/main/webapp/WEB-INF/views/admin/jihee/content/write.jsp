@@ -282,24 +282,7 @@
 	}
 
 
-	function collectExpenseDetailData(){
-		const data = [];
-		for (let i = 1; i <= 15; i++) {
-			if(!$('#expenseDate_' + i).val()){
-				break;
-			}
-			const rowData = {
-				expenseDate: $('#expenseDate_' + i).val(),
-				expenseItem: $('#expenseItem_' + i).val(),
-				storeName: $('#storeName_' + i).val(),
-				usageDetail: $('#usageDetail_' + i).val(),
-				expenseAmount: $('#expenseAmount_' + i).val(),
-				remark: $('#remark_' + i).val(),
-			};
-			data.push(rowData);
-		}
-		return data;
-	}
+
 
 
 	function numberToKorean(num) {
