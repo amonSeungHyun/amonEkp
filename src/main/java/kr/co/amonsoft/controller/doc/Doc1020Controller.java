@@ -5,6 +5,7 @@ import kr.co.amonsoft.service.apv.ApvCommonService;
 import kr.co.amonsoft.service.doc.Doc1020Service;
 import kr.co.amonsoft.service.doc.DocCommonService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
+@Slf4j
 public class Doc1020Controller {
 
     private final Doc1020Service doc1020Service;
@@ -29,6 +31,7 @@ public class Doc1020Controller {
     @ResponseBody
     @PostMapping("/approval/insertExpenseDetail")
     public  ResponseEntity<BigInteger> insertExpenseDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody Map<String,Object> param){
+        log.info("순용시꺼 결재 : {}", param);
         param.put("userId",customUserDetails.getUserId());
         BigInteger docId = doc1020Service.insertApprovalDocument(param);
         return ResponseEntity.ok(docId);
@@ -48,7 +51,7 @@ public class Doc1020Controller {
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("expenseDetails", expenseDetails);
 
-        return "/admin/jihee/content/writeView";
+        return "/admin/jihee/content/expenseWriteView";
     }
 
 }

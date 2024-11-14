@@ -7,8 +7,6 @@
 
 <% String ctxPath = request.getContextPath(); %>
 
-<jsp:include page="/WEB-INF/views/admin/jihee/writeHeader2.jsp"></jsp:include>
-
 <style type="text/css">
 	/* CSS 정리된 스타일 */
 	p { margin:0pt 0pt 8pt }
@@ -84,6 +82,17 @@
 	.first-table{
 		width : 780px;
 		margin: 20px;
+	}
+
+	/* amy */
+	.approval-image-td{
+		text-align: center;
+		vertical-align: center;
+	}
+
+	.approval-image{
+		width: 80px;
+		height:80px;
 	}
 
 	.col-table{
@@ -301,62 +310,18 @@
 			this.style.height = (this.scrollHeight) + 'px'; // 내용에 맞춰 높이 조정
 		});
 
+		// 비상연락처 포맷 설정
+		const emergencyContactField = $("#emergencyContact");
+		let contactValue = emergencyContactField.val();
+
+		if (contactValue && contactValue.length === 11) { // 길이가 11자리일 때 포맷 적용
+			contactValue = contactValue.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+			emergencyContactField.val(contactValue);
+		}
+
 
 	});
 
-	function insertApprovalExpenseDetail() {
-		const approvalData = collectApprovalSteps();
-		const expenseDetailData = collectAnnualLeaveData();
-		if(confirm("결재 신청을 하시겠습니까?")) {
-			$.ajax({
-				url: '/approval/insertExpenseDetail', // 데이터를 보낼 서버의 URL로 변경
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					approvalData: approvalData,
-					expenseDetailData: expenseDetailData
-				}),
-				success: function (docId) {
-					$(location).attr("href", "/approval/annualLeaveView?docId=" + docId);
-				},
-				error: function (error) {
-					console.error('Error sending data:', error);
-				}
-			});
-		}
-	}
-	/*결재선 구성 List 함수*/
-	function collectApprovalSteps() {
-		const approvalData = [];
-
-		// Select all the table cells containing approval steps using jQuery
-		$('.approval-step').each(function() {
-			const stepData = {
-				approvalStepNo: $(this).data('approval-step'),
-				userId: $(this).data('user-id')
-			};
-			approvalData.push(stepData);
-		});
-
-		console.log(approvalData);
-		return approvalData;
-	}
-
-
-	function collectAnnualLeaveData(){
-		const data = [];
-		const rowData = {
-			// amy
-			annualLeave: $("input[name='annualLeave']:checked").val(), // 선택된 유형 추가
-			startDate: $("#startDate").val(),
-			endDate: $("#endDate").val(),
-			emergencyContact: $("#emergencyContact").val(),
-			details: $("#details").val()
-		};
-		data.push(rowData);
-		console.log(data); // Logs the list map structure to the console
-		return data;
-	}
 
 	function calculateDuration() {
 		const startDate = $("#startDate").val();
@@ -373,31 +338,6 @@
 			$("#duration").text(duration > 0 ? duration : 0);
 		}
 	}
-
-
-	// function calculateDuration() {
-	// 	const startDate = $("#startDate").val();
-	// 	const endDate = $("#endDate").val();
-	// 	const isHalfDay = $("#halfDay").is(":checked"); // 반차 여부 확인
-	//
-	// 	if (startDate && endDate) {
-	// 		const start = new Date(startDate);
-	// 		const end = new Date(endDate);
-	//
-	// 		// 날짜 차이 계산 (밀리초 단위에서 일 단위로 변환)
-	// 		let duration = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
-	//
-	// 		// 반차 선택 시 하루로 표시되는 경우 0.5일로 변경, 반차가 아닐 경우는 1일로 설정
-	// 		if (isHalfDay && duration === 1) {
-	// 			duration = 0.5;
-	// 		} else if (!isHalfDay && duration === 1) {
-	// 			duration = 1;
-	// 		}
-	//
-	// 		// 계산된 기간을 표시
-	// 		$("#duration").text(duration > 0 ? duration : 0);
-	// 	}
-	// }
 
 	function calculateWeekdays(startDate, endDate) {
 		const start = new Date(startDate);
@@ -528,16 +468,27 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<td class="col1" style="text-align:center;color:red;">확인</td>
-					<td class="col1"></td>
-					<td class="col1"></td>
-					<td class="col1"></td>
+					<c:forEach var="approvalStep" items="${approvalSteps}" >
+						<c:if test="${approvalStep.status == '03'}">
+							<td class="col1 approval-image-td">
+								<img class="approval-image" src="/image/approval.png">
+							</td>
+						</c:if>
+						<c:if test="${approvalStep.status == '04'}">
+							<td class="col1 approval-image-td">
+								<img class="approval-image" src="/image/reject.png">
+							</td>
+						</c:if>
+						<c:if test="${approvalStep.status != '03' && approvalStep.status != '04'}">
+							<td class="col1 approval-image-td">
+							</td>
+						</c:if>
+					</c:forEach>
 				</tr>
 				<tr style="height:22.05pt">
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal"><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-user-id="">최선영 / 이사</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-user-id="">이길호 / 대표</td>
+					<c:forEach var="approvalStep" items="${approvalSteps}" >
+						<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="${approvalStep.stepNo}" data-user-id="${approvalStep.approvalId}">${approvalStep.userName} / ${approvalStep.positionName}</td>
+					</c:forEach>
 				</tr>
 			</table>
 			<table class="col-table">

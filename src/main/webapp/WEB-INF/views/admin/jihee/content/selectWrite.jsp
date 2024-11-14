@@ -113,7 +113,7 @@
 
 		const frm = document.selectFrm4;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/write";
+		frm.action = "/workflow/expenseWrite";
 		frm.submit();
 
 
@@ -123,7 +123,7 @@
 
 		const frm = document.selectFrm5;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/write";
+		frm.action = "/workflow/expenseWrite";
 		frm.submit();
 
 
@@ -133,7 +133,7 @@
 
 		const frm = document.selectFrm6;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/write";
+		frm.action = "/workflow/expenseWrite";
 		frm.submit();
 
 
@@ -143,7 +143,7 @@
 
 		const frm = document.selectFrm7;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/write";
+		frm.action = "/workflow/expenseWrite";
 		frm.submit();
 
 
@@ -153,7 +153,7 @@
 
 		const frm = document.selectFrm8;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/write";
+		frm.action = "/workflow/expenseWrite";
 		frm.submit();
 
 
@@ -163,7 +163,7 @@
 
 		const frm = document.selectFrm9;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/write";
+		frm.action = "/workflow/expenseWrite";
 		frm.submit();
 
 

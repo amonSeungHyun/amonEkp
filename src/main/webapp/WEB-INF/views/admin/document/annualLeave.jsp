@@ -6,8 +6,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <% String ctxPath = request.getContextPath(); %>
-
-<jsp:include page="/WEB-INF/views/admin/jihee/writeHeader2.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/admin/jihee/writeHeader2.jsp">
+	<jsp:param name="docType" value="01" />
+</jsp:include>
 
 <style type="text/css">
 	/* CSS 정리된 스타일 */
@@ -284,6 +285,18 @@
 		color: #d9534f !important;
 	}
 
+	.centered-cell {
+		text-align: center;       /* 수평 가운데 정렬 */
+		vertical-align: middle;   /* 수직 가운데 정렬 */
+		height: 100px;            /* td의 높이 지정 */
+	}
+
+	/* 이미지 크기를 조절하는 스타일 */
+	.centered-image {
+		max-width: 80px;          /* 이미지의 최대 너비 지정 */
+		max-height: 80px;         /* 이미지의 최대 높이 지정 */
+	}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -291,6 +304,9 @@
 <script type="text/javascript">
 	// === 공휴일 추가 (연도별) ===
 	let holidays = [];		// 공휴일 저장 객체
+	window.docType = "01"; // docType 값을 전역으로 설정
+
+
 
 	// 특정 연도의 공휴일 설정 함수
 	function setHolidaysForYear(year) {
@@ -464,6 +480,7 @@
 		});
 	}
 	function insertApprovalExpenseDetail() {
+		alert("annualLeave.jsp");
 		const approvalData = collectApprovalSteps();
 		const annualLeaveData = collectAnnualLeaveData();
 		if(confirm("결재 신청을 하시겠습니까?")) {
@@ -492,6 +509,7 @@
 		$('.approval-step').each(function() {
 			const stepData = {
 				approvalStepNo: $(this).data('approval-step'),
+				approvalStatus : $(this).data('approval-status'),
 				userId: $(this).data('user-id')
 			};
 			approvalData.push(stepData);
@@ -503,13 +521,14 @@
 
 
 	function collectAnnualLeaveData(){
+		alert("휴가계 collect 데이터");
 		const data = [];
 		const rowData = {
 			// amy
 			vacationType: $("input[name='vacationType']:checked").val(), // 선택된 유형 추가
 			startDate: $("#startDate").val(),
 			endDate: $("#endDate").val(),
-			emergencyContact: $("#emergencyContact").val(),
+			emergencyContact: $("#emergencyContact").val().replace(/-/g, ''),
 			personalReason: $("#personalReason").val(),
 			vacationPeriod: $("#duration").text()
 		};
@@ -582,6 +601,23 @@
 		});
 	}
 
+	function formatPhoneNumber(input) {
+		let value = input.value.replace(/\D/g, ''); // 숫자만 남기기
+		if (value.length > 3 && value.length <= 7) {
+			// 중간에 하이픈 삽입 (3-4 형식)
+			input.value = value.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+		} else if (value.length > 7) {
+			// 끝에 하이픈 삽입 (3-4-4 형식)
+			input.value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+		} else {
+			input.value = value; // 3자리 이하일 때는 그대로 출력
+		}
+
+		// 최대 길이 제한 (13자리 - '010-1234-5678' 형식)
+		if (input.value.length > 13) {
+			input.value = input.value.slice(0, 13);
+		}
+	}
 
 </script>
 <div class="contai" style="overflow-x: hidden;">
@@ -610,16 +646,18 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<td class="col1" style="text-align:center; color: red;">확인</td>
+					<td class="col1 centered-cell">
+						<img src="/image/approval.png" class="centered-image">
+					</td>
 					<td class="col1"></td>
 					<td class="col1"></td>
 					<td class="col1"></td>
 				</tr>
 				<tr style="height:22.05pt">
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal"><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-user-id="">최선영 / 이사</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-user-id="">이길호 / 대표</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-approval-status="03" data-user-id="${sessionScope.userId}" ><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-approval-status="01" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-approval-status="01" data-user-id="2015103001">최선영 / 이사</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="4" data-approval-status="01" data-user-id="1999103001">이길호 / 대표</td>
 				</tr>
 			</table>
 			<table class="col-table">
@@ -669,7 +707,7 @@
 				</tr>
 				<tr>
 					<td class="col2">비상연락처</td>
-					<td colspan="3"><input type="text" id="emergencyContact" class="input-field no-border" name="emergencyContact" placeholder="연락처 입력" ></td>
+					<td colspan="3"><input type="text" id="emergencyContact" class="input-field no-border" name="emergencyContact" placeholder="연락처 입력" maxlength="13" oninput="formatPhoneNumber(this)"></td>
 				</tr>
 				<tr>
 					<td class="col2">개인사유</td>

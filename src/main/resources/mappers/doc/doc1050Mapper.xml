@@ -26,9 +26,9 @@
 			 , #{remark}
 			 , #{corporateCardNumber}
 			 , #{userId}
-			 , DATE_FORMAT(NOW(), '%Y%m%d')
+			 , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
 			 , #{userId}
-			 , DATE_FORMAT(NOW(), '%Y%m%d') )
+			 , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s') )
 	</insert>
 	
 	<select id="selectDoc1050" resultType="camelcasemap">

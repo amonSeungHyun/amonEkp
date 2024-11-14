@@ -56,10 +56,10 @@ public class DocCommonController {
         }
     }
 
-    @RequestMapping(value = "/workflow/write")
+    @RequestMapping(value = "/workflow/expenseWrite")
     public String writeWorkflow(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
-        return "/admin/jihee/content/write";
+        return "/admin/jihee/content/expenseWrite";
     }
 }

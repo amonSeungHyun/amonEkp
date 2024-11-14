@@ -57,12 +57,15 @@ public class Doc1010Contorller {
         log.info("휴가계 결재 화면 진입");
         log.info(docId.toString());
         log.info("##################################################");
+
         List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
         Map<String,Object>  vacationDetails = doc1010Service.findVacationDetailsByDocId(docId);
         Map<String,Object>  documentCreatorInfo = apvCommonService.findDocumentCreatorInfo(docId);
+        Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("vacationDetails", vacationDetails);
+        model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
         return "/admin/document/annualLeaveWriteView";
     }
 

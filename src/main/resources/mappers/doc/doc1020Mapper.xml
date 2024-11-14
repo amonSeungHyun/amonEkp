@@ -37,9 +37,9 @@
              , #{userId}
              , #{approvalStatus}
              , #{userId}
-             , DATE_FORMAT(NOW(), '%Y%m%d')
+             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
              , #{userId}
-             , DATE_FORMAT(NOW(), '%Y%m%d')
+             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
          )
     </insert>
 
@@ -60,9 +60,9 @@
            , '2'
            , '4'
            , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d')
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
            , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d')
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
            , #{docType}
            , '02'
        )
@@ -96,9 +96,9 @@
            , #{expenseType}
            , #{corporateCardNumber}
            , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d')
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
            , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d')
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
            , #{expenseAmount}
        )
     </insert>

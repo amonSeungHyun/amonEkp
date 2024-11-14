@@ -34,10 +34,10 @@
                #{docId}
              , #{approvalStepNo}
              , #{userId}
-             , '01'
-             , 'lee'
+             , #{approvalStatus}
+             , #{userId}
              , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-             , 'lee'
+             , #{userId}
              , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
          )
     </insert>
