@@ -173,7 +173,7 @@ tr {
     background-color: #07B419;
 }
 
-.input_modal, .choice_type {
+.input_modal, .choice_type, textarea {
     width: 100%;
     line-height: 30px;
     border-radius: 10px;
@@ -181,11 +181,11 @@ tr {
     border: solid 1px #d9d9d9;
 }
 
-.input_modal:focus {
+.input_modal:focus, textarea:focus {
     outline-color: #07B419;
 }
 
-.choice_type:active, .choice_type:focus {
+.choice_type:active, .choice_type:focus, textarea:active, textarea:focus {
     border: solid 1px #07B419;
 }
 

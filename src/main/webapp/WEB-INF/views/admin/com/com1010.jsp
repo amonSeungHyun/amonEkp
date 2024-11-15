@@ -8,8 +8,25 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <link rel="stylesheet" type="text/css" href="/css/common.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/member.css"/>
+
+<style>
+	#td_title{
+		text-align : left;
+		padding: 8px 20px;
+	}
+</style>
 
 <script type="text/javascript">
+	
+	//전역 변수 선언
+	let isEditMode = false;
+	let currentMemberData = {};
+	let page = 1;     // 기본 페이지 번호 설정
+	let size = 10;    // 기본 페이지 크기 설정
+	let pageNum = 1;     // 페이지 번호 전역 변수
+	let pageSize = 5;    // 페이지 크기 전역 변수
+
 	$(document).ready(function() {
 		
 		selectCom1010();
@@ -31,13 +48,19 @@
 	    });
 		
 	    $("#contentList tbody").on("click", "tr", function() {
-			//페이지 이동 url추가
+	    	var board_number = $(this).data("board-number");
+	    	var url = '/com/com1020?board_number='+ board_number;
+			window.location.href = url;
 	    });	    
 		
 		$("#checkAll").on("click", function() {
 		    const isChecked = $(this).prop("checked");
 		    
 		    $("#contentList tbody input[type='checkbox']").prop("checked", isChecked);
+		});
+		
+		$('.modal').on('hidden.bs.modal', function (e) {
+			$(this).find('form')[0].reset();
 		});
 
 	});
@@ -49,41 +72,46 @@
 	    selectCom1010(searchInput, selected_type);
 	}
 	
-	function selectCom1010(searchInput = '', selected_type = '') {
+	function selectCom1010(searchInput = '', selected_type = '', pageNum = 1, pageSize = 10) {
+		page = pageNum;
+		size = pageSize;
+		
 		$.ajax({
 			type: "POST",
-			url: "/amonsoft/controller/com/selectCom1010List",
+			url: "/com/selectCom1010List",
 			dataType: "json",
 			contentType: "application/json",
 			data: JSON.stringify({ searchInput: searchInput,
-								 selected_type: selected_type}),
+								 selected_type: selected_type,
+								 pageNum: pageNum,
+								 pageSize: pageSize}),
 			success: function(data) {
 				console.log(">>>>>>>>>>>>",data)
 				let tableBody = $("#contentList tbody");
 				tableBody.empty();  // 기존 데이터 삭제하기
 				
-				if (data.length > 0) {
-	                $("#totalCountText").text("총 " + data[0].total_count + " 건");
+				if (data.resultList.length > 0) {
+	                $("#totalCountText").text("총 " + data.pager.totalCnt + " 건");
 	            } else {
 	                $("#totalCountText").text("총 0 건");
 	            }
 				
-				$.each(data, function(index, item) {
+				$.each(data.resultList, function(index, item) {
 				var formattedCreatedDate = item.created_date.substring(0, 4) + '-' + 
 				item.created_date.substring(4, 6) + '-' + 
 				item.created_date.substring(6, 8);
 	                let rowHtml = 
-	                    '<tr>'
+	                    '<tr data-board-number="' + item.board_number + '">'
 	                       + '<td><input type="checkbox" class="row-check" /></td>'
-	                       + '<td>' + item.board_number + '</td>'
-	                       + '<td>' + item.type + '</td>'
-	                       + '<td>' + item.title + '</td>'
-	                       + '<td>' + item.content + '</td>'
+	                       + '<td>' + item.rowNum + '</td>'
+	                       + '<td id = "td_title">' + item.title + '</td>'
 	                       + '<td>' + item.created_id + '</td>'
 	                       + '<td>' + formattedCreatedDate + '</td>'
 	                    + '</tr>';
 	                tableBody.append(rowHtml);
 	            });
+				// 페이징 표시 함수 호출
+				pageNumDisplay(data.pager, searchInput, selected_type);
 	        },
 			error: function(xhr, status, error) {
 				console.error("데이터 조회 실패:", error);
@@ -91,60 +119,62 @@
 		});
 	}
 
+	function pageNumDisplay(pager, searchInput, selected_type) {
+		var html = '';
+
+		// 이전 버튼
+		if (pager.startPage > pager.blockSize) {
+			html += '<a href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', \'' + pager.prevPage +  '\', \'' + ', ' + size + '\);" class="" style="padding-top: 3px;"><button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button></a>';
+		}
+
+		// 페이지번호
+		for (var i = pager.startPage; i <= pager.endPage; i++) {
+			if (pager.pageNum !== i) {
+				html += '<a class="page-num box" href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', \''  + i + '\', \'' + size + '\');">' + i + '</a>';
+			} else {
+				html += '<a class="page-num is-active" disabled>' + i + '</a>';
+			}
+		}
+
+		// 다음 버튼
+		if (pager.endPage < pager.totalPage) {
+			html += '<a href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', \'' + pager.nextPage + '\', \'' + size + '\');" class="" style="padding-top: 3px;"><button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button></a>';
+		}
+
+		$("#pageNumDiv").html(html);
+	}
+	
 	
 	// 추가 및 수정
 	function insertCom1010() {
 		
-	    const codeNumber = $("input[name='code_number']").val().trim();
-	    const codeName = $("input[name='code_name']").val().trim();
-	    const codeDetailNumber = $("input[name='code_detail_number']").val().trim();
-	    const codeDetailName = $("input[name='code_detail_name']").val().trim();
-	    const sort = $("input[name='sort']").val().trim();
-
-	    if (codeNumber === "") {
+	    if ($("#board_title").val() === "") {
 	        Swal.fire({
 	            icon: 'warning',
 	            title: '필수 입력 오류',
-	            text: '상위그룹코드를 입력하세요.'
+	            text: '제목을 입력하세요.'
 	        });
 	        return;
 	    }
 
-	    if (codeName === "") {
+	    if ($("#board_content").val() === "") {
 	        Swal.fire({
 	            icon: 'warning',
 	            title: '필수 입력 오류',
-	            text: '상위그룹코드명을 입력하세요.'
-	        });
-	        return;
-	    }
-
-	    if (codeDetailNumber === "") {
-	        Swal.fire({
-	            icon: 'warning',
-	            title: '필수 입력 오류',
-	            text: '상세코드번호를 입력하세요.'
-	        });
-	        return;
-	    }
-
-	    if (codeDetailName === "") {
-	        Swal.fire({
-	            icon: 'warning',
-	            title: '필수 입력 오류',
-	            text: '상세코드명을 입력하세요.'
+	            text: '내용을 입력하세요.'
 	        });
 	        return;
 	    }
 	    
-	    if (sort === "") {
-	        Swal.fire({
-	            icon: 'warning',
-	            title: '필수 입력 오류',
-	            text: '정렬순서를 입력하세요.'
-	        });
-	        return;
-	    }
+	    
+	    $("#userId").val("${sessionScope.userId}");
+	    const formData = $("#regist_frm").serializeArray();
+		const jsonData = {};
+		formData.forEach(field => {
+		    jsonData[field.name] = field.value;
+		});
+		
+		console.log("form >> ", JSON.stringify(jsonData));
 	    
 	    Swal.fire({
 	        title: '등록하시겠습니까?',
@@ -157,27 +187,24 @@
 	    }).then((result) => {
 	        if (result.isConfirmed) {
 	            // serializeArray()로 폼 데이터를 객체 형태로 변환
-	            const formDataArray = $("form[name=comCode_frm]").serializeArray();
-	            const param = {};
-	            $.each(formDataArray, function (i, field) {
-	                param[field.name] = field.value;
-	            });
-	
-	            console.log("param >>>", param);
 	            $.ajax({
-	                url: "/amonsoft/controller/com/insertCom1010",
+	                url: "/com/insertCom1010",
 	                type: "POST",
 	                dataType: "JSON",
-	                data: JSON.stringify(param), // JSON 형태로 전송
+	                data: JSON.stringify(jsonData), // JSON 형태로 전송
 	                contentType: "application/json",
 	                success: function (response) {
 	                    $("#modal_comCodeModal").modal("hide");
 	                    Swal.fire({
 	                        icon: 'success',
 	                        title: '입력 완료',
-	                        text: '데이터가 성공적으로 저장되었습니다.'
+	                        text: '데이터가 성공적으로 저장되었습니다.',
+                        	confirmButtonText: '확인',
+	                    }).then((result) => {
+	            	        if (result.isConfirmed) {
+		                    	$(location).attr("href", "/amonsoft/controller/com/com1010");
+	            	        }
 	                    });
-	                    selectCom1010(); // 재조회
 	                },
 	                error: function (xhr, status, error) {
 	                    console.error("데이터 전송 실패:", error);
@@ -195,15 +222,13 @@
 	// 삭제
 	function deleteCom1010() {
 	    
-	    const selectedItems = [];
-	    $("#contentList tbody input[type='checkbox']:checked").each(function () {
-	        const row = $(this).closest("tr");
-	        const codeNumber = row.find("td:eq(2)").text();
-	        const codeDetailNumber = row.find("td:eq(4)").text();
-	        selectedItems.push({ codeNumber: codeNumber, codeDetailNumber: codeDetailNumber });
-	    });
+		const selectedBoardNumbers = [];
+		$("#contentList tbody input[type='checkbox']:checked").each(function () {
+			const rowData = $(this).closest("tr").data("boardNumber"); // tr에 저장된 data-member-data 속성 가져오기
+			selectedBoardNumbers.push(rowData);
+		});
 
-	    if (selectedItems.length === 0) {
+	    if (selectedBoardNumbers.length === 0) {
 	        Swal.fire({
 	            icon: 'warning',
 	            title: '삭제할 항목을 선택하세요.',
@@ -211,6 +236,8 @@
 	        });
 	        return;
 	    }
+	    
+	    console.log("selectedBoardNumbers >> ", selectedBoardNumbers)
 
 	    Swal.fire({
 	        title: '삭제하시겠습니까?',
@@ -223,16 +250,20 @@
 	    }).then((result) => {
 	        if (result.isConfirmed) {
 	            $.ajax({
-	                url: "/amonsoft/controller/com/deleteCom1010",
+	                url: "/com/deleteCom1010",
 	                type: "POST",
 	                contentType: "application/json",
-	                data: JSON.stringify({ selectedItems: selectedItems }),
+	                data: JSON.stringify({ boardNumbers: selectedBoardNumbers }),
 	                success: function (response) {
-	                    selectCom1010();  // 재조회
 	                    Swal.fire({
 	                        icon: 'success',
 	                        title: '삭제 완료',
-	                        text: '선택된 항목이 삭제되었습니다.'
+	                        text: '선택된 항목이 삭제되었습니다.',
+	                        confirmButtonText: '확인',
+	                    }).then((result) => {
+	            	        if (result.isConfirmed) {
+		                    	$(location).attr("href", "/amonsoft/controller/com/com1010");
+	            	        }
 	                    });
 	                },
 	                error: function (xhr, status, error) {
@@ -246,80 +277,140 @@
 	            });
 	        }
 	    });
+	    
+	    
 	}	
-			
+	
 </script>
 
-<div id="title">
-	<div id="category">
-		<span style="font-size: 20pt; font-weight: bold;">공지사항</span>
-	</div>
-	<br>
-	<div id="bottomcate" style="float: none;">
-	<div style="display: inline-block; float:left; margin: 40px 0;">
-		<span id="totalCountText" style="font-weight: bold;"></span> 
-	</div>
-		
-	<hr width = "100%;" style="margin: 7px 0 40px 0; border-color: #d1d3d1;">
-		
-	<div style="display: inline-block; float:right; margin: 0;">
-		<!-- 콤보박스 추가 -->
-	    <label for="searchBoard" style="margin-right: 5px; font-weight: bold;">검색</label>
-    	<select id="selected_type" name="selected_type" style="height: 30px; margin-right: 5px; border: solid 1px #66cc66; border-radius: 0.4rem;">
-    		<option value="01">제목</option>
-            <option value="02">내용</option>
-            <option value="03">작성자</option>
-	    </select>
-	    
-	    <!-- 검색어 입력 input 추가 -->
-    	<input id="searchInput" name="searchInput" style="padding-left: 7px; height: 25px; width: 280px; margin-right: 5px; border: solid 1px #66cc66; border-radius: 0.4rem;" type="text" placeholder="검색어를 입력해주세요." />
-		
-		<button class="btn" id="advanced-search-button" onclick="searchCom1010()" type="button" style="border:none; background-color: #66cc66; height: 30px; color: white;">
-		<i class="fa fa-search"></i>
-		</button> 
-		
-		<button class="btn" id="delete-button" onclick="deleteCom1010()" type="button" style="border:none; background-color: #ff6666; height: 30px; color: white; margin-left: 5px;">
-		    <i class="fa fa-trash"></i>
-		</button>
-	</div>	
-
+<div id="peopleContent">
+	<div id="header">
+		<div id="header_title">
+			<span class="memberTitle">공지사항</span>
+		</div>
+		<div id="button_title">
+			<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
+				<span>
+					<i class="fas fa-plus" style="margin: 0px; width: 20px;"></i>&nbsp;&nbsp;공지사항 등록하기
+				</span>
+			</button>
+		</div>
 	</div>
 	
+	<!-- ========================== 공지사항 추가/수정 모달 시작 ========================== -->
+	<div class="modal fade" id="modal_registMember">
+		<div class="modal-dialog modal-dialog-centered"  style="max-width : 1200px">
+			<div class="modal-content" style="padding: 5px;">
+				<!-- Modal header -->
+				<div class="modal-header">
+					<h2 id="modalTitle">공지사항 등록</h2>
+					<button id="btn_close_registModal" type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<form id="regist_frm" name="regist_frm">
+						<input type="hidden" name="userId" id="userId" /> <!-- 추가된 부분: 사용자 ID 저장 -->
+						<div id="div_regist">
+							<div style="margin: 10px 0;">
+								<div>
+									<div class="regitst_title"> 제목<span style="color: red;">*</span>
+									</div>
+									<input id="board_title" name="board_title" class="input_modal daterange" type="text" autocomplete="off" placeholder="제목 입력" />
+								</div>
+							</div>
+
+							<div style="margin: 10px 0;">
+								<%-- daterange --%>
+								<div class="regitst_title">
+									내용<span style="color: red;">*</span>
+								</div>
+								<textarea id="board_content" name="board_content" style="height: 200pt; width: 100%; margin-top:5px; resize: none;" placeholder="내용 입력"></textarea>
+							</div>
+						</div>
+						<div class="file-area" id="attachArea">
+							<div class="filebox">
+								<label for="file">파일 찾기</label>
+								<input class="upload-name" value="첨부파일" placeholder="첨부파일">
+								<input type="file" id="file" multiple="multiple" name="attach">
+							</div>
+						</div>
+					</form>
+				</div>
+				<!-- Modal footer -->
+				<div class="modal-footer"
+					 style="display: flex; justify-content: space-between;">
+					<%-- form 전송 --%>
+					<button type="button" class="btn" id="regist_member_btn" onclick="insertCom1010()">
+						<i class="fas fa-check" ></i><span id="modalButtonLabel">입력완료</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- ========================== 구성원 추가 모달 끝 ========================== -->
+	
+	
+	<div id="title">
+		<div id="bottomcate" style="float: none;">
+			<div style="display: inline-block; float:left; margin: 40px 0;">
+				<span id="totalCountText" style="font-weight: bold;"></span> 
+			</div>
+			<div style="display: inline-block; float:right; margin: 0;">
+				<!-- 콤보박스 추가 -->
+			    <label for="searchBoard" style="margin-right: 5px; font-weight: bold;">검색</label>
+		    	<select id="selected_type" name="selected_type" style="height: 30px; margin-right: 5px; border: solid 1px #66cc66; border-radius: 0.4rem;">
+		    		<option value="01">제목</option>
+		            <option value="02">내용</option>
+		            <option value="03">작성자</option>
+			    </select>
+			    
+			    <!-- 검색어 입력 input 추가 -->
+		    	<input id="searchInput" name="searchInput" style="padding-left: 7px; height: 25px; width: 280px; margin-right: 5px; border: solid 1px #66cc66; border-radius: 0.4rem;" type="text" placeholder="검색어를 입력해주세요." />
+				
+				<button class="btn" id="advanced-search-button" onclick="searchCom1010()" type="button" style="border:none; background-color: #66cc66; height: 30px; color: white;">
+				<i class="fa fa-search"></i>
+				</button> 
+				
+				<button class="btn" id="delete-button" onclick="deleteCom1010()" type="button" style="border:none; background-color: #ff6666; height: 30px; color: white; margin-left: 5px;">
+				    <i class="fa fa-trash"></i>
+				</button>
+			</div>	
+		</div>
+	</div>
+		<!-- 게시판 리스트 시작 -->
+			<!-- 예시 데이터로 공지 사항 리스트 -->
+	<div id="contentList">
+	    <!-- 테이블 형태로 공지사항 리스트 출력 -->
+	    <div class="listRow">
+	        <table class="table table-bordered table-hover">
+	        	<colgroup>
+	        		<col style="width:5%">
+	        		<col style="width:10%">
+	        		<col style="width:60%">
+	        		<col style="width:15%">
+	        		<col style="width:10%">
+        		</colgroup>
+	            <thead>
+	            		<th><input type="checkbox" id="checkAll" /></th>
+	                	<th>no</th>
+	                    <th>제목</th>
+	                    <th>작성자</th>
+	                    <th>작성일</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	            </tbody>
+	        </table>
+	    </div>
+		<!-- 페이징 처리 -->
+		<div class="container">
+			<div id="pageNumDiv" class="pagination p12">
+			</div>
+		</div>
+
+	</div> <!-- 공지 리스트(content) 끝 -->
 </div>
-
-<!-- 게시판 리스트 시작 -->
-	<!-- 예시 데이터로 공지 사항 리스트 -->
-<div id="contentList">
-    <!-- 테이블 형태로 공지사항 리스트 출력 -->
-    <div class="listRow">
-        <table class="table table-bordered table-hover">
-            <thead>
-            		<th><input type="checkbox" id="checkAll" /></th>
-                	<th>no</th>
-                	<th>유형</th>
-                    <th>제목</th>
-                    <th>내용</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-    </div>
-
-    <!-- 페이징 처리 -->
-    <div class="container">
-        <div class="pagination p12">
-            <a href="#" class="box">Previous</a>
-            <a href="#" class="is-active">1</a>
-            <a href="#" class="box">Next</a>
-        </div>
-    </div>
-
-	
-</div> <!-- 공지 리스트(content) 끝 -->
 
 
 	

@@ -18,4 +18,21 @@ public class Com1010ServiceImpl implements Com1010Service {
 		return com1010Mapper.selectCom1010List(param);
 	}
 
+	@Override
+	public int selectCom1010ListCnt(Map<String, Object> param) {
+		return com1010Mapper.selectCom1010ListCnt(param);
+	}
+
+	@Override
+	public void insertCom1010(Map<String, Object> param) {
+		com1010Mapper.insertCom1010(param);
+		
+	}
+
+	@Override
+	public void deleteCom1010(Map<String, Object> param) {
+		com1010Mapper.deleteCom1010(param);
+		
+	}
+
 }

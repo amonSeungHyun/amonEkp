@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.com.Com1020Mapper">
+
+    <select id="selectCom1020" resultType="map">
+		SELECT 
+			board_number ,
+			title ,
+			content ,
+			created_id ,
+			created_date ,
+			updated_id ,
+			updated_date
+		from
+			board
+	   where 1=1
+	     and board_number = #{boardNumber}
+    </select>
+    
+    <update id="updateCom1020">
+    	UPDATE board
+    	   SET title = #{input_title} ,
+    	       content = #{input_content} ,
+    	       updated_id = #{userId} ,
+    	       updated_date = DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+    	 WHERE board_number = #{boardNumber}
+    </update>
+	
+</mapper>
