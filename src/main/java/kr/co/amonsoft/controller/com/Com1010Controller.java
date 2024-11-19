@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.co.amonsoft.Pager;
-import kr.co.amonsoft.dto.com.MemberListDTO;
 import kr.co.amonsoft.service.com.Com1010Service;
+import kr.co.amonsoft.util.PageUtil;
 @Controller
 public class Com1010Controller {
 	@Autowired
@@ -34,24 +33,15 @@ public class Com1010Controller {
     @RequestMapping(value = "/com/selectCom1010List")
     public Map<String, Object> selectCom1010List(@RequestBody Map<String, Object> param) throws Exception {
     	
-    	int pageNum = param.get("pageNum") != null ? Integer.parseInt(param.get("pageNum").toString()) : 1;
-        int pageSize = param.get("pageSize") != null ? Integer.parseInt(param.get("pageSize").toString()) : 5;
-
-        List<Map<String, Object>> resultList = new ArrayList<>();
-        
         int totalCnt = com1010Service.selectCom1010ListCnt(param);
-        
-        int blockSize = 10;
-
-        Pager pager = new Pager(pageNum, totalCnt, pageSize, blockSize);
-        param.put("startRow", pager.getStartRow());
-        param.put("endRow", pager.getEndRow());
+        Map<String, Object> pagingParams = PageUtil.getPagingParams(param, totalCnt);
+        param.putAll(pagingParams);
     	
-        resultList = com1010Service.selectCom1010List(param);
+        List<Map<String, Object>>resultList = com1010Service.selectCom1010List(param);
         
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("resultList", resultList);
-        resultMap.put("pager", pager);
+        resultMap.put("pager", pagingParams);
 
         return resultMap;
         

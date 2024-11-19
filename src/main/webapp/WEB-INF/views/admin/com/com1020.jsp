@@ -152,8 +152,13 @@ dd {
 				$("#board_title").text(data.title);
 	            $("#created_date").text(formattedCreatedDate);
 	            $("#created_id").text(data.created_id);
-	            const formattedContent = decodeHtmlEntities(data.content.replace(/\n/g, '<br>'));
-            	$('#board_content').html(formattedContent);
+	            const formattedContent = decodeHtmlEntities(
+	                    data.content
+	                        .replace(/\n/g, '<br>')  // 줄바꿈을 <br>로 변환
+	                        .replace(/ {2,}/g, match => '&nbsp;'.repeat(match.length))
+	                        .replace(/(^|\s)(\s|$)/g, '&nbsp;')  // "- 아   래 -" 앞뒤 공백 처리
+	                );
+                $("#board_content").html(formattedContent);
 	            input_title = data.title;
 	            input_content = data.content;
 	        },
