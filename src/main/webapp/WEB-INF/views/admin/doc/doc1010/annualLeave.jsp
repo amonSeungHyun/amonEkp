@@ -7,7 +7,7 @@
 
 <% String ctxPath = request.getContextPath(); %>
 
-<jsp:include page="/WEB-INF/views/admin/jihee/docHeader.jsp">
+<jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp">
 	<jsp:param name="docType" value="01" />
 </jsp:include>
 
