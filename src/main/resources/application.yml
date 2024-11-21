@@ -19,10 +19,20 @@ spring:
   devtools:
     livereload:
       enabled: true
-
     remote:
       restart:
         enabled: true
+  mail:
+    host: 192.168.0.52
+    port: 587
+    username: anrh0213@amonsoft.co.kr
+    password: dpdlahs1!A
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 mybatis:
   config-location: classpath:mybatis-config.xml
@@ -33,3 +43,11 @@ logging:
     org.apache.ibatis: DEBUG
     org.mybatis: DEBUG
   config: classpath:config/log4j2-local.yml
+
+
+
+
+
+
+
+

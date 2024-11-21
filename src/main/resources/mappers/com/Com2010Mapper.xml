@@ -4,39 +4,43 @@
 
     <!-- 캘린더 조회 -->
     <select id="selectCalendarList" resultType="kr.co.amonsoft.dto.com.CalendarListDTO">
-        SELECT
-            NULL AS birthday,
-            schedule_id AS schedule_no,
-            user_id AS fk_empno,
-            start_date,
-            end_date,
-            subject,
-            content,
-            color,
-            category,
-            organization_id AS fk_deptno,
-            participants AS joinuser,
-            place,
-            NULL AS name
-        FROM
-            amoncalendar
+        select distinct(d.doc_id) as docId
+                      , u.user_id as userId
+                      , u.user_name as userName
+                      , d.doc_title as docTitle
+                      , d.doc_type as docType
+                      , ccd.code_detail_name as docTypeNm
+                      , vd.start_date as startDate
+                      , vd.end_date as endDate
+        from vacation_detail vd
+                 inner join document d
+                            on vd.doc_id = d.doc_id
+                 inner join common_code_detail ccd
+                            on d.doc_type = ccd.code_detail_number
+                                and ccd.code_number = 'APV02'
+                 inner join user u
+                            on d.user_id = u.user_id
+        where 1 = 1
+          and d.doc_status = '01'
         UNION ALL
-        SELECT
-            NULL AS birthday,        -- 생일 정보가 없으므로 NULL로 표시
-            NULL AS schedule_no,
-            user_id AS fk_empno,
-            NULL AS start_date,
-            NULL AS end_date,
-            NULL AS subject,
-            NULL AS content,
-            NULL AS color,
-            NULL AS category,
-            organization_id AS fk_deptno,
-            NULL AS joinuser,
-            NULL AS place,
-            user_name AS name
-        FROM
-            `user`
+        select distinct(d.doc_id) as docId
+                      , u.user_id as userId
+                      , u.user_name as userName
+                      , d.doc_title as docTitle
+                      , d.doc_type as docType
+                      , ccd.code_detail_name as docTypeNm
+                      , d.updated_date as startDate
+                      , d.updated_date as endDate
+        from transport_expense_detail ted
+                 inner join document d
+                            on ted.doc_id = d.doc_id
+                 inner join common_code_detail ccd
+                            on d.doc_type = ccd.code_detail_number
+                 inner join user u
+                            on d.user_id = u.user_id
+                                and ccd.code_number = 'APV02'
+        where 1 = 1
+          and d.doc_status = '01'
     </select>
 
 </mapper>

@@ -4,6 +4,7 @@ import kr.co.amonsoft.config.security.CustomUserDetails;
 import kr.co.amonsoft.mapper.apv.ApvCommonMapper;
 import kr.co.amonsoft.mapper.doc.Doc1010Mapper;
 import kr.co.amonsoft.mapper.doc.Doc1020Mapper;
+import kr.co.amonsoft.service.EmailService;
 import kr.co.amonsoft.service.doc.Doc1010Service;
 import kr.co.amonsoft.service.doc.Doc1020Service;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class Doc1010ServiceImpl implements Doc1010Service {
 
     private final Doc1010Mapper doc1010Mapper;
     private final ApvCommonMapper apvCommonMapper;
+    private final EmailService emailService;
 
     @Override
     public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
@@ -55,6 +57,8 @@ public class Doc1010ServiceImpl implements Doc1010Service {
         Map<String, Object> annualLeaveData = (Map<String, Object>) approvalData.get("annualLeaveData");
         annualLeaveData.put("docId", docId);
         doc1010Mapper.insertVacationDetail(annualLeaveData);
+
+        emailService.sendEmail("anrh0213@nate.com", "테스트입니다", "ㅎㅇㅎㅇ");
 
         return docId;
     }
