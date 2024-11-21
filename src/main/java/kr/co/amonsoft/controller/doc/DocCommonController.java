@@ -2,6 +2,7 @@ package kr.co.amonsoft.controller.doc;
 
 import kr.co.amonsoft.config.security.CustomUserDetails;
 import kr.co.amonsoft.service.doc.DocCommonService;
+import kr.co.amonsoft.util.PageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Controller
@@ -23,43 +22,67 @@ public class DocCommonController {
     private static final Set<String> ALLOWED_ROLES = Set.of("01", "02", "03");
     private final DocCommonService docCommonService;
 
-    @GetMapping("/workflow")
-    public String viewWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        List<Map<String, Object>> documentsUnderApproval = docCommonService.findDocumentsUnderApproval(customUserDetails.getUserId());
+    @GetMapping("/docList")
+    public String viewWorkflow(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         String roleCode = customUserDetails.getRole();
+        int totalCnt = 0;
+        String userId = customUserDetails.getUserId();
+        List<Map<String, Object>> documents;
+        Map<String, Object> pagingParams;
+
+        //권한있는사람
         if(ALLOWED_ROLES.contains(roleCode)){
-            model.addAttribute("documents", docCommonService.findPendingApprovalDocuments(customUserDetails.getUserId()) );
+            totalCnt = docCommonService.findDocumentsPendingApprovalTotalCountByUserId(userId);
+            pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+            pagingParams.put("userId",userId);
+            documents = docCommonService.findPendingApprovalDocuments(pagingParams);
             model.addAttribute("role", roleCode);
         }else{
-            model.addAttribute("documents", documentsUnderApproval);
+            totalCnt = docCommonService.findDocumentsUnderApprovalTotalCountByUserId(userId);
+            pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+            pagingParams.put("userId",userId);
+            documents = docCommonService.findDocumentsUnderApproval(pagingParams);
         }
-        return "/admin/jihee/content/document";
+        model.addAttribute("documents", documents);
+        model.addAttribute("pager",pagingParams);
+        return "/admin/doc/docList";
     }
 
-    @GetMapping("/workflow/selectWrite")
+    @GetMapping("/doc/selectWrite")
     public String selectWrite(HttpServletRequest request) {
-        return "/admin/jihee/content/selectWrite";
+        return "/admin/doc/selectWrite";
     }
 
     @ResponseBody
-    @GetMapping("/workflow/changeList")
-    public List<Map<String,Object>> viewWorkflowChangeList(@RequestParam String type, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
+    @GetMapping("/docList/changeList")
+    public Map<String,Object> viewWorkflowChangeList(@RequestParam(defaultValue = "1") int pageNum, @RequestParam String type, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         String roleCode = customUserDetails.getRole();
+        int totalCnt = 0;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        List<Map<String, Object>> resultList;
+        Map<String, Object> pagingParams = new HashMap<String, Object>();
+        String userId = customUserDetails.getUserId();
+        pagingParams.put("userId",userId);
+
         if ("pending".equals(type) && Set.of("01", "02", "03").contains(roleCode)) {
-            // 승인 대기 문서 반환
-            return docCommonService.findPendingApprovalDocuments(customUserDetails.getUserId());
+            // 결재 승인 대기 문서 반환
+            totalCnt = docCommonService.findDocumentsPendingApprovalTotalCountByUserId(customUserDetails.getUserId());
+            pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+            pagingParams.put("userId",userId);
+            resultList = docCommonService.findPendingApprovalDocuments(pagingParams);
         } else if ("complete".equals(type)) {
-            return docCommonService.findCompleteDocuments(customUserDetails.getUserId());
+            //결재 완료는 나중에 추후
+            resultList =  docCommonService.findCompleteDocuments(customUserDetails.getUserId());
         } else {
             // 결재 진행 중 문서 반환
-            return docCommonService.findDocumentsUnderApproval(customUserDetails.getUserId());
+            totalCnt = docCommonService.findDocumentsUnderApprovalTotalCountByUserId(customUserDetails.getUserId());
+            pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+            pagingParams.put("userId",userId);
+            resultList = docCommonService.findDocumentsUnderApproval(pagingParams);
         }
-    }
 
-    @RequestMapping(value = "/workflow/expenseWrite")
-    public String writeWorkflow(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
-        model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
-        return "/admin/jihee/content/expenseWrite";
+        resultMap.put("resultList", resultList);
+        resultMap.put("pager", pagingParams);
+        return resultMap;
     }
 }

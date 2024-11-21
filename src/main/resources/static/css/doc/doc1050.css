@@ -188,3 +188,25 @@
 		padding: 0;
 		line-height: 1.2;
 	}
+
+	.centered-cell {
+		text-align: center;       /* 수평 가운데 정렬 */
+		vertical-align: middle;   /* 수직 가운데 정렬 */
+		height: 100px;            /* td의 높이 지정 */
+	}
+
+	/* 이미지 크기를 조절하는 스타일 */
+	.centered-image {
+		max-width: 80px;          /* 이미지의 최대 너비 지정 */
+		max-height: 80px;         /* 이미지의 최대 높이 지정 */
+	}
+
+	.approval-image-td{
+		text-align: center;
+		vertical-align: center;
+	}
+
+	.approval-image{
+		width: 80px;
+		height:80px;
+	}

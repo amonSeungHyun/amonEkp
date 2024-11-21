@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.amonsoft.mapper.apv.ApvCommonMapper;
+import kr.co.amonsoft.mapper.doc.Doc1060Mapper;
+import kr.co.amonsoft.mapper.doc.DocCommonMapper;
 import org.springframework.stereotype.Service;
 
 import kr.co.amonsoft.mapper.doc.Doc1020Mapper;
@@ -16,83 +19,32 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class Doc1060ServiceImpl implements Doc1060Service {
 
-    private final Doc1040Mapper doc1040Mapper;
+    private final DocCommonMapper docCommonMapper;
+    private final ApvCommonMapper apvCommonMapper;
+    private final Doc1060Mapper doc1060Mapper;
     
 	@Override
-	public void insertTransportExpense(Map<String, Object> param) {
-		Map<String,Object> documentMap = new HashMap<>();
-		List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) param.get("approvalData");
-		List<Map<String, Object>> expenseDetailData = (List<Map<String, Object>>) param.get("expenseDetailData");
-		
-		documentMap.put("userId", param.get("userId"));
-		documentMap.put("docTitle", param.get("docTitle"));
-		documentMap.put("docType", "06");
-		
-		// document 추가
-        doc1040Mapper.insertDocumentApproval(documentMap);
-        
-        // 생성된 docId를 가져옵니다.
-        BigInteger docId = (BigInteger) documentMap.get("docId");
-                
-        // 결재선
+	public BigInteger insertTransportExpense(Map<String, Object> param) {
+        docCommonMapper.insertDocument(param);
+        BigInteger docId = (BigInteger) param.get("docId");
+
+        List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) param.get("approvalData");
         approvalStep.forEach(step -> {
             step.put("docId", docId);
-            step.put("create_id", param.get("userId"));
-            doc1040Mapper.insertApprovalRequestStep(step);
-        });
-        
-        // 교통비
-        expenseDetailData.forEach(detail -> {
-            detail.put("docId", docId);
-            detail.put("create_id", param.get("userId"));
-            doc1040Mapper.insertTransportExpense(detail);
-        });
-        
-	}
-	
-	@Override
-    public Map<String, Object> findApprovalRequestDetailsByDocId(BigInteger docId) {
-        return doc1040Mapper.findApprovalRequestDetailsByDocId(docId);
-    }
-
-	@Override
-	public List<Map<String, Object>> findTransportExpenseDetailsByDocId(BigInteger docId) {
-		return doc1040Mapper.findTransportExpenseDetailsByDocId(docId);
-	}
-/*
-    @Override
-    public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
-        Map<String,Object> documentMap = new HashMap<>();
-        documentMap.put("userId", "lee");
-        doc1020Mapper.insertDocument(documentMap);
-
-        // 생성된 docId를 가져옵니다.
-        BigInteger docId = (BigInteger) documentMap.get("docId");
-
-        // approvalStep과 expenseDetail에서 동일한 docId 사용
-        List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
-        approvalStep.forEach(step -> {
-            step.put("docId", docId);
-            doc1020Mapper.insertApprovalStep(step);
+            apvCommonMapper.insertApprovalStep(step);
         });
 
-
-        List<Map<String, Object>>expenseDetail = (List<Map<String, Object>>) approvalData.get("expenseDetailData");
+        List<Map<String, Object>>expenseDetail = (List<Map<String, Object>>) param.get("data");
         expenseDetail.forEach(detail -> {
             detail.put("docId", docId);
-            doc1020Mapper.insertExpenseDetail(detail);
+            doc1060Mapper.insertTransportExpense(detail);
         });
 
         return docId;
-    }
+	}
 
-
-
-    @Override
-    public List<Map<String, Object>> findExpenseDetailsByDocId(BigInteger docId) {
-        return doc1020Mapper.findExpenseDetailsByDocId(docId);
-    }
-
-
-*/
+	@Override
+	public List<Map<String, Object>> findTransportExpenseDetailsByDocId(BigInteger docId) {
+		return doc1060Mapper.findTransportExpenseDetailsByDocId(docId);
+	}
 }

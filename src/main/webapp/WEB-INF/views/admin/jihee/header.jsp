@@ -21,21 +21,19 @@ a:active {text-decoration: none; color: #cccccc;}
 		color: white;
 		font-weight: bold;
 	}
-	
+
 	
 </style>    
     
 <div style="padding-top: 35px; padding-left: 40px; padding-bottom: 35px;]">
- <span><a class="mylink" href="javascript:location.href='/workflow'" style="color: black; font-size: 27pt; font-weight: bold; padding-right: 20px;">내 문서함</a></span>
+ <span><a class="mylink" href="javascript:location.href='/docList'" style="color: black; font-size: 27pt; font-weight: bold; padding-right: 20px;">내 문서함</a></span>
  <span><a class="link" href="javascript:location.href='/cpWorkflow.yolo'" style=" font-size: 27pt; font-weight: bold;">회사 문서함</a></span>
 	<select>
 		<option>지출결의서</option>
 		<option>근태계</option>
 	</select>
-	<button type="button" class="headerBtn" style="margin-left : 0px; float:right; margin-right:10px;" onclick="javascript:location.href='/workflow/selectWrite'">
+	<button type="button" class="headerBtn" style="margin-left : 0px; float:right; margin-right:10px;" onclick="javascript:location.href='/doc/selectWrite'">
 		<i class="bi bi-pencil-fill"></i>
 		 작성하기
 	</button>
 </div>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">

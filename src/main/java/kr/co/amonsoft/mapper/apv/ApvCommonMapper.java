@@ -22,4 +22,5 @@ public interface ApvCommonMapper {
     int updateDocumentCompletionStatus(int docId);
 
     int updateDocumentCurrentStep(int docId);
-}
+
+    void insertApprovalStep(Map<String, Object> approvalStep);}

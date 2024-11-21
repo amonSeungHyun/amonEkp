@@ -7,12 +7,11 @@
 
 <% String ctxPath = request.getContextPath(); %>
 
-<jsp:include page="/WEB-INF/views/admin/doc/doc1040Header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
 
 <style type="text/css">
 	/* CSS 정리된 스타일 */
 	p { margin:0pt 0pt 8pt }
-	pre {margin-top:30px; margin-left:10px; font-family: 'Pretendard', sans-serif; !important }
 	table { margin-top:0pt; margin-bottom:8pt }
 	/* Additional styles for table formatting and inputs */
 	.filebox .upload-name {
@@ -211,8 +210,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
 	$(document).ready (function(){
-		
-		approvalRequestDetailView();
+		getApprovalId();
 		
 		$("#file").on('change',function(){
 			var fileName = $("#file").val();
@@ -237,31 +235,116 @@
 
 	});
 	
-	function decodeHtmlEntities(str) {
-        var textarea = document.createElement('textarea');
-        textarea.innerHTML = str;
-        return textarea.value.replace(/&nbsp;/g, ' ');
-    }
+	// 결재
+	function insertApprovalRequest() {
+		const formData = $("#writeFrm").serializeArray();
+		const jsonData = {};
+		formData.forEach(field => {
+		    jsonData[field.name] = field.value;
+		});
+		
+		Object.assign(jsonData, {
+		    userId: "<c:out value="${sessionScope.userId}" />",
+		});
+		console.log("form >> ", JSON.stringify(jsonData));
+		
+		const approvalData = collectApprovalSteps();
+		
+		if(!validationChk()){
+			return ;
+		}
+		
+	    Swal.fire({
+	        title: '결재 신청을 하시겠습니까?',
+	        icon: 'question',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: '신청',
+	        cancelButtonText: '취소'
+	    }).then((result) => {
+	        if (result.isConfirmed) {
+	            $.ajax({
+	                url: "/doc/insertApprovalRequest",
+	                type: "POST",
+	                dataType: "JSON",
+	                data: JSON.stringify({
+	                	approvalData: approvalData,
+	                	approvalRequestData : jsonData
+	                }),
+	                contentType: "application/json",
+	                success: function (response) {
+	                    Swal.fire({
+	                        icon: 'success',
+	                        title: '결재신청 완료',
+	                        text: '결재가 성공적으로 신청되었습니다.',
+	                        confirmButtonText: '확인',
+	                    }).then((result) => {
+	            	        if (result.isConfirmed) {
+		                    	$(location).attr("href", "/docList");
+	            	        }
+	                    }); 
+	                },
+	                error: function (xhr, status, error) {
+	                    console.error("데이터 전송 실패:", error);
+	                    Swal.fire({
+	                        icon: 'error',
+	                        title: '오류 발생',
+	                        text: '결재 신청에 실패했습니다.'
+	                    });
+	                }
+	            });
+	        }
+	    });
+		
+	}
 	
-	function approvalRequestDetailView(){
+	// 품의번호 가져오기
+	function getApprovalId(){
 		$.ajax({
-			url: '/doc/approvalRequestDetailView', // 데이터를 보낼 서버의 URL로 변경
+			url: '/doc/getApprovalId', // 데이터를 보낼 서버의 URL로 변경
 			type: 'POST',
 			contentType: 'application/json',
-			data: JSON.stringify({docId:"${docId}"}),
+			data: JSON.stringify({}),
 			success: function(data) {
 				console.log("data >> ", data)
-
-				const formattedContent1 = "<pre>" + decodeHtmlEntities(data.approval_content) + "</pre>";
-	            const formattedContent2 = "<pre>" + decodeHtmlEntities(data.instructions) + "</pre>";
-
-	            $("#approval_content").html(formattedContent1);
-	            $("#instructions").html(formattedContent2);
+		        $("#approval_id").val(data.approval_id);
 			},
 			error: function (error) {
 				console.error('Error sending data:', error);
 			}
 		});
+	}
+	
+	/*결재선 구성 List 함수*/
+	function collectApprovalSteps() {
+		const approvalData = [];
+
+		// Select all the table cells containing approval steps using jQuery
+		$('.approval-step').each(function() {
+			const stepData = {
+				approvalStepNo: $(this).data('approval-step'),
+				userId: $(this).data('user-id')
+			};
+			approvalData.push(stepData);
+		});
+
+		console.log(approvalData);
+		return approvalData;
+	}
+	
+	function validationChk(){
+		if($("#approval_title").val() == null || $("#approval_title").val() == ""){
+			alert("품의제목을 입력해 주세요");
+			$("#approval_title").focus();
+			return false;
+		}
+		if($("#approval_content").val() == null || $("#approval_content").val() == ""){
+			alert("품의내용을 입력해 주세요");
+			$("#approval_content").focus();
+			return false;
+		}
+		return true;
 	}
 
 </script>
@@ -298,7 +381,7 @@
 				</tr>
 				<tr style="height:22.05pt">
 					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal"><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="">박형호 / 상무</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
 					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-user-id="">최선영 / 이사</td>
 					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-user-id="">이길호 / 대표</td>
 				</tr>
@@ -309,13 +392,14 @@
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">기안일</p>
 					</td>
 					<td class="col3">
-						${approvalRequestDetails.draft_date}
+						<input id="draft_date" name="draft_date" class="input_modal" style="width : 100%; border : none;" type="text" autocomplete="off" readonly
+						value="<fmt:formatDate value='<%= new java.util.Date() %>' pattern='yyyy년 MM월 dd일' />">
 					</td>
 					<td class="col2">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">품의번호</p>
 					</td>
 					<td class="col3">
-						${approvalRequestDetails.approval_id}					
+						<input id="approval_id" name="approval_id" class="input_modal" style="width : 100%; border : none;" type="text" autocomplete="off" readonly/>						
 					</td>
 				</tr>
 				<tr style="height:22.55pt">
@@ -323,13 +407,15 @@
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">소속부서</p>
 					</td>
 					<td class="col3">
-						${approvalRequestDetails.department}		
+						<input id="department" name="department" class="input_modal" style="width : 100%; border : none;" type="text" autocomplete="off" readonly
+						value="<c:out value="${sessionScope.department}" />">
 					</td>
 					<td class="col2">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">기안자</p>
 					</td>
 					<td class="col3">
-						${approvalRequestDetails.drafter}	
+						<input id="drafter" name="drafter" class="input_modal" style="width : 100%; border : none;" type="text" autocomplete="off" readonly
+						value="<c:out value="${sessionScope.username}" />">
 					</td>
 				</tr>
 				<tr style="height:22.55pt">
@@ -337,7 +423,7 @@
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">품의제목</p>
 					</td>
 					<td colspan="3">
-						${approvalRequestDetails.approval_title}	
+						<input style="width : 100%; border : none;" id="approval_title" name="approval_title" class="input_modal" type="text" autocomplete="off" />
 					</td>
 				</tr>
 			</table>
@@ -349,7 +435,7 @@
 				</tr>
 				<tr style="height:330px">
 					<td colspan="2" style="height: 330px !important; ">
-				    	<p id="approval_content" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p>
+					    <textarea id="approval_content" name="approval_content" style="height: 330px; width: 100%; margin-top:5px; resize: none;"></textarea>
 					</td>
 				</tr>
 				<tr style="height:29.2pt">
@@ -359,7 +445,7 @@
 				</tr>
 				<tr style="height:90pt">
 					<td colspan="2" style="height: 90pt !important; ">
-				    	<p id="instructions" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p>
+					    <textarea id="instructions" name="instructions" style="height: 90pt; width: 100%; margin-top:5px; resize: none;" ></textarea>
 					</td>
 				</tr>
 				

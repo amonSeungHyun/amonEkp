@@ -18,9 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class Doc1050ServiceImpl implements Doc1050Service {
 	
 	private final Doc1040Mapper doc1040Mapper;
-	
 	private final Doc1050Mapper doc1050Mapper;
-	
 	private final Doc1020Mapper doc1020Mapper;
 	
 	@Override

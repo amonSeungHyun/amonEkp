@@ -7,17 +7,17 @@
 
 <% String ctxPath = request.getContextPath(); %>
 
-<jsp:include page="/WEB-INF/views/admin/doc/doc1060Header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
 <link rel="stylesheet" type="text/css" href="/css/doc/doc1050.css">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
 	$(document).ready (function(){
+		calculateTotal();
 		
-		const today = new Date();
-	    const year = today.getFullYear();
-	    const month = String(today.getMonth() + 1).padStart(2, '0');
-	    $('#Ymtitle').html(year + "년 " + month + "월<br>교통비 청구서");
+		var date = "${documentCreatorInfo.createdDate}".substring(0, 9);
+		
+	    $('#Ymtitle').html(date + "<br>법인카드 사용내역서");
 		
 		$("#file").on('change',function(){
 			var fileName = $("#file").val();
@@ -40,61 +40,8 @@
 			$(textarea).closest('td').height(textarea.scrollHeight);
 		}
 
-		$(document).on('input', '[id^=expenseAmount_]', calculateTotal);
+		$(document).on('input', '[id^=corpAmount_]', calculateTotal);
 	});
-
-	// 결재
-	function insertTransportExpense() {
-		const approvalData = collectApprovalSteps();
-		const expenseDetailData = collectExpenseDetailData();
-		
-		Swal.fire({
-	        title: '결재 신청을 하시겠습니까?',
-	        icon: 'question',
-	        showCancelButton: true,
-	        confirmButtonColor: '#3085d6',
-	        cancelButtonColor: '#d33',
-	        confirmButtonText: '신청',
-	        cancelButtonText: '취소'
-	    }).then((result) => {
-	        if (result.isConfirmed) {
-	            $.ajax({
-	                url: "/doc/insertTransportExpense",
-	                type: "POST",
-	                dataType: "JSON",
-	                data: JSON.stringify({
-	                	approvalData: approvalData,
-	                	expenseDetailData : expenseDetailData,
-	                	userId : "${sessionScope.userId}",
-	                	docTitle : $('#Ymtitle').html().replace("<br>", ' ')
-	                }),
-	                contentType: "application/json",
-	                success: function (response) {
-	                    Swal.fire({
-	                        icon: 'success',
-	                        title: '결재신청 완료',
-	                        text: '결재가 성공적으로 신청되었습니다.',
-	                        confirmButtonText: '확인',
-	                    }).then((result) => {
-	            	        if (result.isConfirmed) {
-		                    	$(location).attr("href", "/workflow");
-	            	        }
-	                    }); 
-	                },
-	                error: function (xhr, status, error) {
-	                    console.error("데이터 전송 실패:", error);
-	                    Swal.fire({
-	                        icon: 'error',
-	                        title: '오류 발생',
-	                        text: '결재 신청에 실패했습니다.'
-	                    });
-	                }
-	            });
-	        }
-	    });
-		
-	}
-	
 	/*결재선 구성 List 함수*/
 	function collectApprovalSteps() {
 		const approvalData = [];
@@ -116,17 +63,17 @@
 	function collectExpenseDetailData(){
 		const data = [];
 		for (let i = 1; i <= 15; i++) {
-			if(!$('#expenseDate_' + i).val()){
+			if(!$('#corpDate_' + i).val()){
 				break;
 			}
 			const rowData = {
-				expenseDate: $('#expenseDate_' + i).val(),
-				vehicleStart: $('#vehicleStart_' + i).val(),
-				vehicleEnd: $('#vehicleEnd_' + i).val(),
-				vehiclePurpose: $('#vehiclePurpose_' + i).val(),
-				visitDescription: $('#visitDescription_' + i).val(),
-				expenseAmount: $('#expenseAmount_' + i).val(),
+				corpDate: $('#corpDate_' + i).val(),
+				corpItem: $('#corpItem_' + i).val(),
+				storeName: $('#storeName_' + i).val(),
+				usageDetail: $('#usageDetail_' + i).val(),
+				corpAmount: $('#corpAmount_' + i).val(),
 				remark: $('#remark_' + i).val(),
+				corporateCardNumber : $("#corporate_card_number").val()
 			};
 			data.push(rowData);
 		}
@@ -162,7 +109,7 @@
 		let total = 0;
 
 		// Loop through all `textarea` elements with id starting `expenseAmount_`
-		$('[id^=expenseAmount_]').each(function () {
+		$('[id^=corpAmount_]').each(function () {
 			const value = $(this).val();
 			total += parseInt(value) || 0;
 		});
@@ -180,7 +127,7 @@
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
 						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<strong><span class="font-malgungothic" style="color:#000000" id="Ymtitle"></span></strong>
+							<strong><span class="font-malgungothic" style="color:#000000" id="Ymtitle">법인카드 사용내역서</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -216,28 +163,36 @@
 			        <td class="col2">
 			            <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">성&#xa0;&#xa0;&#xa0; 명</p>
 			        </td>
-			        <td class="col3"><c:out value="${sessionScope.username}"/></td>
+			        <td class="col3">${documentCreatorInfo.userName}</td>
 			        <td class="col2">
 			            <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">직&#xa0;&#xa0;&#xa0; 급</p>
 			        </td>
-			        <td class="col3"><c:out value="${sessionScope.positionNm}" /></td>
+			        <td class="col3">${documentCreatorInfo.positionName}</td>
 			    </tr>
 			    <tr style="height:22.55pt">
 			        <td class="col2">
 			            <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">부&#xa0;&#xa0;&#xa0; 서</p>
 			        </td>
-			        <td class="col3"><c:out value="${sessionScope.department}" /></td>
+			        <td class="col3">${documentCreatorInfo.organizationName}</td>
 			        <td class="col2">
 			            <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">청구일자</p>
 			        </td>
 			        <td class="col3">
-			            <fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" />
+			            ${documentCreatorInfo.createdDate}
+			        </td>
+			    </tr>
+			    <tr style="height:22.55pt">
+			        <td class="col2" colspan="2" style="text-align: center;">
+			            <p class="a7 font-malgungothic" style="margin: 0;">법인카드 종류 및 번호</p>
+			        </td>
+			        <td class="col3" colspan="2" style="text-align: left;">
+			            ${doc1050Details[0].corporateCardNumber}
 			        </td>
 			    </tr>
 			</table>
 			<table class="col-table">
 				<tr style="height:22.5pt">
-					<td colspan="7" style="width:476.65pt; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
+					<td colspan="6" style="width:476.65pt; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">내&#xa0;&#xa0;&#xa0; 역</p>
 					</td>
 				</tr>
@@ -245,7 +200,7 @@
 					<td colspan="2" style="width:140.15pt; border-top:0.75pt solid #a0a0a0; border-right:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">총 금 액</p>
 					</td>
-					<td colspan="5" style="width:335.3pt; border-top:0.75pt solid #a0a0a0; border-left:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle">
+					<td colspan="4" style="width:335.3pt; border-top:0.75pt solid #a0a0a0; border-left:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle">
 						<p class="a font-malgungothic" style="margin-right:5pt; margin-left:5pt; line-height:normal; font-size:12pt">
 							일금 <span id="koreanAmount">____</span>  (￦<span id="numericAmount">____</span>)
 						</p>
@@ -253,43 +208,52 @@
 				</tr>
 				<tr style="height:22.5pt">
 					<td class="detail-col1 header-cell font-malgungothic text-center">일</td>
-					<td class="detail-col2 header-cell font-malgungothic text-center">출발</td>
-					<td class="detail-col3 header-cell font-malgungothic text-center">도착</td>
-					<td class="detail-col4 header-cell font-malgungothic text-center">목적지</td>
-					<td class="detail-col5 header-cell font-malgungothic text-center">방문내용</td>
-					<td class="detail-col6 header-cell font-malgungothic text-center">비용</td>
-					<td class="detail-col7 header-cell font-malgungothic text-center">비고</td>
+					<td class="detail-col2 header-cell font-malgungothic text-center">지출항목</td>
+					<td class="detail-col3 header-cell font-malgungothic text-center">이용점명</td>
+					<td class="detail-col4 header-cell font-malgungothic text-center">사용 내역</td>
+					<td class="detail-col5 header-cell font-malgungothic text-center">사용 금액</td>
+					<td class="detail-col6 header-cell font-malgungothic text-center">비고</td>
 				</tr>
 				<c:forEach var="i" begin="1" end="15">
 					<tr style="height:22.5pt">
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1"  id="expenseDate_${i}"></textarea>
+							<c:if test="${i <= doc1050Details.size()}">
+								${doc1050Details[i - 1].corpDate}
+							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="vehicleStart_${i}"></textarea>
+							<c:if test="${i <= doc1050Details.size()}">
+								${doc1050Details[i - 1].corpItem}
+							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="vehicleEnd_${i}"></textarea>
+							<c:if test="${i <= doc1050Details.size()}">
+								${doc1050Details[i - 1].storeName}
+							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="vehiclePurpose_${i}"></textarea>
+							<c:if test="${i <= doc1050Details.size()}">
+								${doc1050Details[i - 1].usageDetail}
+							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="visitDescription_${i}"></textarea>
+							<c:if test="${i <= doc1050Details.size()}">
+								<input type="hidden" id="corpAmount_${i}" value="${doc1050Details[i - 1].corpAmount}">
+								${doc1050Details[i - 1].corpAmount}
+							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="expenseAmount_${i}"></textarea>
-						</td>
-						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="remark_${i}"></textarea>
+							<c:if test="${i <= doc1050Details.size()}">
+								${doc1050Details[i - 1].remark}
+							</c:if>
 						</td>
 					</tr>
 				</c:forEach>
 			</table>
 			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
 			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
-			<p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
-			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : <c:out value="${sessionScope.username}"/></p>
+			<p class="a7 font-malgungothic text-center">${documentCreatorInfo.createdDate}</p>
+			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
 		</div>
 		<!-- File upload area -->
 		<div class="file-area" id="attachArea">

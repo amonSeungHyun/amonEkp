@@ -14,13 +14,9 @@ public interface Doc1040Mapper {
     void insertApprovalRequest(Map<String, Object> param);
 
 	void insertApprovalRequestStep(Map<String, Object> param);
-	
-	void insertTransportExpense(Map<String, Object> param);
-	
+
 	void insertDocumentApproval(Map<String, Object> param);
 	
 	Map<String,Object> findApprovalRequestDetailsByDocId(BigInteger docId);
-	
-	List<Map<String,Object>> findTransportExpenseDetailsByDocId(BigInteger docId);
 
 }

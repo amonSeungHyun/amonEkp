@@ -21,55 +21,6 @@
         WHERE doc_id = #{docId}
     </select>
 
-    <insert id="insertApprovalStep">
-        INSERT INTO approval_step(
-              doc_id
-            , step_no
-            , approver_id
-            , status
-            , created_id
-            , created_date
-            , updated_id
-            , updated_date
-        ) VALUES (
-               #{docId}
-             , #{approvalStepNo}
-             , #{userId}
-             , #{approvalStatus}
-             , #{userId}
-             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-             , #{userId}
-             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-         )
-    </insert>
-
-    <insert id="insertDocument" useGeneratedKeys="true" keyProperty="docId">
-        INSERT INTO document
-        (
-             user_id
-            , doc_current_step
-            , total_step
-            , created_id
-            , created_date
-            , updated_id
-            , updated_date
-            , doc_type
-            , doc_status
-        )
-        VALUES ( #{userId}
-           , '2'
-           , '4'
-           , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-           , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-           , #{docType}
-           , '02'
-       )
-    </insert>
-
-
-
     <insert id="insertExpenseDetail">
         INSERT INTO expense_detail(
             doc_id

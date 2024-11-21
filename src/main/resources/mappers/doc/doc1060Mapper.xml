@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.doc.Doc1060Mapper">
+
+	<insert id="insertTransportExpense">
+		INSERT INTO transport_expense_detail
+		     ( doc_id
+			 , expense_date
+			 , vehicle_start
+			 , vehicle_end
+			 , vehicle_purpose
+			 , visit_description
+			 , expense_amount
+			 , remark
+			 , created_id
+			 , created_date
+			 , updated_id
+			 , updated_date )
+	  	VALUES 
+	  		 ( #{docId} 
+	  		 , #{expenseDate}
+			 , #{vehicleStart}
+			 , #{vehicleEnd}
+			 , #{vehiclePurpose}
+			 , #{visitDescription}
+			 , #{expenseAmount}
+			 , #{remark}
+			 , #{userId}
+			 , DATE_FORMAT(NOW(), '%Y%m%d')
+			 , #{userId}
+			 , DATE_FORMAT(NOW(), '%Y%m%d'))
+	</insert>
+    
+    <select id="findTransportExpenseDetailsByDocId" resultType="camelcasemap">
+        SELECT doc_id
+             , transport_expense_id
+             , expense_date
+             , vehicle_start
+             , vehicle_end
+             , vehicle_purpose
+             , visit_description
+             , expense_amount
+             , remark
+             , created_id
+             , created_date
+             , updated_id
+             , updated_date
+          FROM transport_expense_detail
+         WHERE doc_id = #{docId}
+    </select>
+    
+</mapper>

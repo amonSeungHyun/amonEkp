@@ -234,7 +234,7 @@
         <i class="fas fa-solid fa-plane sideIcon"></i><span>휴가</span>
     </div>
     --%>
-    <a href="/workflow">
+    <a href="/docList">
       <div class="sideTr">
         <i class="fas fa-solid fa-pen-nib sideIcon"></i>
         <span>결재</span>

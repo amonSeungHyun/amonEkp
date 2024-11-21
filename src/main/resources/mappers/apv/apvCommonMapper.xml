@@ -7,6 +7,7 @@
              , posi_detail.code_detail_name as positionName
              , d.doc_status
              , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
+             , d.doc_title
         FROM user u
         INNER JOIN document d
           ON u.user_id = d.user_id
@@ -56,6 +57,28 @@
         WHERE doc_id = #{docId}
           AND approver_id = #{userId}
     </select>
+
+    <insert id="insertApprovalStep">
+        INSERT INTO approval_step(
+                                   doc_id
+                                 , step_no
+                                 , approver_id
+                                 , status
+                                 , created_id
+                                 , created_date
+                                 , updated_id
+                                 , updated_date
+        ) VALUES (
+                   #{docId}
+                 , #{approvalStepNo}
+                 , #{userId}
+                 , #{approvalStatus}
+                 , #{userId}
+                 , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+                 , #{userId}
+                 , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+                 )
+    </insert>
 
     <update id="updateApprovalStatus" parameterType="map">
         UPDATE approval_step

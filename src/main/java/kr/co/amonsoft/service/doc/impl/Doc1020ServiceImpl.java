@@ -17,12 +17,13 @@ import java.util.Map;
 @Service
 public class Doc1020ServiceImpl implements Doc1020Service {
 
-    private final Doc1020Mapper doc1020Mapper;
+    private final DocCommonMapper docCommonMapper;
     private final ApvCommonMapper apvCommonMapper;
+    private final Doc1020Mapper doc1020Mapper;
 
     @Override
     public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
-        doc1020Mapper.insertDocument(approvalData);
+        docCommonMapper.insertDocument(approvalData);
 
         // 생성된 docId를 가져옵니다.
         BigInteger docId = (BigInteger) approvalData.get("docId");
@@ -31,11 +32,11 @@ public class Doc1020ServiceImpl implements Doc1020Service {
         List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
         approvalStep.forEach(step -> {
             step.put("docId", docId);
-            doc1020Mapper.insertApprovalStep(step);
+            apvCommonMapper.insertApprovalStep(step);
         });
 
-        List<Map<String, Object>>expenseDetail = (List<Map<String, Object>>) approvalData.get("expenseDetailData");
-        expenseDetail.forEach(detail -> {
+        List<Map<String, Object>> documentDetail = (List<Map<String, Object>>) approvalData.get("data");
+        documentDetail.forEach(detail -> {
             detail.put("docId", docId);
             doc1020Mapper.insertExpenseDetail(detail);
         });

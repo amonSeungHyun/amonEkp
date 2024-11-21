@@ -6,16 +6,18 @@ import java.util.Map;
 public class PageUtil {
 
     private static final int DEFAULT_PAGE_NUM = 1;
-    private static final int DEFAULT_PAGE_SIZE = 5;
+    private static final int DEFAULT_PAGE_SIZE = 10;
     private static final int DEFAULT_BLOCK_SIZE = 10;
 
-    public static Map<String, Object> getPagingParams(Map<String, Object> param, int totalCnt) {
+    public static Map<String, Object> getPagingParams(int pageNum, int totalCnt) {
 
-        int pageNum = param.get("pageNum") != null ? Integer.parseInt(param.get("pageNum").toString()) : DEFAULT_PAGE_NUM;
-        int pageSize = param.get("pageSize") != null ? Integer.parseInt(param.get("pageSize").toString()) : DEFAULT_PAGE_SIZE;
+        int pageSize =  DEFAULT_PAGE_SIZE;
         int blockSize = DEFAULT_BLOCK_SIZE;
+
         int totalPage = (int) Math.ceil((double) totalCnt / pageSize);
         pageNum = Math.min(Math.max(pageNum, 1), totalPage);
+
+        int offset = (pageNum - 1) * pageSize;
 
         int startRow = (pageNum - 1) * pageSize + 1;
         int endRow = Math.min(pageNum * pageSize, totalCnt);
@@ -27,6 +29,8 @@ public class PageUtil {
         int nextPage = startPage + blockSize;
 
         Map<String, Object> pagingParams = new HashMap<>();
+        pagingParams.put("offset", offset);
+        pagingParams.put("limit", pageSize);
         pagingParams.put("startRow", startRow);
         pagingParams.put("endRow", endRow);
         pagingParams.put("totalPage", totalPage);

@@ -7,216 +7,17 @@
 
 <% String ctxPath = request.getContextPath(); %>
 
-<jsp:include page="/WEB-INF/views/admin/jihee/writeHeader2.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
+<link rel="stylesheet" type="text/css" href="/css/doc/doc1050.css">
 
-<style type="text/css">
-	/* CSS 정리된 스타일 */
-	p { margin:0pt 0pt 8pt }
-	table { margin-top:0pt; margin-bottom:8pt }
-	/* Additional styles for table formatting and inputs */
-	.filebox .upload-name {
-		display: inline-block;
-		height: 40px;
-		padding: 0 10px;
-		vertical-align: middle;
-		border: 1px solid #dddddd;
-		width: 70%;
-		border-radius: 0.4rem;
-		color: #999999;
-	}
-	.filebox label {
-		display: inline-block;
-		padding: 9px 20px;
-		color: #fff;
-		vertical-align: middle;
-		text-align: center;
-		background-color: #88eb1e;
-		cursor: pointer;
-		width : 25%;
-		height: 40px;
-		margin-left: 5px;
-		margin-top: 5px;
-		border-radius: 0.4rem;
-	}
-	/* CSS 정리된 스타일 */
-
-	.table-area {
-		border:0.75pt solid #000000;
-		border-collapse:collapse;
-		margin:10px;
-		float: left;
-	}
-	.file-area {
-		width: 25%;
-		margin-left: 20px;
-		float: left;
-	}
-	.clearfix::after {
-		content: "";
-		clear: both;
-		display: table;
-	}
-	/* Additional styles for table formatting and inputs */
-	.filebox .upload-name {
-		display: inline-block;
-		height: 40px;
-		padding: 0 10px;
-		vertical-align: middle;
-		border: 1px solid #dddddd;
-		width: 70%;
-		border-radius: 0.4rem;
-		color: #999999;
-	}
-	.filebox label {
-		display: inline-block;
-		padding: 9px 20px;
-		color: #fff;
-		vertical-align: middle;
-		text-align: center;
-		background-color: #88eb1e;
-		cursor: pointer;
-		width : 25%;
-		height: 40px;
-		margin-left: 5px;
-		margin-top: 5px;
-		border-radius: 0.4rem;
-	}
-	.first-table{
-		width : 780px;
-		margin: 20px;
-	}
-
-	.col-table{
-		border:0.75pt solid #000000;
-		border-collapse:collapse;
-		width : 780px;
-		margin: 20px;
-	}
-
-	.col1{
-		width:64.85pt;
-		border-top:0.75pt solid #000000;
-		border-right:0.75pt solid #a0a0a0;
-		border-left:0.75pt solid #000000;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.col2{
-		width:77.25pt;
-		border-right:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-		background-color:#f3f3f3;
-	}
-
-	.col3{
-		width:158.55pt;
-		border-right:0.75pt solid #a0a0a0;
-		border-left:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.detail-col1{
-		width:48.05pt;
-		border-top:0.75pt solid #a0a0a0;
-		border-right:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.detail-col2{
-		width:90.9pt;
-		border-top:0.75pt solid #a0a0a0;
-		border-right:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.detail-col3{
-		width:87.15pt;
-		border-top:0.75pt solid #a0a0a0;
-		border-right:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.detail-col4{
-		width:80.55pt;
-		border-top:0.75pt solid #a0a0a0;
-		border-right:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.detail-col5{
-		width:85.3pt;
-		border-top:0.75pt solid #a0a0a0;
-		border-right:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.detail-col6{
-		width:78.7pt;
-		border-top:0.75pt solid #a0a0a0;
-		border-right:0.75pt solid #a0a0a0;
-		border-bottom:0.75pt solid #a0a0a0;
-		padding-right:0.22pt;
-		padding-left:0.22pt;
-		vertical-align:middle;
-	}
-
-	.font-malgungothic {
-		font-family: '맑은 고딕';
-	}
-
-	/* Style for the textarea */
-	textarea {
-		width: 100%; /* Make textarea take full width of the cell */
-		height: 100%; /* Adjust height as needed */
-		border: none; /* Remove border */
-		background-color: transparent; /* Make background transparent */
-		resize: none; /* Disable resizing */
-		overflow: hidden; /* Hide overflow */
-		text-align: center; /* Center-align text if needed */
-		padding: 0;
-		line-height: 1.2;
-	}
-
-	.centered-cell {
-		text-align: center;       /* 수평 가운데 정렬 */
-		vertical-align: middle;   /* 수직 가운데 정렬 */
-		height: 100px;            /* td의 높이 지정 */
-	}
-
-	/* 이미지 크기를 조절하는 스타일 */
-	.centered-image {
-		max-width: 80px;          /* 이미지의 최대 너비 지정 */
-		max-height: 80px;         /* 이미지의 최대 높이 지정 */
-	}
-
-</style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
 	$(document).ready (function(){
+		const today = new Date();
+	    const year = today.getFullYear();
+	    const month = String(today.getMonth() + 1).padStart(2, '0');
+	    $('#Ymtitle').html(year + "년 " + month + "월<br>법인카드 사용내역서");
+		
 		$("#file").on('change',function(){
 			var fileName = $("#file").val();
 			$(".upload-name").val(fileName);
@@ -238,30 +39,57 @@
 			$(textarea).closest('td').height(textarea.scrollHeight);
 		}
 
-		$(document).on('input', '[id^=expenseAmount_]', calculateTotal);
+		$(document).on('input', '[id^=corpAmount_]', calculateTotal);
 	});
 
-	function insertApprovalExpenseDetail() {
+	function insertCorpCardUsage() {
 		const approvalData = collectApprovalSteps();
 		const expenseDetailData = collectExpenseDetailData();
-		if(confirm("결재 신청을 하시겠습니까?")) {
-			$.ajax({
-				url: '/approval/insertExpenseDetail', // 데이터를 보낼 서버의 URL로 변경
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					approvalData: approvalData,
-					expenseDetailData: expenseDetailData,
-					docType : "02"
-				}),
-				success: function (docId) {
-					$(location).attr("href", "/approval/expenseDetailView?docId=" + docId);
-				},
-				error: function (error) {
-					console.error('Error sending data:', error);
-				}
-			});
-		}
+		
+		Swal.fire({
+	        title: '결재 신청을 하시겠습니까?',
+	        icon: 'question',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: '신청',
+	        cancelButtonText: '취소'
+	    }).then((result) => {
+	        if (result.isConfirmed) {
+	            $.ajax({
+	                url: "/doc/insertDoc1050",
+	                type: "POST",
+	                dataType: "JSON",
+	                data: JSON.stringify({
+	                	approvalData: approvalData,
+	                	expenseDetailData : expenseDetailData,
+	                	userId : "${sessionScope.userId}",
+	                	docTitle : $('#Ymtitle').html().replace("<br>", ' ')
+	                }),
+	                contentType: "application/json",
+	                success: function (response) {
+	                    Swal.fire({
+	                        icon: 'success',
+	                        title: '결재신청 완료',
+	                        text: '결재가 성공적으로 신청되었습니다.',
+	                        confirmButtonText: '확인',
+	                    }).then((result) => {
+	            	        if (result.isConfirmed) {
+		                    	$(location).attr("href", "/workflow");
+	            	        }
+	                    }); 
+	                },
+	                error: function (xhr, status, error) {
+	                    console.error("데이터 전송 실패:", error);
+	                    Swal.fire({
+	                        icon: 'error',
+	                        title: '오류 발생',
+	                        text: '결재 신청에 실패했습니다.'
+	                    });
+	                }
+	            });
+	        }
+	    });
 	}
 	/*결재선 구성 List 함수*/
 	function collectApprovalSteps() {
@@ -271,7 +99,6 @@
 		$('.approval-step').each(function() {
 			const stepData = {
 				approvalStepNo: $(this).data('approval-step'),
-				approvalStatus : $(this).data('approval-status'),
 				userId: $(this).data('user-id')
 			};
 			approvalData.push(stepData);
@@ -282,7 +109,26 @@
 	}
 
 
-
+	function collectExpenseDetailData(){
+		const data = [];
+		for (let i = 1; i <= 15; i++) {
+			if(!$('#corpDate_' + i).val()){
+				break;
+			}
+			const rowData = {
+				corpDate: $('#corpDate_' + i).val(),
+				corpItem: $('#corpItem_' + i).val(),
+				storeName: $('#storeName_' + i).val(),
+				usageDetail: $('#usageDetail_' + i).val(),
+				corpAmount: $('#corpAmount_' + i).val(),
+				remark: $('#remark_' + i).val(),
+				corporateCardNumber : $("#corporate_card_number").val()
+			};
+			data.push(rowData);
+		}
+		console.log(data); // Logs the list map structure to the console
+		return data;
+	}
 
 
 	function numberToKorean(num) {
@@ -312,7 +158,7 @@
 		let total = 0;
 
 		// Loop through all `textarea` elements with id starting `expenseAmount_`
-		$('[id^=expenseAmount_]').each(function () {
+		$('[id^=corpAmount_]').each(function () {
 			const value = $(this).val();
 			total += parseInt(value) || 0;
 		});
@@ -325,12 +171,13 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
+		<input id="docType" type="hidden" value="02">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
 						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<a href="http://www.yesform.com/z_n/forms/search.php?mrown=IT&amp;free_search=&amp;focus_count=0&amp;focus_cus=0&amp;focus_prev=0&amp;is_show_lvch=1&amp;skwid=&amp;bq=%25C1%25F6%25C3%25E2%25B0%25E1%25C0%25C7%25BC%25AD%25C8%25C4%25BA%25B8%25C0%25DA%25C0%25CC%25B7%25C2%25BC%25AD&amp;isc=&amp;q=%C1%25F" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000">지출결의서</span></strong></a>
+							<strong><span class="font-malgungothic" style="color:#000000">법인카드 사용내역서</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -389,6 +236,14 @@
 			</table>
 			<table class="col-table">
 				<tr style="height:22.5pt">
+					<td colspan="2" style="width:140.15pt; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">제 목</p>
+					</td>
+					<td colspan="4" style="width:335.3pt; border-top:0.75pt solid #a0a0a0; border-left:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle">
+						<input id="docTitle" style="width:500px; margin-left: 10px"  type="text">
+					</td>
+				</tr>
+				<tr style="height:22.5pt">
 					<td colspan="6" style="width:476.65pt; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">내&#xa0;&#xa0;&#xa0; 역</p>
 					</td>
@@ -436,16 +291,10 @@
 			</table>
 			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
 			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
-			<p class="a7 font-malgungothic text-center">2022년 3월 11일</p>
-			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 :</p>
+			<p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
+			<p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : <c:out value="${sessionScope.username}"/></p>
 		</div>
 		<!-- File upload area -->
-		<div class="file-area" id="attachArea">
-			<div class="filebox">
-				<label for="file">파일 찾기</label>
-				<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-				<input type="file" id="file" multiple="multiple" name="attach">
-			</div>
-		</div>
+		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 	</form>
 </div>

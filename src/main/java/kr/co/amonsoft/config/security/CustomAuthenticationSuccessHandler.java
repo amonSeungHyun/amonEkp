@@ -37,16 +37,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // 사용자 권한에 따라 다른 경로로 리다이렉트
         if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CEO"))) {
             log.info("[onAuthenticationSuccess] 대표로 들어옴 ***********************************");
-            response.sendRedirect("/workflow");
+            response.sendRedirect("/docList");
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_VICE_PRESIDENT"))) {
             log.info("[onAuthenticationSuccess] 부서장으로 들어옴 ***********************************");
             response.sendRedirect("/admin/members/com7050");
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             log.info("[onAuthenticationSuccess] 경영관리자로 들어옴 ***********************************");
-            response.sendRedirect("/workflow");
+            response.sendRedirect("/docList");
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_LEADER"))) {
             log.info("[onAuthenticationSuccess] 팀장으로 들어옴 ***********************************");
-            response.sendRedirect("/workflow");
+            response.sendRedirect("/docList");
         } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_STAFF"))) {
             log.info("[onAuthenticationSuccess] 직원으로 들어옴 ***********************************");
             response.sendRedirect("/admin/members/com7050");

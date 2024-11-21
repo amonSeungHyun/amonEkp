@@ -7,6 +7,8 @@
 
 <% String ctxPath = request.getContextPath(); %>
 
+<jsp:include page="/WEB-INF/views/admin/jihee/docHeader.jsp"></jsp:include>
+
 <style type="text/css">
 	/* CSS 정리된 스타일 */
 	p { margin:0pt 0pt 8pt }

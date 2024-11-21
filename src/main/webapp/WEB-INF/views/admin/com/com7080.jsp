@@ -265,7 +265,7 @@
 		
 		<div id="right_sidebar">
 			<div id='div_leave_absence'></div>
-			<a class="a_side" href="/workflow"> <%-- TODO 클릭 시 캘린더로 이동 --%>
+			<a class="a_side" href="/docList"> <%-- TODO 클릭 시 캘린더로 이동 --%>
 				<div class="div_rightside" id="annual">
 					<i class="fas fa-leaf fa-lg i_sideIcon"></i>
 					<div style="display: flex; justify-content: space-between; margin-top: 5px;">

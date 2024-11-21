@@ -34,14 +34,14 @@ public class Com1010Controller {
     public Map<String, Object> selectCom1010List(@RequestBody Map<String, Object> param) throws Exception {
     	
         int totalCnt = com1010Service.selectCom1010ListCnt(param);
-        Map<String, Object> pagingParams = PageUtil.getPagingParams(param, totalCnt);
-        param.putAll(pagingParams);
+//        Map<String, Object> pagingParams = PageUtil.getPagingParams(param, totalCnt);
+//        param.putAll(pagingParams);
     	
         List<Map<String, Object>>resultList = com1010Service.selectCom1010List(param);
         
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("resultList", resultList);
-        resultMap.put("pager", pagingParams);
+//        resultMap.put("resultList", resultList);
+//        resultMap.put("pager", pagingParams);
 
         return resultMap;
         

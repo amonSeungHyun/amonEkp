@@ -25,11 +25,11 @@ public class Com7050Controller {
 
     @PostMapping("selectMemberList")
     @ResponseBody
-    public Map<String, Object> selectMemberList(@RequestParam Map<String, Object> param){
+    public Map<String, Object> selectMemberList(@RequestParam(defaultValue = "1") int pageNum, @RequestParam Map<String, Object> param){
         log.info("[구성원 조회 컨트롤러 - selectMemberList] param : {}", param);
 
         int totalCnt = com7050Service.selectMemberCnt(param);
-        Map<String, Object> pagingParams = PageUtil.getPagingParams(param, totalCnt);
+        Map<String, Object> pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
         param.putAll(pagingParams);
 
         List<MemberListDTO> resultList = com7050Service.selectMemberList(param);

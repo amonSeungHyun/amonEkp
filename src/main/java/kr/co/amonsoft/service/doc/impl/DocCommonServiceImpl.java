@@ -15,13 +15,18 @@ public class DocCommonServiceImpl implements DocCommonService {
     private final DocCommonMapper docCommonMapper;
 
     @Override
-    public List<Map<String, Object>> findDocumentsUnderApproval(String userId) {
-        return docCommonMapper.findDocumentsUnderApproval(userId);
+    public int findDocumentsUnderApprovalTotalCountByUserId(String userId) {
+        return docCommonMapper.findDocumentsTotalCountByUserId(userId);
     }
 
     @Override
-    public List<Map<String, Object>> findPendingApprovalDocuments(String userId) {
-        return docCommonMapper.findPendingApprovalDocuments(userId);
+    public List<Map<String, Object>> findDocumentsUnderApproval(Map<String, Object> param) {
+             return docCommonMapper.findDocumentsUnderApproval(param);
+    }
+
+    @Override
+    public List<Map<String, Object>> findPendingApprovalDocuments(Map<String, Object> param) {
+        return docCommonMapper.findPendingApprovalDocuments(param);
     }
 
     @Override
@@ -32,5 +37,10 @@ public class DocCommonServiceImpl implements DocCommonService {
     @Override
     public Map<String, Object> findTeamLeadersByUserOrganization(String userId) {
         return docCommonMapper.findTeamLeadersByUserOrganization(userId);
+    }
+
+    @Override
+    public int findDocumentsPendingApprovalTotalCountByUserId(String userId) {
+        return docCommonMapper.findDocumentsPendingApprovalTotalCountByUserId(userId);
     }
 }

@@ -11,10 +11,7 @@ import kr.co.amonsoft.dto.com.MemberListDTO;
 import kr.co.amonsoft.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.co.amonsoft.service.com.Com7010Service;
@@ -33,12 +30,12 @@ public class Com7010Controller {
 	
     @ResponseBody
     @RequestMapping(value = "/amonsoft/controller/com/selectCom7010List")
-    public Map<String, Object> selectCom7010List(@RequestBody Map<String, Object> param) throws Exception {
+    public Map<String, Object> selectCom7010List(@RequestParam(defaultValue = "1") int pageNum,  @RequestBody Map<String, Object> param) throws Exception {
 
     	
     	int totalCnt = com7010Service.selectCom7010Cnt(param);
 
-        Map<String, Object> pagingParams = PageUtil.getPagingParams(param, totalCnt);
+        Map<String, Object> pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
         param.putAll(pagingParams);
 
         List<Map<String,Object>> resultList =  com7010Service.selectCom7010List(param);

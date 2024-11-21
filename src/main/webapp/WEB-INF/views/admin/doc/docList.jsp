@@ -1,28 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<% String ctxPath = request.getContextPath(); %>
-
-
+		 pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
-
+<link rel="stylesheet" type="text/css" href="/css/common.css">
 <style type="text/css">
-
-
-
 	div.row{
 			width: 100%;
 			margin: 0px;
 			padding: 0px;
 		}
-
-
 	div.v-line {
 	  border-left : thin solid #cccccc;
-	  height : 80%px;
+	  height : 80px;
 	  padding: 0px;
 	}
 
@@ -438,7 +429,7 @@
 
 	function loadDocuments(type) {
 		$.ajax({
-			url: "/workflow/changeList?type=" + type,
+			url: "/docList/changeList?type=" + type,
 			type: "GET",
 			success: function(data) {
 				console.log(data);
@@ -478,22 +469,82 @@
 				.css("border-bottom", activeType === "complete" ? "4px solid #00cc00" : "none");
 	}
 
+	function selectDocumentSearchList(pageNum,type) {
+		$.ajax({
+			type: "GET",
+			url: "/docList/changeList",
+			dataType: "json",
+			data: {
+				pageNum: pageNum,
+				type: 'approval'
+			},
+			success: function(data) {
+				var tableBody = $("#documentTable tbody");
+				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
+				$.each(data.resultList, function(index, doc) {
+					var rowHtml = $('<tr>')
+							.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType + ")") // 클릭 시 상세보기 함수 호출
+							.append('<td>' + doc.docTypeName + '</td>') // 결재 분류
+							.append('<td>' + doc.docTitle + '</td>')    // 결재 제목
+							.append('<td>' + doc.createdDate + '</td>') // 작성일
+							.append('<td>' + doc.docStatusName + '</td>'); // 결재 상태
+					tableBody.append(rowHtml);
+				});
+				// 페이징 표시 함수 호출
+				pageNumDisplay(data.pager);
+			},
+			error: function(xhr, status, error) {
+				console.error("데이터 조회 실패:", error);
+			}
+		});
+	}
+
+	/*페이징 그리기*/
+	function pageNumDisplay(pager) {
+		var pageNumDiv = $("#pageNumDiv");
+		pageNumDiv.empty();
+		if (pager.startPage > pager.blockSize) {
+			pageNumDiv.append(
+					'<a href="javascript:selectDocumentSearchList(' + pager.prevPage + ');">' +
+					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>' +
+					'</a>'
+			);
+		}
+		for (var i = pager.startPage; i <= pager.endPage; i++) {
+			if (pager.pageNum !== i) {
+				pageNumDiv.append(
+						'<a class="page-numbox" href="javascript:selectDocumentSearchList(' + i + ');">' + i + '</a>'
+				);
+			} else {
+				pageNumDiv.append(
+						'<a class="page-num is-active" disabled>' + i + '</a>'
+				);
+			}
+		}
+		if (pager.endPage < pager.totalPage) {
+			pageNumDiv.append(
+					'<a href="javascript:selectDocumentSearchList(' + pager.nextPage + ');">' +
+					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>' +
+					'</a>'
+			);
+		}
+	}
 
 
 	function documentDetailView(docId, docType){
-
 		let docTypeCode = parseInt(docType);
+        let referenceType = "doc";
 		// 상태 코드에 따른 파라미터 설정
 		if (docTypeCode === 1) {
 			fullUrl = "/approval/annualLeaveView?docId=" + docId;
 		} else if (docTypeCode === 2) {
-			fullUrl = "/approval/expenseDetailView?docId=" + docId;
+			fullUrl = "/approval/expenseDetailView?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 3) {
 			fullUrl = "/doc/doc1040View?docId=" + docId;
 		} else if (docTypeCode === 5) {
 			fullUrl = "/doc/doc1050View?docId=" + docId;
 		} else if (docTypeCode === 6) {
-			fullUrl = "/doc/doc1060View?docId=" + docId;
+			fullUrl = "/doc/doc1060View?docId=" + docId + "&referenceType=" + referenceType ;
 		} else {
 			// docType이 예상치 못한 값일 경우 기본 URL로 설정
 			fullUrl = "/defaultView?docId=" + docId;
@@ -502,13 +553,19 @@
 		// 생성된 URL로 이동
 		window.location.href = fullUrl;
 	}
-
-
-
-
-  /////////////////////////////////////////////
 </script>
-<jsp:include page="/WEB-INF/views/admin/jihee/header.jsp"></jsp:include>
+<div style="padding-top: 35px; padding-left: 40px; padding-bottom: 35px;]">
+	<span><a class="mylink" href="javascript:location.href='/docList'" style="color: black; font-size: 27pt; font-weight: bold; padding-right: 20px;">내 문서함</a></span>
+	<span><a class="link" href="javascript:location.href='/cpWorkflow.yolo'" style=" font-size: 27pt; font-weight: bold;">회사 문서함</a></span>
+	<select>
+		<option>지출결의서</option>
+		<option>근태계</option>
+	</select>
+	<button type="button" class="headerBtn" style="margin-left : 0px; float:right; margin-right:10px;" onclick="javascript:location.href='/doc/selectWrite'">
+		<i class="bi bi-pencil-fill"></i>
+		작성하기
+	</button>
+</div>
 <div class="border-top"></div>
 
 <div class="" >
@@ -557,7 +614,31 @@
 					</table>
 				</div>
 			</div>
-	    	<!-- 페이지바 -->
+			<div class="container">
+				<div id="pageNumDiv" class="pagination p12">
+					<c:if test="${pager.startPage > pager.blockSize}">
+						<!-- 스크립트는 검색하는 param값-->
+						<a href="javascript:selectDocumentSearchList('${pager.prevPage}');" style="padding-top: 3px;">
+							<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>
+						</a>
+					</c:if>
+					<c:forEach var="i" begin="${pager.startPage}" end="${pager.endPage}">
+						<c:choose>
+							<c:when test="${pager.pageNum != i}">
+								<a class="page-numbox" href="javascript:selectDocumentSearchList('${i}');">${i}</a>
+							</c:when>
+							<c:otherwise>
+								<a class="page-num is-active" disabled>${i}</a>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+					<c:if test="${pager.endPage < pager.totalPage}">
+						<a href="javascript:selectDocumentSearchList();" class="" style="padding-top: 3px;">
+							<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>
+						</a>
+					</c:if>
+				</div>
+			</div>
 	    </div>
 	<!-- ajax 올릴 것 끝1 -->
 	</div>

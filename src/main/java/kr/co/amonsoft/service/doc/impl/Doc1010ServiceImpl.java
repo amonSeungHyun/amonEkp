@@ -48,7 +48,7 @@ public class Doc1010ServiceImpl implements Doc1010Service {
         List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
         approvalStep.forEach(step -> {
             step.put("docId", docId);
-            doc1010Mapper.insertApprovalStep(step);
+            apvCommonMapper.insertApprovalStep(step);
         });
 
         // 휴가계 테이블에 넣을 데이터

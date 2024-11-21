@@ -4,12 +4,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<jsp:include page="/WEB-INF/views/admin/jihee/writeHeader2.jsp"></jsp:include>
+
+<% String ctxPath = request.getContextPath(); %>
+
+<jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
 
 <style type="text/css">
 	/* CSS 정리된 스타일 */
 	p { margin:0pt 0pt 8pt }
+	pre {margin-top:30px; margin-left:10px; font-family: 'Pretendard', sans-serif; !important }
 	table { margin-top:0pt; margin-bottom:8pt }
 	/* Additional styles for table formatting and inputs */
 	.filebox .upload-name {
@@ -83,21 +86,16 @@
 		width : 780px;
 		margin: 20px;
 	}
-	.approval-image-td{
-		text-align: center;
-		vertical-align: center;
-	}
-
-	.approval-image{
-		width: 80px;
-		height:80px;
-	}
 
 	.col-table{
 		border:0.75pt solid #000000;
 		border-collapse:collapse;
 		width : 780px;
 		margin: 20px;
+	}
+	
+	.col-table td {
+	    height: auto !important;
 	}
 
 	.col1{
@@ -198,13 +196,14 @@
 	/* Style for the textarea */
 	textarea {
 		width: 100%; /* Make textarea take full width of the cell */
-		height: 100%; /* Adjust height as needed */
-		border: none; /* Remove border */
+		height: 100% !important; /* td padding을 고려한 높이 조정 */
+		border: none;
 		background-color: transparent; /* Make background transparent */
 		resize: none; /* Disable resizing */
 		overflow: hidden; /* Hide overflow */
-		text-align: center; /* Center-align text if needed */
-		padding: 0;
+		text-align: left; /* Center-align text if needed */
+		border-radius: 10px;
+		padding: 10px;
 		line-height: 1.2;
 	}
 
@@ -212,6 +211,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
 	$(document).ready (function(){
+		
+		approvalRequestDetailView();
+		
 		$("#file").on('change',function(){
 			var fileName = $("#file").val();
 			$(".upload-name").val(fileName);
@@ -232,19 +234,45 @@
 			// Set the td height to match the textarea height
 			$(textarea).closest('td').height(textarea.scrollHeight);
 		}
+
 	});
+	
+	function decodeHtmlEntities(str) {
+        var textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        return textarea.value.replace(/&nbsp;/g, ' ');
+    }
+	
+	function approvalRequestDetailView(){
+		$.ajax({
+			url: '/doc/approvalRequestDetailView', // 데이터를 보낼 서버의 URL로 변경
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({docId:"${docId}"}),
+			success: function(data) {
+				console.log("data >> ", data)
 
+				const formattedContent1 = "<pre>" + decodeHtmlEntities(data.approval_content) + "</pre>";
+	            const formattedContent2 = "<pre>" + decodeHtmlEntities(data.instructions) + "</pre>";
 
+	            $("#approval_content").html(formattedContent1);
+	            $("#instructions").html(formattedContent2);
+			},
+			error: function (error) {
+				console.error('Error sending data:', error);
+			}
+		});
+	}
 
 </script>
 <div class="contai" style="overflow-x: hidden;">
-	<form name="writeFrm" enctype="multipart/form-data">
+	<form name="writeFrm" id="writeFrm" enctype="multipart/form-data">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
 						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<strong><span class="font-malgungothic" style="color:#000000">지출결의서</span></strong>
+							<strong><span class="font-malgungothic" style="color:#000000">품의서</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -263,114 +291,80 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<c:forEach var="approvalStep" items="${approvalSteps}" >
-						<c:if test="${approvalStep.status == '03'}">
-							<td class="col1 approval-image-td">
-								<img class="approval-image" src="/image/approval.png">
-							</td>
-						</c:if>
-						<c:if test="${approvalStep.status == '04'}">
-							<td class="col1 approval-image-td">
-								<img class="approval-image" src="/image/reject.png">
-							</td>
-						</c:if>
-						<c:if test="${approvalStep.status != '03' && approvalStep.status != '04'}">
-							<td class="col1 approval-image-td">
-							</td>
-						</c:if>
-					</c:forEach>
+					<td class="col1">확인</td>
+					<td class="col1"></td>
+					<td class="col1"></td>
+					<td class="col1"></td>
 				</tr>
 				<tr style="height:22.05pt">
-					<c:forEach var="approvalStep" items="${approvalSteps}" >
-						<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="${approvalStep.stepNo}" data-user-id="${approvalStep.approvalId}">${approvalStep.userName} / ${approvalStep.positionName}</td>
-					</c:forEach>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal"><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="">박형호 / 상무</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-user-id="">최선영 / 이사</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-user-id="">이길호 / 대표</td>
 				</tr>
 			</table>
 			<table class="col-table">
 				<tr style="height:22.5pt">
 					<td class="col2">
-						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">성&#xa0;&#xa0;&#xa0; 명</p>
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">기안일</p>
 					</td>
-					<td class="col3">${documentCreatorInfo.userName}</td>
+					<td class="col3">
+						${approvalRequestDetails.draft_date}
+					</td>
 					<td class="col2">
-						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">직&#xa0;&#xa0;&#xa0; 급</p>
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">품의번호</p>
 					</td>
-					<td class="col3">${documentCreatorInfo.positionName}</td>
+					<td class="col3">
+						${approvalRequestDetails.approval_id}					
+					</td>
 				</tr>
 				<tr style="height:22.55pt">
 					<td class="col2">
-						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">부&#xa0;&#xa0;&#xa0; 서</p>
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">소속부서</p>
 					</td>
-					<td class="col3">${documentCreatorInfo.organizationName}</td>
+					<td class="col3">
+						${approvalRequestDetails.department}		
+					</td>
 					<td class="col2">
-						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">작성일</p>
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">기안자</p>
 					</td>
-					<td class="col3">${documentCreatorInfo.createdDate}</td>
+					<td class="col3">
+						${approvalRequestDetails.drafter}	
+					</td>
+				</tr>
+				<tr style="height:22.55pt">
+					<td class="col2">
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">품의제목</p>
+					</td>
+					<td colspan="3">
+						${approvalRequestDetails.approval_title}	
+					</td>
 				</tr>
 			</table>
 			<table class="col-table">
-				<tr style="height:22.5pt">
-					<td colspan="6" style="width:476.65pt; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
-						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">내&#xa0;&#xa0;&#xa0; 역</p>
+				<tr style="height:29.2pt">
+					<td colspan="2" style="width:140.15pt; border-top:0.75pt solid #a0a0a0; border-right:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">품의내용</p>
+					</td>
+				</tr>
+				<tr style="height:330px">
+					<td colspan="2" style="height: 330px !important; ">
+				    	<p id="approval_content" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p>
 					</td>
 				</tr>
 				<tr style="height:29.2pt">
 					<td colspan="2" style="width:140.15pt; border-top:0.75pt solid #a0a0a0; border-right:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
-						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">총 금 액</p>
-					</td>
-					<td colspan="4" style="width:335.3pt; border-top:0.75pt solid #a0a0a0; border-left:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle">
-						<p class="a font-malgungothic" style="margin-right:5pt; margin-left:5pt; line-height:normal; font-size:9pt">일금 ____ 원정 (\____)</p>
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">지시사항</p>
 					</td>
 				</tr>
-				<tr style="height:22.5pt">
-					<td class="detail-col1 header-cell font-malgungothic text-center">일</td>
-					<td class="detail-col2 header-cell font-malgungothic text-center">지출항목</td>
-					<td class="detail-col3 header-cell font-malgungothic text-center">이용점명</td>
-					<td class="detail-col4 header-cell font-malgungothic text-center">사용 내역</td>
-					<td class="detail-col5 header-cell font-malgungothic text-center">사용 금액</td>
-					<td class="detail-col6 header-cell font-malgungothic text-center">비고</td>
+				<tr style="height:90pt">
+					<td colspan="2" style="height: 90pt !important; ">
+				    	<p id="instructions" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p>
+					</td>
 				</tr>
-				<c:forEach var="i" begin="1" end="15">
-					<input id="docId" type="hidden" value="${expenseDetails[0].docId}"/>
-					<input id="d" type="hidden" value="${expenseDetails[0].docId}"/>
-					<tr style="height:22.5pt">
-						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<c:if test="${i <= expenseDetails.size()}">
-								${expenseDetails[i - 1].expenseDate}
-							</c:if>
-						</td>
-						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<c:if test="${i <= expenseDetails.size()}">
-								${expenseDetails[i - 1].expenseItem}
-							</c:if>
-						</td>
-						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<c:if test="${i <= expenseDetails.size()}">
-								${expenseDetails[i - 1].storeName}
-							</c:if>
-						</td>
-						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<c:if test="${i <= expenseDetails.size()}">
-								${expenseDetails[i - 1].usageDetail}
-							</c:if>
-						</td>
-						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<c:if test="${i <= expenseDetails.size()}">
-								${expenseDetails[i - 1].expenseAmount}
-							</c:if>
-						</td>
-						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<c:if test="${i <= expenseDetails.size()}">
-								${expenseDetails[i - 1].remark}
-							</c:if>
-						</td>
-					</tr>
-				</c:forEach>
+				
 			</table>
-			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
-			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
-			<p class="a7 font-malgungothic text-center">2022년 3월 11일</p>
-			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 :</p>
+			
 		</div>
 		<!-- File upload area -->
 		<div class="file-area" id="attachArea">

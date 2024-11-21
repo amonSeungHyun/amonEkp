@@ -100,20 +100,17 @@
 	}
 
 	function goWrite3() {
-
 		const frm = document.selectFrm3;
 		/* frm.method = "POST"; */
 		frm.action = "/doc/doc1050";
 		frm.submit();
-
-
 	}
 
 	function goWrite4() {
 
 		const frm = document.selectFrm4;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/expenseWrite";
+		frm.action = "/doc/doc1040";
 		frm.submit();
 
 
@@ -133,7 +130,7 @@
 
 		const frm = document.selectFrm6;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/expenseWrite";
+		frm.action = "/workflow/write";
 		frm.submit();
 
 
@@ -143,7 +140,7 @@
 
 		const frm = document.selectFrm7;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/expenseWrite";
+		frm.action = "/workflow/write";
 		frm.submit();
 
 
@@ -153,7 +150,7 @@
 
 		const frm = document.selectFrm8;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/expenseWrite";
+		frm.action = "/workflow/write";
 		frm.submit();
 
 
@@ -163,7 +160,7 @@
 
 		const frm = document.selectFrm9;
 		/* frm.method = "POST"; */
-		frm.action = "/workflow/expenseWrite";
+		frm.action = "/doc/expenseDetailWrite";
 		frm.submit();
 
 

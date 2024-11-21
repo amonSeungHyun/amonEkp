@@ -9,7 +9,6 @@ import java.util.Map;
 @Mapper
 public interface Doc1010Mapper {
 
-    void insertApprovalStep(Map<String, Object> approvalStep);
 
     void insertDocument(Map<String, Object> param);
 

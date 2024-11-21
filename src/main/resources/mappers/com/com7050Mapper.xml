@@ -5,10 +5,7 @@
     <!-- 구성원 조회 -->
     <select id="selectMemberList" parameterType="map" resultType="kr.co.amonsoft.dto.com.MemberListDTO">
         <!-- selectMemberList(구성원 조회) -->
-        SELECT *
-        FROM (
-            SELECT ROW_NUMBER() OVER (ORDER BY m.user_id) AS rowNum
-                 , m.user_name as userName
+            SELECT m.user_name as userName
                  , m.user_id as userId
                  , m.employment_status as employmentStatus
                  , emp.code_detail_name as employmentStatusNm
@@ -51,8 +48,7 @@
 	            AND m.user_id = #{userId}
 	        </if>
              ORDER BY m.user_id ASC
-        ) AS SUB
-        WHERE SUB.rownum BETWEEN #{startRow} AND #{endRow}
+             LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="selectMemberCnt" resultType="int">

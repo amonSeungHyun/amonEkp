@@ -6,7 +6,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <% String ctxPath = request.getContextPath(); %>
-<jsp:include page="/WEB-INF/views/admin/jihee/writeHeader2.jsp">
+
+<jsp:include page="/WEB-INF/views/admin/jihee/docHeader.jsp">
 	<jsp:param name="docType" value="01" />
 </jsp:include>
 
@@ -306,8 +307,6 @@
 	let holidays = [];		// 공휴일 저장 객체
 	window.docType = "01"; // docType 값을 전역으로 설정
 
-
-
 	// 특정 연도의 공휴일 설정 함수
 	function setHolidaysForYear(year) {
 		console.log("year : ", year);
@@ -480,7 +479,6 @@
 		});
 	}
 	function insertApprovalExpenseDetail() {
-		alert("annualLeave.jsp");
 		const approvalData = collectApprovalSteps();
 		const annualLeaveData = collectAnnualLeaveData();
 		if(confirm("결재 신청을 하시겠습니까?")) {
@@ -521,7 +519,6 @@
 
 
 	function collectAnnualLeaveData(){
-		alert("휴가계 collect 데이터");
 		const data = [];
 		const rowData = {
 			// amy
@@ -707,7 +704,7 @@
 				</tr>
 				<tr>
 					<td class="col2">비상연락처</td>
-					<td colspan="3"><input type="text" id="emergencyContact" class="input-field no-border" name="emergencyContact" placeholder="연락처 입력" maxlength="13" oninput="formatPhoneNumber(this)"></td>
+					<td colspan="3"><input type="text" id="emergencyContact" class="input-field no-border" name="emergencyContact" placeholder="연락처 입력" ></td>
 				</tr>
 				<tr>
 					<td class="col2">개인사유</td>

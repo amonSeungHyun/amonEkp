@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.file.FileMapper">
+
+    <select id="findFileDatas" parameterType="map" resultType="camelcasemap">
+        SELECT file_id
+             , original_file_name
+        FROM file
+       WHERE reference_type = #{referenceType}
+         AND reference_id = #{referenceId}
+    </select>
+
+    <select id="findFileById" parameterType="BigInteger" resultType="camelcasemap">
+        SELECT file_path
+             , stored_file_name
+             , original_file_name
+        FROM file
+        WHERE file_id = #{fileId}
+    </select>
+
+
+    <insert id="saveFile" parameterType="map">
+        INSERT INTO file(
+            original_file_name
+           , stored_file_name
+           , file_path
+           , file_size
+           , file_type
+           , created_id
+           , created_date
+           , updated_id
+           , updated_date
+           , reference_id
+           , reference_type
+        )
+        VALUES(
+             #{originalFileName}
+           , #{storedFileName}
+           , #{filePath}
+           , #{fileSize}
+           , #{fileType}
+           , #{userId}
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+           , #{userId}
+           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+           , #{referenceId}
+           , #{referenceType}
+        )
+    </insert>
+
+</mapper>
