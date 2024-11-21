@@ -83,7 +83,7 @@
 
 		const frm = document.selectFrm;
 		frm.method = "POST";
-		frm.action = "/admin/doc/annualLeave";
+		frm.action = "/admin/doc/doc1010/annualLeave";
 		frm.submit();
 
 
