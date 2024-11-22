@@ -75,16 +75,15 @@
 	function selectCom1010(searchInput = '', selected_type = '', pageNum = 1, pageSize = 10) {
 		page = pageNum;
 		size = pageSize;
-		
 		$.ajax({
 			type: "POST",
 			url: "/com/selectCom1010List",
 			dataType: "json",
-			contentType: "application/json",
-			data: JSON.stringify({ searchInput: searchInput,
+			//contentType: "application/json",
+			data: { searchInput: searchInput,
 								 selected_type: selected_type,
 								 pageNum: pageNum,
-								 pageSize: pageSize}),
+								 pageSize: pageSize},
 			success: function(data) {
 				console.log(">>>>>>>>>>>>",data)
 				let tableBody = $("#contentList tbody");
@@ -120,28 +119,30 @@
 	}
 
 	function pageNumDisplay(pager, searchInput, selected_type) {
-		var html = '';
+	    var html = '';
 
-		// 이전 버튼
-		if (pager.startPage > pager.blockSize) {
-			html += '<a href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', \'' + pager.prevPage +  '\', \'' + ', ' + size + '\);" class="" style="padding-top: 3px;"><button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button></a>';
-		}
+	    // 이전 버튼
+	    if (pager.startPage > pager.blockSize) {
+	        html += '<a href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', ' + pager.prevPage + ', ' + size + ');" class="" style="padding-top: 3px;">';
+	        html += '<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button></a>';
+	    }
 
-		// 페이지번호
-		for (var i = pager.startPage; i <= pager.endPage; i++) {
-			if (pager.pageNum !== i) {
-				html += '<a class="page-num box" href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', \''  + i + '\', \'' + size + '\');">' + i + '</a>';
-			} else {
-				html += '<a class="page-num is-active" disabled>' + i + '</a>';
-			}
-		}
+	    // 페이지 번호
+	    for (var i = pager.startPage; i <= pager.endPage; i++) {
+	        if (pager.pageNum !== i) {
+	            html += '<a class="page-num box" href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', ' + i + ', ' + size + ');">' + i + '</a>';
+	        } else {
+	            html += '<a class="page-num is-active" disabled>' + i + '</a>';
+	        }
+	    }
 
-		// 다음 버튼
-		if (pager.endPage < pager.totalPage) {
-			html += '<a href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', \'' + pager.nextPage + '\', \'' + size + '\');" class="" style="padding-top: 3px;"><button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button></a>';
-		}
+	    // 다음 버튼
+	    if (pager.endPage < pager.totalPage) {
+	        html += '<a href="javascript:selectCom1010(\'' + searchInput + '\', \'' + selected_type + '\', ' + pager.nextPage + ', ' + size + ');" class="" style="padding-top: 3px;">';
+	        html += '<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button></a>';
+	    }
 
-		$("#pageNumDiv").html(html);
+	    $("#pageNumDiv").html(html);
 	}
 	
 	

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,18 +31,17 @@ public class Com1010Controller {
     }
 	
     @ResponseBody
-    @RequestMapping(value = "/com/selectCom1010List")
-    public Map<String, Object> selectCom1010List(@RequestBody Map<String, Object> param) throws Exception {
-    	
+    @PostMapping("/com/selectCom1010List")
+    public Map<String, Object> selectCom1010List(@RequestParam(defaultValue = "1") int pageNum, @RequestParam Map<String, Object> param) throws Exception {
         int totalCnt = com1010Service.selectCom1010ListCnt(param);
-//        Map<String, Object> pagingParams = PageUtil.getPagingParams(param, totalCnt);
-//        param.putAll(pagingParams);
+        Map<String, Object> pagingParams = PageUtil.getPagingParams(pageNum, totalCnt);
+        param.putAll(pagingParams);
     	
         List<Map<String, Object>>resultList = com1010Service.selectCom1010List(param);
         
         Map<String, Object> resultMap = new HashMap<String, Object>();
-//        resultMap.put("resultList", resultList);
-//        resultMap.put("pager", pagingParams);
+        resultMap.put("resultList", resultList);
+        resultMap.put("pager", pagingParams);
 
         return resultMap;
         
