@@ -23,4 +23,6 @@ public interface DocCommonMapper {
 
     void insertDocument(Map<String, Object> param);
 
+    List<Map<String, Object>> findCeoAndManager();
+
 }

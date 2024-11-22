@@ -5,11 +5,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<% String ctxPath = request.getContextPath(); %>
-
-<jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp">
-	<jsp:param name="docType" value="01" />
-</jsp:include>
+<jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
 
 <style type="text/css">
 	/* CSS 정리된 스타일 */
@@ -299,13 +295,16 @@
 	}
 
 </style>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 <script type="text/javascript">
 	// === 공휴일 추가 (연도별) ===
 	let holidays = [];		// 공휴일 저장 객체
-	window.docType = "01"; // docType 값을 전역으로 설정
 
 	// 특정 연도의 공휴일 설정 함수
 	function setHolidaysForYear(year) {
@@ -403,11 +402,6 @@
 			calculateDuration(); // endDate 변경 시 기간 계산
 		}).on('show.daterangepicker', function(event, picker) {
 			applyHolidayStyles(picker);
-		});
-
-		$("#file").on('change',function(){
-			var fileName = $("#file").val();
-			$(".upload-name").val(fileName);
 		});
 
 		$("input[name='vacationType']").on("change", function() {
@@ -519,7 +513,7 @@
 
 
 	function collectAnnualLeaveData(){
-		const data = [];
+		// const data = [];
 		const rowData = {
 			// amy
 			vacationType: $("input[name='vacationType']:checked").val(), // 선택된 유형 추가
@@ -579,10 +573,6 @@
 
 	// 이벤트 바인딩 함수
 	function bindEvents() {
-		$("#file").on('change', function () {
-			var fileName = $("#file").val();
-			$(".upload-name").val(fileName);
-		});
 
 		$("input[name='vacationType']").on("change", function () {
 			$("input[name='vacationType']").not(this).prop("checked", false);
@@ -619,6 +609,7 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
+		<input id="docType" type="hidden" value="01">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
@@ -718,13 +709,9 @@
 			<p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
 			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 :</p>
 		</div>
+
 		<!-- File upload area -->
-		<div class="file-area" id="attachArea">
-			<div class="filebox">
-				<label for="file">파일 찾기</label>
-				<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-				<input type="file" id="file" multiple="multiple" name="attach">
-			</div>
-		</div>
+		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
+
 	</form>
 </div>

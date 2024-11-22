@@ -109,6 +109,23 @@
           AND cd_detail.code_detail_number = '01'
     </select>
 
+    <!-- 대표님, 관리자 리스트 뽑기 -->
+    <select id="findCeoAndManager" resultType="list">
+        SELECT u.user_id as userId
+             , u.user_name as userName
+             , u.position_code as positionCode
+             , position_detail.code_detail_name as positionName
+             , u.email as email
+        FROM user u
+                 LEFT JOIN common_code_detail cd_detail
+                           ON u.employment_status = cd_detail.code_detail_number
+                               AND cd_detail.code_number = 'COM04'
+                 LEFT JOIN common_code_detail position_detail
+                           ON u.position_code = position_detail.code_detail_number
+                               AND position_detail.code_number = 'COM02'
+        WHERE u.role in ('01', '02')
+    </select>
+
     <insert id="insertDocument" useGeneratedKeys="true" keyProperty="docId">
         INSERT INTO document
         (

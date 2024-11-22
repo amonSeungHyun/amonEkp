@@ -114,8 +114,8 @@ a:active {text-decoration: none; color: #cccccc;}
 		switch (docCode) {
 			case "01":
 				return {
-					data : "dataFor07",
-					ajaxUrl: `${commonBaseUrl}/insertExpenseDetail07`,
+					data : collectAnnualLeaveData(),
+					ajaxUrl: "/approval/insertAnnualLeaveDetail",
 				};
 			case "02":
 				return {
@@ -144,8 +144,8 @@ a:active {text-decoration: none; color: #cccccc;}
 
 	function getRedirectUrl(docId, docType, referenceType) {
 		const urls = {
-			"01": "/approval/expenseDetailView?docId=" + docId + "&referenceType=doc",
-			"02": "/docList",
+			"01": "/approval/annualLeaveView?docId=" + docId + "&referenceType=doc",
+			"02": "/approval/expenseDetailView?docId=" + docId + "&referenceType=doc",
 			"03": "/doc/doc1040View?docId=" + docId + "&referenceType=doc",
 			"05": "/doc/doc1050View?docId=" + docId + "&referenceType=doc",
 			"06": "/doc/doc1060View?docId=" + docId + "&referenceType=doc",
@@ -180,7 +180,6 @@ a:active {text-decoration: none; color: #cccccc;}
 		let documentConfig = getDocumentConfig(docType);
 		const data = documentConfig.data
 		const files = $("#fileInput")[0].files;
-
 
 		Swal.fire({
 			title: '결재 신청을 하시겠습니까?',

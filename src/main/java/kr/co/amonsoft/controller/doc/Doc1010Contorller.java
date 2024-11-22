@@ -1,5 +1,6 @@
 package kr.co.amonsoft.controller.doc;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import kr.co.amonsoft.service.apv.ApvCommonService;
 import kr.co.amonsoft.service.doc.DocCommonService;
+import kr.co.amonsoft.service.file.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +29,7 @@ import kr.co.amonsoft.service.doc.Doc1010Service;
 import kr.co.amonsoft.service.doc.Doc1020Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Controller
@@ -36,7 +39,9 @@ public class Doc1010Contorller {
     private final Doc1010Service doc1010Service;
     private final DocCommonService docCommonService;
     private final ApvCommonService apvCommonService;
+    private final FileService fileService;
 
+    private final String UPLOAD_PATH = "C:\\test";
 
     /** ##########################################################################################################################
      * 휴가계
@@ -71,11 +76,19 @@ public class Doc1010Contorller {
 
     @ResponseBody
     @PostMapping("/approval/insertAnnualLeaveDetail")
-    public ResponseEntity<BigInteger> insertAnnualLeaveDetail(@RequestBody Map<String,Object> param){
+    public ResponseEntity<BigInteger> insertAnnualLeaveDetail(
+            @RequestBody Map<String,Object> param
+            , @RequestParam(value = "files", required = false) List<MultipartFile> files
+    ) throws IOException {
         log.info("#####################");
         log.info("휴가계 : {}", param);
         log.info("#####################");
         BigInteger docId = doc1010Service.insertApprovalDocument(param);
+
+        if(files != null && !files.isEmpty()) {
+            fileService.uploadFiles(files, UPLOAD_PATH, param);
+        }
+
         return ResponseEntity.ok(docId);
     }
 

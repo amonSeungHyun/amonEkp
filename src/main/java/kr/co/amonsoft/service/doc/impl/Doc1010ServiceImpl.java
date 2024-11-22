@@ -4,6 +4,7 @@ import kr.co.amonsoft.config.security.CustomUserDetails;
 import kr.co.amonsoft.mapper.apv.ApvCommonMapper;
 import kr.co.amonsoft.mapper.doc.Doc1010Mapper;
 import kr.co.amonsoft.mapper.doc.Doc1020Mapper;
+import kr.co.amonsoft.mapper.doc.DocCommonMapper;
 import kr.co.amonsoft.service.EmailService;
 import kr.co.amonsoft.service.doc.Doc1010Service;
 import kr.co.amonsoft.service.doc.Doc1020Service;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class Doc1010ServiceImpl implements Doc1010Service {
     private final Doc1010Mapper doc1010Mapper;
     private final ApvCommonMapper apvCommonMapper;
     private final EmailService emailService;
+    private final DocCommonMapper docCommonMapper;
 
     @Override
     public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
@@ -58,7 +61,11 @@ public class Doc1010ServiceImpl implements Doc1010Service {
         annualLeaveData.put("docId", docId);
         doc1010Mapper.insertVacationDetail(annualLeaveData);
 
-        emailService.sendEmail("anrh0213@nate.com", "테스트입니다", "ㅎㅇㅎㅇ");
+        // 결재후 메일
+        List<Map<String, Object>> findEmail = new ArrayList<>();
+        findEmail = docCommonMapper.findCeoAndManager();
+        log.info("이메일 리스트 : {}", findEmail);
+//        emailService.sendEmail("anrh0213@nate.com", "테스트입니다", "ㅎㅇㅎㅇ");
 
         return docId;
     }
