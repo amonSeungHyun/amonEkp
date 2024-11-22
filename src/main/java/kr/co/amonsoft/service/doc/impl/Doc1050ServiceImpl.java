@@ -7,9 +7,12 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import kr.co.amonsoft.mapper.apv.ApvCommonMapper;
 import kr.co.amonsoft.mapper.doc.Doc1020Mapper;
 import kr.co.amonsoft.mapper.doc.Doc1040Mapper;
 import kr.co.amonsoft.mapper.doc.Doc1050Mapper;
+import kr.co.amonsoft.mapper.doc.Doc1060Mapper;
+import kr.co.amonsoft.mapper.doc.DocCommonMapper;
 import kr.co.amonsoft.service.doc.Doc1050Service;
 import lombok.RequiredArgsConstructor;
 
@@ -17,39 +20,29 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class Doc1050ServiceImpl implements Doc1050Service {
 	
-	private final Doc1040Mapper doc1040Mapper;
-	private final Doc1050Mapper doc1050Mapper;
-	private final Doc1020Mapper doc1020Mapper;
+	private final DocCommonMapper docCommonMapper;
+    private final ApvCommonMapper apvCommonMapper;
+    private final Doc1050Mapper doc1050Mapper;
 	
 	@Override
-	public void insertDoc1050(Map<String, Object> param) {
-		Map<String,Object> documentMap = new HashMap<>();
-		List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) param.get("approvalData");
-		List<Map<String, Object>> expenseDetailData = (List<Map<String, Object>>) param.get("expenseDetailData");
-		
-		documentMap.put("userId", param.get("userId"));
-		documentMap.put("docTitle", param.get("docTitle"));
-		documentMap.put("docType", "05");
-		
-		 doc1040Mapper.insertDocumentApproval(documentMap);
-		 
-        // 생성된 docId를 가져옵니다.
-        BigInteger docId = (BigInteger) documentMap.get("docId");
-        
-        // 결재선
+	public BigInteger insertDoc1050(Map<String, Object> param) {
+		docCommonMapper.insertDocument(param);
+		BigInteger docId = (BigInteger) param.get("docId");
+
+        List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) param.get("approvalData");
         approvalStep.forEach(step -> {
             step.put("docId", docId);
-            step.put("create_id", param.get("userId"));
-            doc1040Mapper.insertApprovalRequestStep(step);
+            apvCommonMapper.insertApprovalStep(step);
         });
         
-        // 법인카드사용내역
+        List<Map<String, Object>>expenseDetailData = (List<Map<String, Object>>) param.get("data");
         expenseDetailData.forEach(detail -> {
             detail.put("docId", docId);
-            detail.put("create_id", param.get("userId"));
+            detail.put("userId", param.get("userId"));
             doc1050Mapper.insertDoc1050(detail);
         });
         
+        return docId;
 	}
 
 	@Override

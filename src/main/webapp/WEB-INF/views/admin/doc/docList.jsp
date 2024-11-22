@@ -540,9 +540,11 @@
 		} else if (docTypeCode === 2) {
 			fullUrl = "/approval/expenseDetailView?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 3) {
-			fullUrl = "/doc/doc1040View?docId=" + docId;
+			fullUrl = "/doc/doc1040View?docId=" + docId + "&referenceType=" + referenceType ;
+		} else if (docTypeCode === 4) {
+			fullUrl = "/doc/doc1040View?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 5) {
-			fullUrl = "/doc/doc1050View?docId=" + docId;
+			fullUrl = "/doc/doc1050View?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 6) {
 			fullUrl = "/doc/doc1060View?docId=" + docId + "&referenceType=" + referenceType ;
 		} else {

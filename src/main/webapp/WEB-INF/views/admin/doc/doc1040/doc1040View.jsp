@@ -8,6 +8,7 @@
 <% String ctxPath = request.getContextPath(); %>
 
 <jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
+<link rel="stylesheet" type="text/css" href="/css/doc/doc1050.css">
 
 <style type="text/css">
 	/* CSS 정리된 스타일 */
@@ -267,6 +268,8 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" id="writeFrm" enctype="multipart/form-data">
+		<input id="docId" type="hidden" value="${docId}"/>
+		<input id="docType" type="hidden" value="03">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
@@ -291,16 +294,27 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<td class="col1">확인</td>
-					<td class="col1"></td>
-					<td class="col1"></td>
-					<td class="col1"></td>
+					<c:forEach var="approvalStep" items="${approvalSteps}" >
+						<c:if test="${approvalStep.status == '03'}">
+							<td class="col1 approval-image-td">
+								<img class="approval-image" src="/image/approval.png">
+							</td>
+						</c:if>
+						<c:if test="${approvalStep.status == '04'}">
+							<td class="col1 approval-image-td">
+								<img class="approval-image" src="/image/reject.png">
+							</td>
+						</c:if>
+						<c:if test="${approvalStep.status != '03' && approvalStep.status != '04'}">
+							<td class="col1 approval-image-td">
+							</td>
+						</c:if>
+					</c:forEach>
 				</tr>
 				<tr style="height:22.05pt">
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal"><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="">박형호 / 상무</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-user-id="">최선영 / 이사</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-user-id="">이길호 / 대표</td>
+					<c:forEach var="approvalStep" items="${approvalSteps}" >
+						<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="${approvalStep.stepNo}" data-user-id="${approvalStep.approvalId}">${approvalStep.userName} / ${approvalStep.positionName}</td>
+					</c:forEach>
 				</tr>
 			</table>
 			<table class="col-table">
@@ -367,12 +381,6 @@
 			
 		</div>
 		<!-- File upload area -->
-		<div class="file-area" id="attachArea">
-			<div class="filebox">
-				<label for="file">파일 찾기</label>
-				<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-				<input type="file" id="file" multiple="multiple" name="attach">
-			</div>
-		</div>
+		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 	</form>
 </div>

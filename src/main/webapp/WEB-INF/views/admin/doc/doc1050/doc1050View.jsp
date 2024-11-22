@@ -42,23 +42,6 @@
 
 		$(document).on('input', '[id^=corpAmount_]', calculateTotal);
 	});
-	/*결재선 구성 List 함수*/
-	function collectApprovalSteps() {
-		const approvalData = [];
-
-		// Select all the table cells containing approval steps using jQuery
-		$('.approval-step').each(function() {
-			const stepData = {
-				approvalStepNo: $(this).data('approval-step'),
-				userId: $(this).data('user-id')
-			};
-			approvalData.push(stepData);
-		});
-
-		console.log(approvalData);
-		return approvalData;
-	}
-
 
 	function collectExpenseDetailData(){
 		const data = [];
@@ -122,6 +105,8 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
+		<input id="docId" type="hidden" value="${docId}"/>
+		<input id="docType" type="hidden" value="05">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
@@ -146,16 +131,27 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<td class="col1">확인</td>
-					<td class="col1"></td>
-					<td class="col1"></td>
-					<td class="col1"></td>
+					<c:forEach var="approvalStep" items="${approvalSteps}" >
+						<c:if test="${approvalStep.status == '03'}">
+							<td class="col1 approval-image-td">
+								<img class="approval-image" src="/image/approval.png">
+							</td>
+						</c:if>
+						<c:if test="${approvalStep.status == '04'}">
+							<td class="col1 approval-image-td">
+								<img class="approval-image" src="/image/reject.png">
+							</td>
+						</c:if>
+						<c:if test="${approvalStep.status != '03' && approvalStep.status != '04'}">
+							<td class="col1 approval-image-td">
+							</td>
+						</c:if>
+					</c:forEach>
 				</tr>
 				<tr style="height:22.05pt">
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal"><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-user-id="">최선영 / 이사</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-user-id="">이길호 / 대표</td>
+					<c:forEach var="approvalStep" items="${approvalSteps}" >
+						<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="${approvalStep.stepNo}" data-user-id="${approvalStep.approvalId}">${approvalStep.userName} / ${approvalStep.positionName}</td>
+					</c:forEach>
 				</tr>
 			</table>
 			<table class="col-table">
@@ -256,12 +252,6 @@
 			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
 		</div>
 		<!-- File upload area -->
-		<div class="file-area" id="attachArea">
-			<div class="filebox">
-				<label for="file">파일 찾기</label>
-				<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-				<input type="file" id="file" multiple="multiple" name="attach">
-			</div>
-		</div>
+		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 	</form>
 </div>

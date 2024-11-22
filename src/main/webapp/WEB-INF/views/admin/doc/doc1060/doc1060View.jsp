@@ -42,24 +42,6 @@
 		$(document).on('input', '[id^=expenseAmount_]', calculateTotal);
 	});
 
-	/*결재선 구성 List 함수*/
-	function collectApprovalSteps() {
-		const approvalData = [];
-
-		// Select all the table cells containing approval steps using jQuery
-		$('.approval-step').each(function() {
-			const stepData = {
-				approvalStepNo: $(this).data('approval-step'),
-				userId: $(this).data('user-id')
-			};
-			approvalData.push(stepData);
-		});
-
-		console.log(approvalData);
-		return approvalData;
-	}
-
-
 	function collectExpenseDetailData(){
 		const data = [];
 		for (let i = 1; i <= 15; i++) {
@@ -121,6 +103,7 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
+		<input id="docType" type="hidden" value="06">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">

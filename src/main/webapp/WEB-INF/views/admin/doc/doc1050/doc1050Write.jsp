@@ -4,9 +4,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<% String ctxPath = request.getContextPath(); %>
-
 <jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
 <link rel="stylesheet" type="text/css" href="/css/doc/doc1050.css">
 
@@ -17,12 +14,8 @@
 	    const year = today.getFullYear();
 	    const month = String(today.getMonth() + 1).padStart(2, '0');
 	    $('#Ymtitle').html(year + "년 " + month + "월<br>법인카드 사용내역서");
+	    $('#docTitle').val(year + "년 " + month + "월 법인카드 사용내역서");
 		
-		$("#file").on('change',function(){
-			var fileName = $("#file").val();
-			$(".upload-name").val(fileName);
-		});
-
 		$('textarea').each(function() {
 			adjustHeight(this);
 		}).on('input', function() {
@@ -42,74 +35,7 @@
 		$(document).on('input', '[id^=corpAmount_]', calculateTotal);
 	});
 
-	function insertCorpCardUsage() {
-		const approvalData = collectApprovalSteps();
-		const expenseDetailData = collectExpenseDetailData();
-		
-		Swal.fire({
-	        title: '결재 신청을 하시겠습니까?',
-	        icon: 'question',
-	        showCancelButton: true,
-	        confirmButtonColor: '#3085d6',
-	        cancelButtonColor: '#d33',
-	        confirmButtonText: '신청',
-	        cancelButtonText: '취소'
-	    }).then((result) => {
-	        if (result.isConfirmed) {
-	            $.ajax({
-	                url: "/doc/insertDoc1050",
-	                type: "POST",
-	                dataType: "JSON",
-	                data: JSON.stringify({
-	                	approvalData: approvalData,
-	                	expenseDetailData : expenseDetailData,
-	                	userId : "${sessionScope.userId}",
-	                	docTitle : $('#Ymtitle').html().replace("<br>", ' ')
-	                }),
-	                contentType: "application/json",
-	                success: function (response) {
-	                    Swal.fire({
-	                        icon: 'success',
-	                        title: '결재신청 완료',
-	                        text: '결재가 성공적으로 신청되었습니다.',
-	                        confirmButtonText: '확인',
-	                    }).then((result) => {
-	            	        if (result.isConfirmed) {
-		                    	$(location).attr("href", "/workflow");
-	            	        }
-	                    }); 
-	                },
-	                error: function (xhr, status, error) {
-	                    console.error("데이터 전송 실패:", error);
-	                    Swal.fire({
-	                        icon: 'error',
-	                        title: '오류 발생',
-	                        text: '결재 신청에 실패했습니다.'
-	                    });
-	                }
-	            });
-	        }
-	    });
-	}
-	/*결재선 구성 List 함수*/
-	function collectApprovalSteps() {
-		const approvalData = [];
-
-		// Select all the table cells containing approval steps using jQuery
-		$('.approval-step').each(function() {
-			const stepData = {
-				approvalStepNo: $(this).data('approval-step'),
-				userId: $(this).data('user-id')
-			};
-			approvalData.push(stepData);
-		});
-
-		console.log(approvalData);
-		return approvalData;
-	}
-
-
-	function collectExpenseDetailData(){
+	function collectcorporateCardDetailData(){
 		const data = [];
 		for (let i = 1; i <= 15; i++) {
 			if(!$('#corpDate_' + i).val()){
@@ -122,7 +48,7 @@
 				usageDetail: $('#usageDetail_' + i).val(),
 				corpAmount: $('#corpAmount_' + i).val(),
 				remark: $('#remark_' + i).val(),
-				corporateCardNumber : $("#corporate_card_number").val()
+				corporateCardNumber : $("#corporateCardNumber").val()
 			};
 			data.push(rowData);
 		}
@@ -171,7 +97,8 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
-		<input id="docType" type="hidden" value="02">
+		<input id="docType" type="hidden" value="05">
+		<input id="docTitle" type="hidden" value="05">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
@@ -237,10 +164,10 @@
 			<table class="col-table">
 				<tr style="height:22.5pt">
 					<td colspan="2" style="width:140.15pt; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
-						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">제 목</p>
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">법인카드 종류 및 번호</p>
 					</td>
 					<td colspan="4" style="width:335.3pt; border-top:0.75pt solid #a0a0a0; border-left:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle">
-						<input id="docTitle" style="width:500px; margin-left: 10px"  type="text">
+						<input id="corporateCardNumber" style="width:500px; margin-left: 10px"  type="text">
 					</td>
 				</tr>
 				<tr style="height:22.5pt">
@@ -269,10 +196,10 @@
 				<c:forEach var="i" begin="1" end="15">
 					<tr style="height:22.5pt">
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1"  id="expenseDate_${i}"></textarea>
+							<textarea wrap="soft" rows="1"  id="corpDate_${i}"></textarea>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="expenseItem_${i}"></textarea>
+							<textarea wrap="soft" rows="1" id="corpItem_${i}"></textarea>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
 							<textarea wrap="soft" rows="1" id="storeName_${i}"></textarea>
@@ -281,7 +208,7 @@
 							<textarea wrap="soft" rows="1" id="usageDetail_${i}"></textarea>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
-							<textarea wrap="soft" rows="1" id="expenseAmount_${i}"></textarea>
+							<textarea wrap="soft" rows="1" id="corpAmount_${i}"></textarea>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
 							<textarea wrap="soft" rows="1" id="remark_${i}"></textarea>

@@ -15,6 +15,7 @@
 	    const year = today.getFullYear();
 	    const month = String(today.getMonth() + 1).padStart(2, '0');
 	    $('#Ymtitle').html(year + "년 " + month + "월<br>교통비 청구서");
+	    $('#docTitle').val(year + "년 " + month + "월 교통비 청구서");
 
 
 		$('textarea').each(function() {
@@ -99,6 +100,7 @@
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
 		<input id="docType" type="hidden" value="06">
+		<input id="docTitle" type="hidden" value="06">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">

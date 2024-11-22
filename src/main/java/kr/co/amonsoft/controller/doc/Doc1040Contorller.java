@@ -1,5 +1,6 @@
 package kr.co.amonsoft.controller.doc;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import kr.co.amonsoft.service.apv.ApvCommonService;
 import kr.co.amonsoft.service.doc.DocCommonService;
+import kr.co.amonsoft.service.file.FileService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.amonsoft.config.security.CustomUserDetails;
 import kr.co.amonsoft.service.doc.Doc1020Service;
@@ -30,15 +37,17 @@ import lombok.RequiredArgsConstructor;
 public class Doc1040Contorller {
 
     private final Doc1040Service doc1040Service;
-
     private final DocCommonService docCommonService;
     private final ApvCommonService apvCommonService;
+    private final FileService fileService;
+    
+    private final String UPLOAD_PATH = "C:\\test";
     
     @GetMapping("/doc/doc1040")
     public String selectWrite(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
     	Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
-        return "/admin/doc/doc1040";
+        return "/admin/doc/doc1040/doc1040Write";
     }
     
     @ResponseBody
@@ -50,20 +59,46 @@ public class Doc1040Contorller {
     
     @ResponseBody
     @PostMapping("/doc/insertApprovalRequest")
-    public Map<String,Object> insertApprovalRequest(@RequestBody Map<String,Object> param){
-    	Map<String,Object> result = new HashMap<>();
-        doc1040Service.insertApprovalRequest(param);
-        return result;
+    public ResponseEntity<BigInteger> insertApprovalRequest(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam("data") String data,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> param = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {});
+        String userId = customUserDetails.getUserId();
+        param.put("userId",userId);
+
+        BigInteger docId = doc1040Service.insertApprovalRequest(param);
+        param.put("referenceId",docId);
+        if(files != null && !files.isEmpty()) {
+            fileService.uploadFiles(files, UPLOAD_PATH, param);
+        }
+
+        return ResponseEntity.ok(docId);
     }
     
     @GetMapping("/doc/doc1040View")
-    public String approvalRequestDetailView(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam BigInteger docId, Model model) {
+    public String approvalRequestDetailView(@AuthenticationPrincipal CustomUserDetails customUserDetails
+    		, @RequestParam BigInteger docId
+    		, @RequestParam String referenceType
+    		, Model model) {
     	model.addAttribute("docId", docId);
     	List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
+    	List<Map<String,Object>> fileList = fileService.findFileDatas(docId, referenceType);
+    	Map<String,Object>  documentCreatorInfo = apvCommonService.findDocumentCreatorInfo(docId);
+    	Map<String, Object> currentStepNo = apvCommonService.findCurrentStepNo(docId);
+        Map<String, Object> userStepNo = apvCommonService.findStepNoByDocIdAndUserId(docId, customUserDetails.getUserId());
+    	
         Map<String,Object>  approvalRequestDetails = doc1040Service.findApprovalRequestDetailsByDocId(docId);
+        
+        model.addAttribute("userStepNo",userStepNo);
+        model.addAttribute("fileList",fileList);
+        model.addAttribute("currentStepNo",currentStepNo);
         model.addAttribute("approvalSteps", approvalSteps);
+        model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("approvalRequestDetails", approvalRequestDetails);
-        return "/admin/doc/doc1040View";
+        
+        return "/admin/doc/doc1040/doc1040View";
     }
     
     @ResponseBody

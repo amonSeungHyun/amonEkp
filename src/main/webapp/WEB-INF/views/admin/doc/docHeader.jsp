@@ -122,12 +122,21 @@ a:active {text-decoration: none; color: #cccccc;}
 					data: collectExpenseDetailData(),
 					ajaxUrl: "/approval/insertExpenseDetail",
 				};
-			case "06":
+			case "03":	// 품의서
+				return {
+					data : collectApprovalRequest(),
+					ajaxUrl: "/doc/insertApprovalRequest",
+				};
+			case "05":	// 법인카드
+				return {
+					data : collectcorporateCardDetailData(),
+					ajaxUrl: "/doc/insertDoc1050",
+				};
+			case "06":	// 교통비
 				return {
 					data : collectVehicleExpenseDetailData(),
 					ajaxUrl: "/doc/insertTransportExpense",
 				};
-
 			default:
 				throw new Error(("Unknown docType:" + docCode));
 		}
@@ -137,7 +146,9 @@ a:active {text-decoration: none; color: #cccccc;}
 		const urls = {
 			"01": "/approval/expenseDetailView?docId=" + docId + "&referenceType=doc",
 			"02": "/docList",
-			"06": "/docList",
+			"03": "/doc/doc1040View?docId=" + docId + "&referenceType=doc",
+			"05": "/doc/doc1050View?docId=" + docId + "&referenceType=doc",
+			"06": "/doc/doc1060View?docId=" + docId + "&referenceType=doc",
 		};
 		console.log(docCode);
 		return urls[docCode];

@@ -4,11 +4,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<% String ctxPath = request.getContextPath(); %>
-
 <jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
-
+<link rel="stylesheet" type="text/css" href="/css/doc/doc1050.css">
 <style type="text/css">
 	/* CSS 정리된 스타일 */
 	p { margin:0pt 0pt 8pt }
@@ -235,68 +232,24 @@
 
 	});
 	
-	// 결재
-	function insertApprovalRequest() {
-		const formData = $("#writeFrm").serializeArray();
-		const jsonData = {};
-		formData.forEach(field => {
-		    jsonData[field.name] = field.value;
-		});
+	function collectApprovalRequest() {
 		
-		Object.assign(jsonData, {
-		    userId: "<c:out value="${sessionScope.userId}" />",
-		});
-		console.log("form >> ", JSON.stringify(jsonData));
-		
-		const approvalData = collectApprovalSteps();
-		
-		if(!validationChk()){
-			return ;
+		$('#docTitle').val($('#approval_title').val());
+		const data = [];
+		const rowData = {
+				draft_date: $('#draft_date').val(),
+				approval_id:	$('#approval_id').val(),
+				department: $('#department').val(),
+				drafter: $('#drafter').val(),
+				approval_title: $('#approval_title').val(),
+				approval_content: $('#approval_content').val(),
+				instructions: $('#instructions').val(),
+				userId: "<c:out value="${sessionScope.userId}" />",
 		}
+		data.push(rowData);
 		
-	    Swal.fire({
-	        title: '결재 신청을 하시겠습니까?',
-	        icon: 'question',
-	        showCancelButton: true,
-	        confirmButtonColor: '#3085d6',
-	        cancelButtonColor: '#d33',
-	        confirmButtonText: '신청',
-	        cancelButtonText: '취소'
-	    }).then((result) => {
-	        if (result.isConfirmed) {
-	            $.ajax({
-	                url: "/doc/insertApprovalRequest",
-	                type: "POST",
-	                dataType: "JSON",
-	                data: JSON.stringify({
-	                	approvalData: approvalData,
-	                	approvalRequestData : jsonData
-	                }),
-	                contentType: "application/json",
-	                success: function (response) {
-	                    Swal.fire({
-	                        icon: 'success',
-	                        title: '결재신청 완료',
-	                        text: '결재가 성공적으로 신청되었습니다.',
-	                        confirmButtonText: '확인',
-	                    }).then((result) => {
-	            	        if (result.isConfirmed) {
-		                    	$(location).attr("href", "/docList");
-	            	        }
-	                    }); 
-	                },
-	                error: function (xhr, status, error) {
-	                    console.error("데이터 전송 실패:", error);
-	                    Swal.fire({
-	                        icon: 'error',
-	                        title: '오류 발생',
-	                        text: '결재 신청에 실패했습니다.'
-	                    });
-	                }
-	            });
-	        }
-	    });
-		
+		console.log(data); // Logs the list map structure to the console
+		return data;
 	}
 	
 	// 품의번호 가져오기
@@ -316,40 +269,12 @@
 		});
 	}
 	
-	/*결재선 구성 List 함수*/
-	function collectApprovalSteps() {
-		const approvalData = [];
-
-		// Select all the table cells containing approval steps using jQuery
-		$('.approval-step').each(function() {
-			const stepData = {
-				approvalStepNo: $(this).data('approval-step'),
-				userId: $(this).data('user-id')
-			};
-			approvalData.push(stepData);
-		});
-
-		console.log(approvalData);
-		return approvalData;
-	}
-	
-	function validationChk(){
-		if($("#approval_title").val() == null || $("#approval_title").val() == ""){
-			alert("품의제목을 입력해 주세요");
-			$("#approval_title").focus();
-			return false;
-		}
-		if($("#approval_content").val() == null || $("#approval_content").val() == ""){
-			alert("품의내용을 입력해 주세요");
-			$("#approval_content").focus();
-			return false;
-		}
-		return true;
-	}
 
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" id="writeFrm" enctype="multipart/form-data">
+		<input id="docType" type="hidden" value="03">
+		<input id="docTitle" type="hidden" value="06">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
@@ -374,16 +299,18 @@
 					</td>
 				</tr>
 				<tr style="height:39.15pt">
-					<td class="col1">확인</td>
+					<td class="col1 centered-cell">
+						<img src="/image/approval.png" class="centered-image">
+					</td>
 					<td class="col1"></td>
 					<td class="col1"></td>
 					<td class="col1"></td>
 				</tr>
 				<tr style="height:22.05pt">
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal"><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-user-id="">최선영 / 이사</td>
-					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-user-id="">이길호 / 대표</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-approval-status="03" data-user-id="${sessionScope.userId}" ><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-approval-status="01" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-approval-status="01" data-user-id="2015103001">최선영 / 이사</td>
+					<td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="4" data-approval-status="01" data-user-id="1999103001">이길호 / 대표</td>
 				</tr>
 			</table>
 			<table class="col-table">
@@ -453,12 +380,6 @@
 			
 		</div>
 		<!-- File upload area -->
-		<div class="file-area" id="attachArea">
-			<div class="filebox">
-				<label for="file">파일 찾기</label>
-				<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-				<input type="file" id="file" multiple="multiple" name="attach">
-			</div>
-		</div>
+		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 	</form>
 </div>

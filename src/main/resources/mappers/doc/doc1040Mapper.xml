@@ -9,33 +9,6 @@
 		 WHERE approval_id LIKE CONCAT('amon-', DATE_FORMAT(NOW(), '%Y%m%d'), '-%')
     </select>
 
-	<insert id="insertDocumentApproval" useGeneratedKeys="true" keyProperty="docId">
-        INSERT INTO document
-        (
-             user_id
-            , doc_current_step
-            , total_step
-            , created_id
-            , created_date
-            , updated_id
-            , updated_date
-            , doc_type
-            , doc_title
-            , doc_status
-        )
-        VALUES ( #{userId}
-           , '1'
-           , '4'
-           , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d')
-           , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d')
-           , #{docType}
-           , #{docTitle}
-           , '01'
-       )
-    </insert>
-
 	<insert id="insertApprovalRequest">
 		INSERT INTO approval_request
 		     ( doc_id
@@ -52,7 +25,7 @@
 			 , updated_id
 			 , updated_date)
 	  	VALUES 
-	  		 ( #{doc_id} 
+	  		 ( #{docId} 
 	  		 , #{approval_id}
 			 , #{draft_date}
 			 , #{department}
@@ -62,9 +35,9 @@
 			 , #{instructions}
 			 , #{remark}
 			 , #{userId}
-			 , DATE_FORMAT(NOW(), '%Y%m%d')
+			 , DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
 			 , #{userId}
-			 , DATE_FORMAT(NOW(), '%Y%m%d'))
+			 , DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
 	</insert>
 	
 	<insert id="insertTransportExpense">
@@ -91,9 +64,9 @@
 			 , #{expenseAmount}
 			 , #{remark}
 			 , #{userId}
-			 , DATE_FORMAT(NOW(), '%Y%m%d')
+			 , DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
 			 , #{userId}
-			 , DATE_FORMAT(NOW(), '%Y%m%d'))
+			 , DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
 	</insert>
 	
 	<insert id="insertApprovalRequestStep">
@@ -112,10 +85,10 @@
              , #{approvalStepNo}
              , #{userId}
              , '01'
-             , #{create_id}
-             , DATE_FORMAT(NOW(), '%Y%m%d')
-             , #{create_id}
-             , DATE_FORMAT(NOW(), '%Y%m%d')
+             , #{userId}
+             , DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+             , #{userId}
+             , DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
          )
     </insert>
     

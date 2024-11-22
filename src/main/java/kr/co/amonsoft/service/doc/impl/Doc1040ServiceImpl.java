@@ -8,8 +8,10 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.amonsoft.mapper.apv.ApvCommonMapper;
 import kr.co.amonsoft.mapper.doc.Doc1020Mapper;
 import kr.co.amonsoft.mapper.doc.Doc1040Mapper;
+import kr.co.amonsoft.mapper.doc.DocCommonMapper;
 import kr.co.amonsoft.service.doc.Doc1040Service;
 import lombok.RequiredArgsConstructor;
 
@@ -17,9 +19,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class Doc1040ServiceImpl implements Doc1040Service {
 
+	private final DocCommonMapper docCommonMapper;
+    private final ApvCommonMapper apvCommonMapper;
     private final Doc1040Mapper doc1040Mapper;
-    
-    private final Doc1020Mapper doc1020Mapper;
     
     @Override
     public Map<String, Object> getApprovalId() {
@@ -27,31 +29,24 @@ public class Doc1040ServiceImpl implements Doc1040Service {
     }
 
 	@Override
-	public void insertApprovalRequest(Map<String, Object> param) {
-		Map<String,Object> documentMap = new HashMap<>();
+	public BigInteger insertApprovalRequest(Map<String, Object> param) {
+		docCommonMapper.insertDocument(param);
+		BigInteger docId = (BigInteger) param.get("docId");
+		
 		List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) param.get("approvalData");
-		Map<String, Object> approvalRequestData = (Map<String, Object>) param.get("approvalRequestData");
-		
-		documentMap.put("userId", approvalRequestData.get("userId"));
-		documentMap.put("docTitle", approvalRequestData.get("approval_title"));
-		documentMap.put("docType", "03");
-		
-		// document 추가
-        doc1040Mapper.insertDocumentApproval(documentMap);
-        
-        // 생성된 docId를 가져옵니다.
-        BigInteger docId = (BigInteger) documentMap.get("docId");
-        
-        approvalRequestData.put("doc_id", docId);
-        
-        doc1040Mapper.insertApprovalRequest(approvalRequestData);
-        
         approvalStep.forEach(step -> {
             step.put("docId", docId);
-            step.put("create_id", approvalRequestData.get("userId"));
-            doc1040Mapper.insertApprovalRequestStep(step);
+            apvCommonMapper.insertApprovalStep(step);
+        });
+		
+        List<Map<String, Object>> approvalRequestData = (List<Map<String, Object>>) param.get("data");
+        approvalRequestData.forEach(detail -> {
+            detail.put("docId", docId);
+            detail.put("userId", param.get("userId"));
+            doc1040Mapper.insertApprovalRequest(detail);
         });
         
+        return docId;
 	}
 	
 	@Override

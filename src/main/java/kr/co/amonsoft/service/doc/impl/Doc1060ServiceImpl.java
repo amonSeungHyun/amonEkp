@@ -37,6 +37,7 @@ public class Doc1060ServiceImpl implements Doc1060Service {
         List<Map<String, Object>>expenseDetail = (List<Map<String, Object>>) param.get("data");
         expenseDetail.forEach(detail -> {
             detail.put("docId", docId);
+            detail.put("userId", param.get("userId"));
             doc1060Mapper.insertTransportExpense(detail);
         });
 

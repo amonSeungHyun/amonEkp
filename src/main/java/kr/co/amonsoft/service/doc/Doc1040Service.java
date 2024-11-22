@@ -8,7 +8,7 @@ public interface Doc1040Service {
 
     Map<String,Object> getApprovalId();
 
-	void insertApprovalRequest(Map<String, Object> param);
+    BigInteger insertApprovalRequest(Map<String, Object> param);
 
 	Map<String, Object> findApprovalRequestDetailsByDocId(BigInteger docId);
 
