@@ -41,11 +41,11 @@ public class Doc1010Contorller {
     /** ##########################################################################################################################
      * 휴가계
      */
-    @RequestMapping(value = "/admin/doc/annualLeave")
+    @RequestMapping(value = "/admin/doc/doc1010/annualLeave")
     public String annualLeave( HttpServletRequest request,@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
-        return "/admin/document/annualLeave";
+        return "/admin/doc/doc1010/annualLeave";
     }
 
     /**
@@ -66,7 +66,7 @@ public class Doc1010Contorller {
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("vacationDetails", vacationDetails);
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
-        return "/admin/document/annualLeaveWriteView";
+        return "/admin/doc/doc1010/annualLeaveWriteView";
     }
 
     @ResponseBody

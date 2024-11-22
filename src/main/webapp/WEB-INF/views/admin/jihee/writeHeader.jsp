@@ -103,7 +103,7 @@ input::placeholder {
 </script> 
     
 <div style="display: flex; padding-top: 30px; padding-left: 30px; padding-bottom: 40px;]" class="border-bottom">
-	 <span ><a class="mylink" href="javascript:location.href='/workflow'" style="color: #404040; font-size: 23pt; font-weight: bold; padding-right: 20px;"><</a></span>
+	 <span ><a class="mylink" href="javascript:location.href='/docList'" style="color: #404040; font-size: 23pt; font-weight: bold; padding-right: 20px;"><</a></span>
 	 <span style="color:#404040; font-size: 23pt; font-weight: bold; margin-right: 65%; cursor:pointe;" >작성하기</span>
 	 <!-- <div id="search">
 	 	<input id="search" placeholder="양식검색 " />
