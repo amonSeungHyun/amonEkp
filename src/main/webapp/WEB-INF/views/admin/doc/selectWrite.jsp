@@ -83,7 +83,7 @@
 
 		const frm = document.selectFrm;
 		frm.method = "POST";
-		frm.action = "/admin/doc/annualLeave";
+		frm.action = "/admin/doc/doc1010/annualLeave";
 		frm.submit();
 
 
@@ -216,18 +216,10 @@
 				<i class="fas fa-file fa-lg"></i>
 			</div>
 			<div id="fontSubject">
-				식비 사용 내역
-				<input type="hidden" name="subject" value="식비 사용 내역" readonly />
-				<input type="hidden" name="information" value="작성 시 영수증을 첨부해 주세요." readonly />
-				<textarea style="display: none;" name="guide_form">사용 금액:
-
-식사 인원 :
-
-비고 :
-				 </textarea>
+				품의서
 			</div>
 			<div id="fontpurpose">
-				복리 후생
+				품의서
 			</div>
 		</div>
 	</form>
