@@ -48,6 +48,13 @@
 	    });
 		
 	    $("#contentList tbody").on("click", "tr", function() {
+	    	if (
+					$(event.target).is(".row-check") ||
+					$(event.target).closest("td").find(".row-check").length > 0 
+			) {
+				return; // 체크박스, 초기화 버튼, 해당 요소가 포함된 td를 클릭한 경우 모달을 띄우지 않음
+			}
+	    	
 	    	var board_number = $(this).data("board-number");
 	    	var url = '/com/com1020?board_number='+ board_number;
 			window.location.href = url;
