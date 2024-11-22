@@ -137,6 +137,7 @@ a:active {text-decoration: none; color: #cccccc;}
 					data : collectVehicleExpenseDetailData(),
 					ajaxUrl: "/doc/insertTransportExpense",
 				};
+
 			default:
 				throw new Error(("Unknown docType:" + docCode));
 		}
@@ -180,6 +181,7 @@ a:active {text-decoration: none; color: #cccccc;}
 		let documentConfig = getDocumentConfig(docType);
 		const data = documentConfig.data
 		const files = $("#fileInput")[0].files;
+
 
 		Swal.fire({
 			title: '결재 신청을 하시겠습니까?',

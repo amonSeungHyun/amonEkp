@@ -9,6 +9,8 @@ import java.util.Set;
 import javax.print.Doc;
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.amonsoft.service.apv.ApvCommonService;
 import kr.co.amonsoft.service.doc.DocCommonService;
 import kr.co.amonsoft.service.file.FileService;
@@ -77,12 +79,15 @@ public class Doc1010Contorller {
     @ResponseBody
     @PostMapping("/approval/insertAnnualLeaveDetail")
     public ResponseEntity<BigInteger> insertAnnualLeaveDetail(
-            @RequestBody Map<String,Object> param
-            , @RequestParam(value = "files", required = false) List<MultipartFile> files
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam("data") String data,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files
     ) throws IOException {
-        log.info("#####################");
-        log.info("휴가계 : {}", param);
-        log.info("#####################");
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> param = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {});
+        String userId = customUserDetails.getUserId();
+
+        param.put("userId",userId);
         BigInteger docId = doc1010Service.insertApprovalDocument(param);
 
         if(files != null && !files.isEmpty()) {

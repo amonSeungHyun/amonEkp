@@ -71,7 +71,7 @@
 
 
 
-    <insert id="insertVacationDetail">
+    <insert id="insertVacationDetail" parameterType="map">
         INSERT INTO vacation_detail(
                 doc_id
                , start_date

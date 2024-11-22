@@ -33,33 +33,22 @@ public class Doc1010ServiceImpl implements Doc1010Service {
 
     @Override
     public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
-        log.info("######################################");
-        log.info("결재 등록할때 데이터");
-        log.info("approvalData :{}", approvalData.get("approvalData").toString());
-        log.info("annualLeaveData :{}", approvalData.get("annualLeaveData").toString());
-        log.info("######################################");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Map<String,Object> documentMap = new HashMap<>();
-        if (authentication.getPrincipal() instanceof CustomUserDetails) {
-            documentMap.put("userId", userDetails.getUserId());
-        }
-        doc1010Mapper.insertDocument(documentMap);
+        docCommonMapper.insertDocument(approvalData);
 
-        // 생성된 docId를 가져옵니다.
-        BigInteger docId = (BigInteger) documentMap.get("docId");
+        BigInteger docId = (BigInteger) approvalData.get("docId");
 
-        // approvalStep과 동일한 docId 사용
+        // approvalStep과 expenseDetail에서 동일한 docId 사용
         List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
         approvalStep.forEach(step -> {
             step.put("docId", docId);
             apvCommonMapper.insertApprovalStep(step);
         });
 
-        // 휴가계 테이블에 넣을 데이터
-        Map<String, Object> annualLeaveData = (Map<String, Object>) approvalData.get("annualLeaveData");
-        annualLeaveData.put("docId", docId);
-        doc1010Mapper.insertVacationDetail(annualLeaveData);
+        List<Map<String, Object>> documentDetail = (List<Map<String, Object>>) approvalData.get("data");
+        documentDetail.forEach(detail -> {
+                detail.put("docId", docId);
+                doc1010Mapper.insertVacationDetail(detail);
+        });
 
         // 결재후 메일
         List<Map<String, Object>> findEmail = new ArrayList<>();

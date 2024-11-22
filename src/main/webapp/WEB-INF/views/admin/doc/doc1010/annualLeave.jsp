@@ -493,27 +493,9 @@
 			});
 		}
 	}
-	/*결재선 구성 List 함수*/
-	function collectApprovalSteps() {
-		const approvalData = [];
-
-		// Select all the table cells containing approval steps using jQuery
-		$('.approval-step').each(function() {
-			const stepData = {
-				approvalStepNo: $(this).data('approval-step'),
-				approvalStatus : $(this).data('approval-status'),
-				userId: $(this).data('user-id')
-			};
-			approvalData.push(stepData);
-		});
-
-		console.log(approvalData);
-		return approvalData;
-	}
-
 
 	function collectAnnualLeaveData(){
-		// const data = [];
+		const data = [];
 		const rowData = {
 			// amy
 			vacationType: $("input[name='vacationType']:checked").val(), // 선택된 유형 추가
@@ -522,10 +504,9 @@
 			emergencyContact: $("#emergencyContact").val().replace(/-/g, ''),
 			personalReason: $("#personalReason").val(),
 			vacationPeriod: $("#duration").text()
-		};
-		// data.push(rowData);
-		console.log(rowData); // Logs the list map structure to the console
-		return rowData;
+		}
+		data.push(rowData);
+		return data;
 	}
 
 	function calculateDuration() {
@@ -615,7 +596,7 @@
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
 						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<a href="http://www.yesform.com/z_n/forms/search.php?mrown=IT&amp;free_search=&amp;focus_count=0&amp;focus_cus=0&amp;focus_prev=0&amp;is_show_lvch=1&amp;skwid=&amp;bq=%25C1%25F6%25C3%25E2%25B0%25E1%25C0%25C7%25BC%25AD%25C8%25C4%25BA%25B8%25C0%25DA%25C0%25CC%25B7%25C2%25BC%25AD&amp;isc=&amp;q=%C1%25F" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000">휴가계</span></strong></a>
+							<strong><span class="font-malgungothic" style="color:#000000">휴가계</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -695,7 +676,8 @@
 				</tr>
 				<tr>
 					<td class="col2">비상연락처</td>
-					<td colspan="3"><input type="text" id="emergencyContact" class="input-field no-border" name="emergencyContact" placeholder="연락처 입력" ></td>
+					<td colspan="3"><input type="text" id="emergencyContact" class="input-field no-border" name="emergencyContact" placeholder="연락처 입력" oninput="formatPhoneNumber(this)"></td>
+				</tr>
 				</tr>
 				<tr>
 					<td class="col2">개인사유</td>
@@ -707,11 +689,9 @@
 			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
 			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
 			<p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
-			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 :</p>
+			<p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : <c:out value="${sessionScope.username}"/></p>
 		</div>
-
 		<!-- File upload area -->
 		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
-
 	</form>
 </div>
