@@ -42,7 +42,7 @@ public class Com1020Controller {
 		List<Map<String,Object>> fileList = fileService.findFileDatas(board_number, referenceType);
 		
 		Map<String, Object> currentStepNo = new HashMap<>();
-		currentStepNo.put("docCurrentStep", "1");
+		currentStepNo.put("currentStep", "1");
 
 		
 		model.addAttribute("fileList",fileList);

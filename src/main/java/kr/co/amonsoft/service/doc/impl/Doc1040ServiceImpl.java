@@ -29,20 +29,29 @@ public class Doc1040ServiceImpl implements Doc1040Service {
     }
 
 	@Override
-	public BigInteger insertApprovalRequest(Map<String, Object> param) {
-		docCommonMapper.insertDocument(param);
-		BigInteger docId = (BigInteger) param.get("docId");
+	public BigInteger insertApprovalRequest(Map<String, Object> approvalData) {
+		List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
 		
-		List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) param.get("approvalData");
+		String currentApproverId = approvalStep.stream()
+	            .filter(step -> Integer.valueOf(String.valueOf(step.get("approvalStepNo"))) == 2) // approvalStepNo는 Integer로 처리
+	            .map(step -> String.valueOf(step.get("userId"))) // userId는 String으로 변환
+	            .findFirst()
+	            .orElseThrow(() -> new RuntimeException("Approval step with stepNo 2 is missing"));
+
+	    approvalData.put("currentApproverId", currentApproverId);
+		
+		docCommonMapper.insertDocument(approvalData);
+		BigInteger docId = (BigInteger) approvalData.get("docId");
+		
         approvalStep.forEach(step -> {
             step.put("docId", docId);
             apvCommonMapper.insertApprovalStep(step);
         });
 		
-        List<Map<String, Object>> approvalRequestData = (List<Map<String, Object>>) param.get("data");
+        List<Map<String, Object>> approvalRequestData = (List<Map<String, Object>>) approvalData.get("data");
         approvalRequestData.forEach(detail -> {
             detail.put("docId", docId);
-            detail.put("userId", param.get("userId"));
+            detail.put("userId", approvalData.get("userId"));
             doc1040Mapper.insertApprovalRequest(detail);
         });
         
