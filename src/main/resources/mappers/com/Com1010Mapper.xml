@@ -57,7 +57,7 @@
 		   </if>
 	</select>
 	
-	<insert id="insertCom1010">
+	<insert id="insertCom1010" useGeneratedKeys="true" keyProperty="boardNumber">
 		INSERT INTO board
 		     ( type
 			 , title
