@@ -54,9 +54,9 @@
 			) {
 				return; // 체크박스, 초기화 버튼, 해당 요소가 포함된 td를 클릭한 경우 모달을 띄우지 않음
 			}
-	    	
-	    	var board_number = $(this).data("board-number");
-	    	var url = '/com/com1020?board_number='+ board_number;
+	    	let referenceType = "board";
+	    	var board_number = parseInt($(this).data("board-number"));
+	    	var url = '/com/com1020?board_number='+ board_number + "&referenceType=" + referenceType ;
 			window.location.href = url;
 	    });	    
 		
@@ -174,15 +174,22 @@
 	        return;
 	    }
 	    
-	    
 	    $("#userId").val("${sessionScope.userId}");
-	    const formData = $("#regist_frm").serializeArray();
-		const jsonData = {};
-		formData.forEach(field => {
-		    jsonData[field.name] = field.value;
-		});
+	    
+	    const formData = new FormData();
+		formData.append("data", JSON.stringify({
+			userId: $("#userId").val(),
+			board_title: $("#board_title").val(),
+			board_content: $("#board_content").val(),
+		}));
 		
-		console.log("form >> ", JSON.stringify(jsonData));
+		console.log("form >> " , formData.data);
+		const files = $("#fileInput")[0].files;
+	    $.each(files, function (i, file) {
+	        formData.append("files", file);
+	    });
+	    
+	    console.log("form >> " , formData.files);
 	    
 	    Swal.fire({
 	        title: '등록하시겠습니까?',
@@ -194,13 +201,12 @@
 	        cancelButtonText: '취소'
 	    }).then((result) => {
 	        if (result.isConfirmed) {
-	            // serializeArray()로 폼 데이터를 객체 형태로 변환
 	            $.ajax({
 	                url: "/com/insertCom1010",
 	                type: "POST",
-	                dataType: "JSON",
-	                data: JSON.stringify(jsonData), // JSON 형태로 전송
-	                contentType: "application/json",
+	                processData: false, 
+	                contentType: false,
+	                data: formData, 
 	                success: function (response) {
 	                    $("#modal_comCodeModal").modal("hide");
 	                    Swal.fire({
@@ -336,13 +342,7 @@
 								<textarea id="board_content" name="board_content" style="height: 200pt; width: 100%; margin-top:5px; resize: none;" placeholder="내용 입력"></textarea>
 							</div>
 						</div>
-						<div class="file-area" id="attachArea">
-							<div class="filebox">
-								<label for="file">파일 찾기</label>
-								<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-								<input type="file" id="file" multiple="multiple" name="attach">
-							</div>
-						</div>
+						<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 					</form>
 				</div>
 				<!-- Modal footer -->

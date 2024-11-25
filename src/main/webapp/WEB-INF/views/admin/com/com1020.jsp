@@ -274,13 +274,7 @@ dd {
 								<textarea id="input_content" name="input_content" style="height: 200pt; width: 100%; margin-top:5px; resize: none;" placeholder="내용 입력"></textarea>
 							</div>
 						</div>
-						<div class="file-area" id="attachArea">
-							<div class="filebox">
-								<label for="file">파일 찾기</label>
-								<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-								<input type="file" id="file" multiple="multiple" name="attach">
-							</div>
-						</div>
+						<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 					</form>
 				</div>
 				<!-- Modal footer -->
@@ -317,9 +311,7 @@ dd {
                 </div>
                 <div class="board-body-items">
                     <dl class="board-item">
-                        <dt>첨부파일</dt>
-                        <dd>첨부파일이 없습니다.
-                        </dd>
+                        <jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
                     </dl>
                 </div>
             </div>
