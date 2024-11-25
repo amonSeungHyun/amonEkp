@@ -5,7 +5,7 @@
     <select id="findDocumentsTotalCountByUserId" parameterType="String" resultType="int">
         SELECT count(*)
           FROM document
-         WHERE user_id = #{userId};
+         WHERE created_id = #{userId}
     </select>
 
     <select id="findDocumentsPendingApprovalTotalCountByUserId" parameterType="String" resultType="int">
@@ -37,7 +37,7 @@
         INNER JOIN common_code_detail docstatus
            ON d.doc_status = docstatus.code_detail_number
            AND docstatus.code_number = 'APV01'
-        WHERE d.user_id = #{userId}
+        WHERE d.created_id = #{userId}
          ORDER BY d.created_date DESC
          LIMIT #{limit} OFFSET #{offset}
     </select>
@@ -58,7 +58,7 @@
          INNER JOIN common_code_detail docstatus
                     ON d.doc_status = docstatus.code_detail_number
                         AND docstatus.code_number = 'APV01'
-        WHERE d.user_id = #{userId}
+        WHERE d.created_id = #{userId}
           AND d.doc_status = '03'
         ORDER BY d.created_date DESC
     </select>
@@ -129,8 +129,8 @@
     <insert id="insertDocument" useGeneratedKeys="true" keyProperty="docId">
         INSERT INTO document
         (
-          user_id
-        , doc_current_step
+          current_approver_id
+        , current_step
         , total_step
         , created_id
         , created_date
@@ -140,7 +140,7 @@
         , doc_title
         , doc_status
         )
-        VALUES ( #{userId}
+        VALUES ( #{currentApproverId}
                , '2'
                , '4'
                , #{userId}

@@ -19,7 +19,7 @@
                             on d.doc_type = ccd.code_detail_number
                                 and ccd.code_number = 'APV02'
                  inner join user u
-                            on d.user_id = u.user_id
+                            on d.created_id = u.user_id
         where 1 = 1
           and d.doc_status = '01'
         UNION ALL
@@ -37,7 +37,7 @@
                  inner join common_code_detail ccd
                             on d.doc_type = ccd.code_detail_number
                  inner join user u
-                            on d.user_id = u.user_id
+                            on d.created_id = u.user_id
                                 and ccd.code_number = 'APV02'
         where 1 = 1
           and d.doc_status = '01'

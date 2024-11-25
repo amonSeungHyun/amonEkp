@@ -53,40 +53,4 @@ public class Doc1040ServiceImpl implements Doc1040Service {
     public Map<String, Object> findApprovalRequestDetailsByDocId(BigInteger docId) {
         return doc1040Mapper.findApprovalRequestDetailsByDocId(docId);
     }
-/*
-    @Override
-    public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
-        Map<String,Object> documentMap = new HashMap<>();
-        documentMap.put("userId", "lee");
-        doc1020Mapper.insertDocument(documentMap);
-
-        // 생성된 docId를 가져옵니다.
-        BigInteger docId = (BigInteger) documentMap.get("docId");
-
-        // approvalStep과 expenseDetail에서 동일한 docId 사용
-        List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
-        approvalStep.forEach(step -> {
-            step.put("docId", docId);
-            doc1020Mapper.insertApprovalStep(step);
-        });
-
-
-        List<Map<String, Object>>expenseDetail = (List<Map<String, Object>>) approvalData.get("expenseDetailData");
-        expenseDetail.forEach(detail -> {
-            detail.put("docId", docId);
-            doc1020Mapper.insertExpenseDetail(detail);
-        });
-
-        return docId;
-    }
-
-
-
-    @Override
-    public List<Map<String, Object>> findExpenseDetailsByDocId(BigInteger docId) {
-        return doc1020Mapper.findExpenseDetailsByDocId(docId);
-    }
-
-
-*/
 }

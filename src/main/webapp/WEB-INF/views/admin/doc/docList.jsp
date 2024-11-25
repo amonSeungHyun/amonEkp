@@ -421,40 +421,36 @@
 	button#delete:hover {
  	background-color: #efefef;
   }
-
-
 </style>
-
 <script type="text/javascript">
 
 	function loadDocuments(type) {
 		$.ajax({
-			url: "/docList/changeList?type=" + type,
 			type: "GET",
-			success: function(data) {
-				console.log(data);
-				// 테이블 내용을 비우고 새 데이터로 갱신
-				$("#documentTable tbody").empty();
-
-				// HTML 문자열을 누적
-				let html = "";
-				data.forEach(function(doc) {
-					html += "<tr onclick=\"documentDetailView(" + doc.docId + ", '" + doc.docType + "')\">";
-					html += "<td>" + doc.docTypeName + "</td>";
-					html += "<td>" + doc.docTitle + "</td>";
-					html += "<td>" + doc.createdDate + "</td>";
-					html += "<td>" + doc.docStatusName + "</td>";
-					html += "</tr>";
-				});
-
-				// 한 번에 테이블에 추가
-				$("#documentTable tbody").html(html);
-
-				// 버튼 스타일 업데이트
-				updateButtonStyles(type);
+			url: "/docList/changeList",
+			dataType: "json",
+			data: {
+				pageNum: 1,
+				type: type
 			},
-			error: function() {
-				alert("문서 목록을 불러오는 중 오류가 발생했습니다.");
+			success: function(data) {
+				var tableBody = $("#documentTable tbody");
+				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
+				$.each(data.resultList, function(index, doc) {
+					var rowHtml = $('<tr>')
+							.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType + ")") // 클릭 시 상세보기 함수 호출
+							.append('<td>' + doc.docTypeName + '</td>') // 결재 분류
+							.append('<td>' + doc.docTitle + '</td>')    // 결재 제목
+							.append('<td>' + doc.createdDate + '</td>') // 작성일
+							.append('<td>' + doc.docStatusName + '</td>'); // 결재 상태
+					tableBody.append(rowHtml);
+				});
+				// 페이징 표시 함수 호출
+				pdateButtonStyles(type);
+				pageNumDisplay(data.pager);
+			},
+			error: function(xhr, status, error) {
+				console.error("데이터 조회 실패:", error);
 			}
 		});
 	}
@@ -558,7 +554,7 @@
 </script>
 <div style="padding-top: 35px; padding-left: 40px; padding-bottom: 35px;]">
 	<span><a class="mylink" href="javascript:location.href='/docList'" style="color: black; font-size: 27pt; font-weight: bold; padding-right: 20px;">내 문서함</a></span>
-	<span><a class="link" href="javascript:location.href='/cpWorkflow.yolo'" style=" font-size: 27pt; font-weight: bold;">회사 문서함</a></span>
+	<span><a class="link" href="javascript:location.href='/docPendingList'" style=" font-size: 27pt; font-weight: bold;">회사 문서함</a></span>
 	<select>
 		<option>지출결의서</option>
 		<option>근태계</option>
@@ -577,9 +573,6 @@
 				 <c:when test="${not empty role}">
 					 <button class="bottom-line" id="wating" style="border-bottom : 4px solid #00cc00;" onclick="loadDocuments('pending')">
 						 <span id="subject" class="doc1" style="color:black;">결재 승인 대기 문서 </span><span id="number" class="num1"></span>
-					 </button>
-					 <button class="bottom-line" id="mine" onclick="loadDocuments('underApproval')">
-						 <span id="subject" class="doc2" style="color:gray;">결재 중 문서 </span><span id="number" class="num2"></span>
 					 </button>
 				 </c:when>
 				 <c:otherwise>

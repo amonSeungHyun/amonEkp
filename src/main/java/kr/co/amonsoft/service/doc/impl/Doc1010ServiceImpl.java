@@ -33,12 +33,21 @@ public class Doc1010ServiceImpl implements Doc1010Service {
 
     @Override
     public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
+        List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
+        String currentApproverId = approvalStep.stream()
+                .filter(step -> (Integer) step.get("approvalStepNo") == 2) // stepNo가 1인 데이터
+                .map(step -> (String) step.get("userId")) // approverId 추출
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Approval step with stepNo 1 is missing"));
+
+        approvalData.put("currentApproverId", currentApproverId);
+
         docCommonMapper.insertDocument(approvalData);
 
+        // 생성된 docId를 가져옵니다.
         BigInteger docId = (BigInteger) approvalData.get("docId");
 
         // approvalStep과 expenseDetail에서 동일한 docId 사용
-        List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
         approvalStep.forEach(step -> {
             step.put("docId", docId);
             apvCommonMapper.insertApprovalStep(step);

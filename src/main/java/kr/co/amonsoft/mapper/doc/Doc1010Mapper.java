@@ -9,9 +9,6 @@ import java.util.Map;
 @Mapper
 public interface Doc1010Mapper {
 
-
-    void insertDocument(Map<String, Object> param);
-
     void insertVacationDetail(Map<String, Object> expenseDetail);
 
     Map<String,Object> findVacationDetailsByDocId(BigInteger docId);

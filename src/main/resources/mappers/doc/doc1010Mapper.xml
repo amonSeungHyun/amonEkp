@@ -42,35 +42,6 @@
          )
     </insert>
 
-    <insert id="insertDocument" useGeneratedKeys="true" keyProperty="docId">
-        INSERT INTO document
-        (
-             user_id
-            , doc_current_step
-            , total_step
-            , doc_type
-            , doc_title
-            , doc_status
-            , created_id
-            , created_date
-            , updated_id
-            , updated_date
-        )
-        VALUES ( #{userId}
-           , '1'
-           , '4'
-           , '01'
-           , '휴가계'
-           , '01'
-           , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-           , #{userId}
-           , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-       )
-    </insert>
-
-
-
     <insert id="insertVacationDetail" parameterType="map">
         INSERT INTO vacation_detail(
                 doc_id

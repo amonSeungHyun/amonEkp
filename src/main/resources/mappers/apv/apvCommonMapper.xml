@@ -10,7 +10,7 @@
              , d.doc_title
         FROM user u
         INNER JOIN document d
-          ON u.user_id = d.user_id
+          ON u.user_id = d.created_id
         INNER JOIN organization o
           ON u.organization_id = o.organization_id
         INNER JOIN common_code_detail posi_detail
@@ -46,7 +46,7 @@
     </select>
 
     <select id="findCurrentStepNo" parameterType="BigInteger" resultType="camelcasemap">
-        SELECT doc_current_step
+        SELECT current_step
         FROM document d
         where doc_id = #{docId}
     </select>

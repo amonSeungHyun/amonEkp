@@ -23,7 +23,7 @@ public class DocCommonController {
     private final DocCommonService docCommonService;
 
     @GetMapping("/docList")
-    public String viewWorkflow(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
+    public String docListView(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         String roleCode = customUserDetails.getRole();
         int totalCnt = 0;
         String userId = customUserDetails.getUserId();
@@ -48,6 +48,22 @@ public class DocCommonController {
         return "/admin/doc/docList";
     }
 
+    @GetMapping("/docPendingList")
+    public String viewWorkflow(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
+        String roleCode = customUserDetails.getRole();
+        String userId = customUserDetails.getUserId();
+
+        int totalCnt = docCommonService.findDocumentsPendingApprovalTotalCountByUserId(userId);
+        Map<String, Object> pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+        pagingParams.put("userId",userId);
+        List<Map<String, Object>> documents = docCommonService.findPendingApprovalDocuments(pagingParams);
+
+        model.addAttribute("role", roleCode);
+        model.addAttribute("documents", documents);
+        model.addAttribute("pager",pagingParams);
+        return "/admin/doc/docList";
+    }
+
     @GetMapping("/doc/selectWrite")
     public String selectWrite(HttpServletRequest request) {
         return "/admin/doc/selectWrite";
@@ -55,7 +71,8 @@ public class DocCommonController {
 
     @ResponseBody
     @GetMapping("/docList/changeList")
-    public Map<String,Object> viewWorkflowChangeList(@RequestParam(defaultValue = "1") int pageNum, @RequestParam String type, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
+    public Map<String,Object> viewWorkflowChangeList(@RequestParam(defaultValue = "1") int pageNum, @RequestParam String type
+            , @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         String roleCode = customUserDetails.getRole();
         int totalCnt = 0;
         Map<String, Object> resultMap = new HashMap<String, Object>();

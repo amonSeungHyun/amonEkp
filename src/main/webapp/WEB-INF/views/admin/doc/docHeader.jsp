@@ -309,8 +309,8 @@ a:active {text-decoration: none; color: #cccccc;}
 			 결재
 		</button>
 	</c:if>
-	<c:if test="${not empty currentStepNo.docCurrentStep}">
-		<c:if test="${currentStepNo.docCurrentStep == userStepNo.stepNo && documentCreatorInfo.docStatus != '03'}">
+	<c:if test="${not empty currentStepNo.currentStep}">
+		<c:if test="${currentStepNo.currentStep == userStepNo.stepNo && documentCreatorInfo.docStatus != '03'}">
 			<input id="approverId" type="hidden" value="${sessionScope.userId}">
 			<input id="userStepNo" type="hidden" value="${userStepNo.stepNo}">
 			<button type="button" class="headerBtn" onclick="updateApproveDocument();">
