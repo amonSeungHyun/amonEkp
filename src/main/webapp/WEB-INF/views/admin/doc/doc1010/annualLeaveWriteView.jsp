@@ -8,6 +8,7 @@
 <% String ctxPath = request.getContextPath(); %>
 
 <jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
+<link rel="stylesheet" type="text/css" href="/css/doc/doc1050.css">
 
 <style type="text/css">
 	/* CSS 정리된 스타일 */
@@ -446,6 +447,7 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
+		<input id="docId" type="hidden" value="${docId}"/>
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">

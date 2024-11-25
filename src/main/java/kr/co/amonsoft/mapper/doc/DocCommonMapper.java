@@ -23,6 +23,8 @@ public interface DocCommonMapper {
 
     void insertDocument(Map<String, Object> param);
 
+    // 결재할때 메일 관련 ############################################################
     List<Map<String, Object>> findCeoAndManager();
+    List<Map<String, Object>> findDocTypeTitles();
 
 }

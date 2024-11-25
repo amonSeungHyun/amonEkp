@@ -503,7 +503,8 @@
 			endDate: $("#endDate").val(),
 			emergencyContact: $("#emergencyContact").val().replace(/-/g, ''),
 			personalReason: $("#personalReason").val(),
-			vacationPeriod: $("#duration").text()
+			vacationPeriod: $("#duration").text(),
+			docTitle: $("#docTitle").val()
 		}
 		data.push(rowData);
 		return data;
@@ -591,6 +592,7 @@
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
 		<input id="docType" type="hidden" value="01">
+		<input id="docTitle" type="hidden" value="휴가신청서">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">

@@ -59,7 +59,9 @@ public class Doc1010Contorller {
      * 휴가계 결재 화면
      */
     @GetMapping("/approval/annualLeaveView")
-    public String annualLeaveView(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam BigInteger docId, Model model) {
+    public String annualLeaveView(@AuthenticationPrincipal CustomUserDetails customUserDetails
+            , @RequestParam BigInteger docId
+            , Model model) {
         log.info("##################################################");
         log.info("휴가계 결재 화면 진입");
         log.info(docId.toString());
@@ -69,10 +71,15 @@ public class Doc1010Contorller {
         Map<String,Object>  vacationDetails = doc1010Service.findVacationDetailsByDocId(docId);
         Map<String,Object>  documentCreatorInfo = apvCommonService.findDocumentCreatorInfo(docId);
         Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
+        Map<String, Object> currentStepNo = apvCommonService.findCurrentStepNo(docId);
+        Map<String, Object> userStepNo = apvCommonService.findStepNoByDocIdAndUserId(docId, customUserDetails.getUserId());
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("vacationDetails", vacationDetails);
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
+        model.addAttribute("currentStepNo",currentStepNo);
+        model.addAttribute("userStepNo",userStepNo);
+        model.addAttribute("docId", docId);
         return "/admin/doc/doc1010/annualLeaveWriteView";
     }
 

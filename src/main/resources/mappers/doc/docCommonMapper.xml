@@ -110,7 +110,7 @@
     </select>
 
     <!-- 대표님, 관리자 리스트 뽑기 -->
-    <select id="findCeoAndManager" resultType="list">
+    <select id="findCeoAndManager" resultType="map">
         SELECT u.user_id as userId
              , u.user_name as userName
              , u.position_code as positionCode
@@ -153,5 +153,13 @@
         )
     </insert>
 
+
+    <!-- docType명 불러오기 -->
+    <select id="findDocTypeTitles" resultType="map">
+        select code_detail_number as docType
+             , concat(code_detail_name, ' 결재 요청입니다.') as docTypeNm
+        from common_code_detail
+        where code_number = 'APV02'
+    </select>
 
 </mapper>
