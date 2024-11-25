@@ -31,12 +31,13 @@ public class Doc1010ServiceImpl implements Doc1010Service {
     private final EmailService emailService;
     private final DocCommonMapper docCommonMapper;
 
+    @Transactional
     @Override
     public BigInteger insertApprovalDocument(Map<String, Object> approvalData) {
         List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
         String currentApproverId = approvalStep.stream()
                 .filter(step -> (Integer) step.get("approvalStepNo") == 2) // stepNo가 1인 데이터
-                .map(step -> (String) step.get("userId")) // approverId 추출
+                .map(step -> step.get("userId").toString()) // approverId 추출
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Approval step with stepNo 1 is missing"));
 
@@ -60,10 +61,7 @@ public class Doc1010ServiceImpl implements Doc1010Service {
         });
 
         // 결재후 메일
-        List<Map<String, Object>> findEmail = new ArrayList<>();
-        findEmail = docCommonMapper.findCeoAndManager();
-        log.info("이메일 리스트 : {}", findEmail);
-//        emailService.sendEmail("anrh0213@nate.com", "테스트입니다", "ㅎㅇㅎㅇ");
+//        emailService.sendApprovalEmails((String)approvalData.get("docType"));
 
         return docId;
     }
