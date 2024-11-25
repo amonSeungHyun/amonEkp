@@ -151,8 +151,8 @@ a:active {text-decoration: none; color: #cccccc;}
 			"05": "/doc/doc1050View?docId=" + docId + "&referenceType=doc",
 			"06": "/doc/doc1060View?docId=" + docId + "&referenceType=doc",
 		};
-		console.log(docCode);
-		return urls[docCode];
+		console.log(docType);
+		return urls[docType];
 	}
 
 	/*결재선 구성 List 함수*/
@@ -221,6 +221,7 @@ a:active {text-decoration: none; color: #cccccc;}
 						}).then((result) => {
 							if (result.isConfirmed) {
 								// 확인 버튼을 누르면 페이지 이동
+								alert("리다이렉트로 간다");
 								var redirectUrl = getRedirectUrl(docId, docType,referenceType);
 								alert(redirectUrl);
 								$(location).attr("href", redirectUrl);
