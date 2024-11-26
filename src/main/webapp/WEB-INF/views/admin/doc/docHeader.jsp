@@ -221,9 +221,7 @@ a:active {text-decoration: none; color: #cccccc;}
 						}).then((result) => {
 							if (result.isConfirmed) {
 								// 확인 버튼을 누르면 페이지 이동
-								alert("리다이렉트로 간다");
 								var redirectUrl = getRedirectUrl(docId, docType,referenceType);
-								alert(redirectUrl);
 								$(location).attr("href", redirectUrl);
 							}
 						});
@@ -239,57 +237,90 @@ a:active {text-decoration: none; color: #cccccc;}
 	function updateApproveDocument() {
 		var docType = $("#docType").val();
 		const referenceType = "doc";
-
-		if(confirm("승인 하시겠습니까?")) {
-			$.ajax({
-				url: '/approval/updateApprovalStep', // 데이터를 보낼 서버의 URL로 변경
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					status : '03',
-					docId : $("#docId").val(),
-					approverId : $("#approverId").val(),
-					userStepNo : $("#userStepNo").val()
-				}),
-				success: function (docId) {
-					console.log('success');
-					var redirectUrl = getRedirectUrl(docId, docType,referenceType);
-					$(location).attr("href", redirectUrl);
-
-				},
-				error: function (error) {
-					console.error('Error sending data:', error);
-				}
-			});
-		}
+		Swal.fire({
+			title: '승인 하시겠습니까?',
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: '승인',
+			cancelButtonText: '취소'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				$.ajax({
+					url: '/approval/updateApprovalStep', // 데이터를 보낼 서버의 URL로 변경
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({
+						status: '03',
+						docId: $("#docId").val(),
+						approverId: $("#approverId").val(),
+						userStepNo: $("#userStepNo").val()
+					}),
+					success: function (docId) {
+						Swal.fire({
+							title: '승인처리 되었습니다.',
+							text: '승인완료',
+							icon: 'success',
+							confirmButtonText: '확인'
+						}).then((result) => {
+							if (result.isConfirmed) {
+								var redirectUrl = getRedirectUrl(docId, docType, referenceType);
+								console.log(redirectUrl);
+								$(location).attr("href", redirectUrl);
+							}
+						});
+					},
+					error: function (error) {
+						console.error('Error sending data:', error);
+					}
+				});
+			}
+		})
 	}
 
 	function updateRejectDocument() {
 		var docType = $("#docType").val();
 		const referenceType = "doc";
-
-		if(confirm("반려 하시겠습니까?")) {
-			$.ajax({
-				url: '/approval/updateApprovalStep', // 데이터를 보낼 서버의 URL로 변경
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					status : '04',
-					docId : $("#docId").val(),
-					approverId : $("#approverId").val(),
-					userStepNo : $("#userStepNo").val()
-				}),
-				success: function (docId) {
-					console.log('success');
-					var redirectUrl = getRedirectUrl(docId, docType,referenceType);
-					$(location).attr("href", redirectUrl);
-
-				},
-				error: function (error) {
-					console.error('Error sending data:', error);
-				}
-			});
-		}
+		Swal.fire({
+			title: '반려 하시겠습니까?',
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: '반려',
+			cancelButtonText: '취소'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				$.ajax({
+					url: '/approval/updateApprovalStep', // 데이터를 보낼 서버의 URL로 변경
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({
+						status: '04',
+						docId: $("#docId").val(),
+						approverId: $("#approverId").val(),
+						userStepNo: $("#userStepNo").val()
+					}),
+					success: function (docId) {
+						Swal.fire({
+							title: '반려처리 되었습니다.',
+							text: '반려완료',
+							icon: 'success',
+							confirmButtonText: '확인'
+						}).then((result) => {
+							if (result.isConfirmed) {
+								var redirectUrl = getRedirectUrl(docId, docType, referenceType);
+								$(location).attr("href", redirectUrl);
+							}
+						});
+					},
+					error: function (error) {
+						console.error('Error sending data:', error);
+					}
+				});
+			}
+		})
 	}
 
 	async function printTable() {

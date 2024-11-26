@@ -60,6 +60,8 @@ public class ApvCommonServiceImpl implements ApvCommonService {
                 stepUpdateResult = apvCommonMapper.updateDocumentCurrentStep(docId);
             }
         }
+        //다음결재자 업데이트
+        apvCommonMapper.updateCurrentApproverId(docId);
         return (approvalUpdateResult > 0 && stepUpdateResult > 0) ? 1 : 0;
     }
 }

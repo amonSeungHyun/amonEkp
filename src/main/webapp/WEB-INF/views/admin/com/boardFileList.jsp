@@ -174,7 +174,7 @@
         });
     }
 </script>
-<c:if test="${not empty currentStepNo.currentStep && not empty fileList}">
+<c:if test="${not empty fileList}">
 <div class="file-area" id="attachArea">
     <div class="filebox">
         <span class="file-text">파일 찾기</span> <!-- 그레이 색상 텍스트 -->
@@ -189,7 +189,7 @@
     </div> <!-- 선택된 파일 목록이 표시될 영역 -->
 </div>
 </c:if>
-<c:if test="${not empty currentStepNo.currentStep && empty fileList}">
+<c:if test="${empty fileList}">
     <div class="file-area" id="attachArea">
         <div class="filebox">
             <span class="file-text">파일 찾기</span> <!-- 그레이 색상 텍스트 -->
@@ -198,7 +198,7 @@
         <div class="uploaded-files"></div> <!-- 선택된 파일 목록이 표시될 영역 -->
     </div>
 </c:if>
-<c:if test="${empty currentStepNo.currentStep && empty fileList}">
+<c:if test="${empty fileList}">
     <div class="file-area" id="attachArea">
         <div class="filebox">
             <span class="file-text">파일 찾기</span> <!-- 그레이 색상 텍스트 -->

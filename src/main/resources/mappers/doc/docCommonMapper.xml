@@ -8,19 +8,6 @@
          WHERE created_id = #{userId}
     </select>
 
-    <select id="findDocumentsPendingApprovalTotalCountByUserId" parameterType="String" resultType="int">
-        SELECT count(*)
-          FROM approval_step s
-        INNER JOIN document d
-            ON d.doc_id = s.doc_id
-        WHERE s.approver_id = #{userId}
-          AND s.step_no = (
-            SELECT MIN(s2.step_no)
-              FROM approval_step s2
-             WHERE s2.doc_id = s.doc_id
-               AND s2.status = '01' -- 대기중
-        )
-    </select>
 
     <select id="findDocumentsUnderApproval" parameterType="map" resultType="camelcasemap">
         SELECT d.created_date
@@ -63,31 +50,37 @@
         ORDER BY d.created_date DESC
     </select>
 
+    <select id="findDocumentsPendingApprovalTotalCountByUserId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+          FROM document d
+        INNER JOIN approval_step s
+            ON d.doc_id = s.doc_id
+           AND s.approver_id = #{userId}
+        WHERE d.current_approver_id = #{userId}
+          AND s.status = '01'
+    </select>
+
     <select id="findPendingApprovalDocuments" parameterType="map" resultType="camelcasemap">
         SELECT d.doc_id
              , d.doc_title
              , d.doc_type
-             , d.doc_title
-             , doc_status.code_detail_name as docStatusName
-             , doc_type.code_detail_name as docTypeName
+             , doc_status.code_detail_name AS docStatusName
+             , doc_type.code_detail_name AS docTypeName
              , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
-        FROM approval_step s
-                 INNER JOIN document d
-                            ON d.doc_id = s.doc_id
-                 INNER JOIN common_code_detail doc_status
-                            ON d.doc_status = doc_status.code_detail_number
-                                AND doc_status.code_number = 'APV02'
-                 INNER JOIN common_code_detail doc_type
-                            ON d.doc_status = doc_type.code_detail_number
-                                AND doc_type.code_number = 'APV01'
-        WHERE s.approver_id = #{userId}
-          AND s.step_no = (
-            SELECT MIN(s2.step_no)
-            FROM approval_step s2
-            WHERE s2.doc_id = s.doc_id
-              AND s2.status = '01' -- 대기중
-        )
+        FROM document d
+        INNER JOIN approval_step s
+            ON d.doc_id = s.doc_id
+           AND s.approver_id = #{userId}
+        INNER JOIN common_code_detail doc_type
+              ON d.doc_type = doc_type.code_detail_number
+             AND doc_type.code_number = 'APV02'
+        INNER JOIN common_code_detail doc_status
+                   ON d.doc_status = doc_status.code_detail_number
+                       AND doc_status.code_number = 'APV01'
+        WHERE d.current_approver_id = #{userId}
+          AND s.status = '01' -- 현재 결재 상태 (대기 중)
         ORDER BY d.created_date DESC
+        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="findTeamLeadersByUserOrganization" parameterType="String" resultType="camelcasemap">

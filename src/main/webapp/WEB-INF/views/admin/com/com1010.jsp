@@ -416,7 +416,6 @@
 			<div id="pageNumDiv" class="pagination p12">
 			</div>
 		</div>
-
 	</div> <!-- 공지 리스트(content) 끝 -->
 </div>
 

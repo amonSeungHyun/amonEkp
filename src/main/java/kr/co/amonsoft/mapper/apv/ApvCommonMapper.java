@@ -23,4 +23,8 @@ public interface ApvCommonMapper {
 
     int updateDocumentCurrentStep(int docId);
 
-    void insertApprovalStep(Map<String, Object> approvalStep);}
+    int updateCurrentApproverId(int docId);
+
+    void insertApprovalStep(Map<String, Object> approvalStep);
+
+}

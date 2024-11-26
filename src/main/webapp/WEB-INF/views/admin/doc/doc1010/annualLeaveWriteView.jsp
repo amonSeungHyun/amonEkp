@@ -448,6 +448,7 @@
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
 		<input id="docId" type="hidden" value="${docId}"/>
+		<input id="docType" type="hidden" value="01">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">

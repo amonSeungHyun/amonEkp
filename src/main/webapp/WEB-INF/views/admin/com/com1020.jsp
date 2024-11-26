@@ -289,8 +289,6 @@ dd {
 		</div>
 	</div>
 	<!-- ========================== 구성원 추가 모달 끝 ========================== -->
-	
-	
 	<div class="content-body">
         <div class="board-view">
 			<div class="board-view-header">
@@ -320,6 +318,4 @@ dd {
             <a href="/amonsoft/controller/com/com1010" class="btn btn-lg btn-light"><span>목록</span></a>
         </div>
     </div>
-	
-	
 </div>

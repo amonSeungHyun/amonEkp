@@ -60,14 +60,14 @@
 
     <insert id="insertApprovalStep">
         INSERT INTO approval_step(
-                                   doc_id
-                                 , step_no
-                                 , approver_id
-                                 , status
-                                 , created_id
-                                 , created_date
-                                 , updated_id
-                                 , updated_date
+                   doc_id
+                 , step_no
+                 , approver_id
+                 , status
+                 , created_id
+                 , created_date
+                 , updated_id
+                 , updated_date
         ) VALUES (
                    #{docId}
                  , #{approvalStepNo}
@@ -95,5 +95,22 @@
         WHERE doc_id= #{docId}
     </update>
 
+    <update id="updateDocumentCurrentStep" parameterType="int">
+        UPDATE document
+        SET current_step = current_step + 1
+        WHERE doc_id = #{docId}
+          AND current_step <![CDATA[<]]> total_step;
+    </update>
+
+    <update id="updateCurrentApproverId" parameterType="int">
+        UPDATE document d
+        SET d.current_approver_id = (
+            SELECT a.approver_id
+            FROM approval_step a
+            WHERE a.doc_id = d.doc_id
+              AND a.step_no = d.current_step
+        )
+        WHERE d.doc_id = #{docId};
+    </update>
 
 </mapper>

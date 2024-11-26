@@ -73,6 +73,7 @@ public class Doc1010Contorller {
         Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         Map<String, Object> currentStepNo = apvCommonService.findCurrentStepNo(docId);
         Map<String, Object> userStepNo = apvCommonService.findStepNoByDocIdAndUserId(docId, customUserDetails.getUserId());
+
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("vacationDetails", vacationDetails);

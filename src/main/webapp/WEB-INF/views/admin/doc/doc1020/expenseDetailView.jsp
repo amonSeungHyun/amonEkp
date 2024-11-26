@@ -248,6 +248,7 @@
 </script>
 <div class="contai" style="overflow-x: hidden;">
   <form name="writeFrm" enctype="multipart/form-data">
+    <input id="docType" type="hidden" value="02">
     <div id="printableTable" class="table-area">
       <table class="first-table">
         <tr style="height:17.1pt">
