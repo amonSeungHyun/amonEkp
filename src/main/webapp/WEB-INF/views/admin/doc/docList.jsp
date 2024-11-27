@@ -28,11 +28,28 @@
 		font-size: 13pt;
 	}
 
-	a.link:link {color: #cccccc;}
-	a:visited {text-decoration: none; color: #cccccc;}
-	a.link:hover {text-decoration: none; color: gray;}
-	a.mylink:hover {text-decoration: none; }
-	a:active {text-decoration: none; color: #cccccc;}
+	a.link {
+		color: #cccccc; /* 기본 색상 */
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+		color: #cccccc;
+	}
+
+	a.link:hover {
+		text-decoration: none;
+		color: gray;
+	}
+
+	a.mylink:hover {
+		text-decoration: none;
+	}
+
+	a.link.active {
+		color: black; /* 클릭된 링크 색상 */
+	}
 
 	/* div#leftFirst { overflow: scroll; }
 	div#rightFirst { overflow: scroll; }	 */
@@ -424,6 +441,17 @@
 </style>
 <script type="text/javascript">
 
+	$(document).ready(function() {
+		const activePath = localStorage.getItem('activePath') || window.location.pathname;
+
+		$("a.link").each(function() {
+			if ($(this).attr("href") === activePath) {
+				$(this).addClass("active");
+			}
+		});
+	});
+
+
 	function loadDocuments(type) {
 		$.ajax({
 			type: "GET",
@@ -446,7 +474,7 @@
 					tableBody.append(rowHtml);
 				});
 				// 페이징 표시 함수 호출
-				pdateButtonStyles(type);
+				updateButtonStyles(type);
 				pageNumDisplay(data.pager);
 			},
 			error: function(xhr, status, error) {
@@ -493,6 +521,13 @@
 				console.error("데이터 조회 실패:", error);
 			}
 		});
+	}
+
+	function setActiveLink(element) {
+		$("a.link").removeClass("active");
+		$(element).addClass("active");
+
+		localStorage.setItem('activePath', $(element).attr("href"));
 	}
 
 	/*페이징 그리기*/
@@ -552,9 +587,19 @@
 		window.location.href = fullUrl;
 	}
 </script>
-<div style="padding-top: 35px; padding-left: 40px; padding-bottom: 35px;]">
-	<span><a class="mylink" href="javascript:location.href='/docList'" style="color: black; font-size: 27pt; font-weight: bold; padding-right: 20px;">내 문서함</a></span>
-	<span><a class="link" href="javascript:location.href='/docPendingList'" style=" font-size: 27pt; font-weight: bold;">회사 문서함</a></span>
+<div style="padding-top: 35px; padding-left: 40px; padding-bottom: 35px;">
+	<c:if test="${role <= 3}}">
+		<span>
+			<a class="link" href="/docPendingList" onclick="setActiveLink(this)" style="font-size: 27pt; font-weight: bold;">
+				회사 문서함
+			</a>
+		</span>
+	</c:if>
+	<span>
+		<a class="mylink link" href="/docList" onclick="setActiveLink(this)" style="font-size: 27pt; font-weight: bold; padding-right: 20px;">
+			내 문서함
+		</a>
+	</span>
 	<select>
 		<option>지출결의서</option>
 		<option>근태계</option>
@@ -570,9 +615,9 @@
  <div >
     	 <div style="padding:15px 10px 0px 35px;">
 			 <c:choose>
-				 <c:when test="${not empty role}">
+				 <c:when test="${role <= 3}">
 					 <button class="bottom-line" id="wating" style="border-bottom : 4px solid #00cc00;" onclick="loadDocuments('pending')">
-						 <span id="subject" class="doc1" style="color:black;">결재 승인 대기 문서 </span><span id="number" class="num1"></span>
+						 <span id="subject" class="doc1" style="color:black;">결재 승인 대기 문서 ${role}</span><span id="number" class="num1"></span>
 					 </button>
 				 </c:when>
 				 <c:otherwise>

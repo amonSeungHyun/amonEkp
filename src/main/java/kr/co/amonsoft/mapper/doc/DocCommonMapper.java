@@ -9,7 +9,7 @@ import java.util.Map;
 @Mapper
 public interface DocCommonMapper {
 
-    int findDocumentsTotalCountByUserId(String userId);
+    int findDocumentsUnderApprovalTotalCountByUserId(String userId);
 
     List<Map<String, Object>> findDocumentsUnderApproval(Map<String,Object> param);
 
@@ -20,6 +20,8 @@ public interface DocCommonMapper {
     Map<String, Object> findTeamLeadersByUserOrganization(String userId);
 
     int findDocumentsPendingApprovalTotalCountByUserId(String userId);
+
+    int findCompleteDocumentsTotalCountByUserId(String userId);
 
     void insertDocument(Map<String, Object> param);
 

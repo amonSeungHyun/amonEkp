@@ -15,4 +15,6 @@ public interface DocCommonService {
     Map<String,Object> findTeamLeadersByUserOrganization(String userId);
 
     int findDocumentsPendingApprovalTotalCountByUserId(String userId);
+
+    int findCompleteDocumentsTotalCountByUserId(String userId);
 }

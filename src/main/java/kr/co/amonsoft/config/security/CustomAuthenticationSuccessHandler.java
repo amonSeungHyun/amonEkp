@@ -84,6 +84,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             request.getSession().setAttribute("department", userEntity.getDepartment());
             request.getSession().setAttribute("address", userEntity.getAddress());
             request.getSession().setAttribute("roleNm", userEntity.getRoleNm());
+            request.getSession().setAttribute("role", userEntity.getRole());
             request.getSession().setAttribute("IP", request.getRemoteAddr());
             log.info("[onAuthenticationSuccess] 사용자 정보 세션에 저장 완료: {}", userEntity);
             return true;

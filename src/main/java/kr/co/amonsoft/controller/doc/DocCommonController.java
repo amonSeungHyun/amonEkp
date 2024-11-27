@@ -19,30 +19,17 @@ import java.util.*;
 @Controller
 public class DocCommonController {
 
-    private static final Set<String> ALLOWED_ROLES = Set.of("01", "02", "03");
     private final DocCommonService docCommonService;
 
     @GetMapping("/docList")
     public String docListView(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        String roleCode = customUserDetails.getRole();
-        int totalCnt = 0;
         String userId = customUserDetails.getUserId();
-        List<Map<String, Object>> documents;
-        Map<String, Object> pagingParams;
 
-        //권한있는사람
-        if(ALLOWED_ROLES.contains(roleCode)){
-            totalCnt = docCommonService.findDocumentsPendingApprovalTotalCountByUserId(userId);
-            pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
-            pagingParams.put("userId",userId);
-            documents = docCommonService.findPendingApprovalDocuments(pagingParams);
-            model.addAttribute("role", roleCode);
-        }else{
-            totalCnt = docCommonService.findDocumentsUnderApprovalTotalCountByUserId(userId);
-            pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
-            pagingParams.put("userId",userId);
-            documents = docCommonService.findDocumentsUnderApproval(pagingParams);
-        }
+        int totalCnt = docCommonService.findDocumentsUnderApprovalTotalCountByUserId(userId);
+        Map<String, Object> pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+        pagingParams.put("userId",userId);
+        List<Map<String, Object>> documents = docCommonService.findDocumentsUnderApproval(pagingParams);
+
         model.addAttribute("documents", documents);
         model.addAttribute("pager",pagingParams);
         return "/admin/doc/docList";
@@ -88,7 +75,10 @@ public class DocCommonController {
             pagingParams.put("userId",userId);
             resultList = docCommonService.findPendingApprovalDocuments(pagingParams);
         } else if ("complete".equals(type)) {
+            totalCnt = docCommonService.findCompleteDocumentsTotalCountByUserId(customUserDetails.getUserId());
             //결재 완료는 나중에 추후
+            pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+            pagingParams.put("userId",userId);
             resultList =  docCommonService.findCompleteDocuments(customUserDetails.getUserId());
         } else {
             // 결재 진행 중 문서 반환

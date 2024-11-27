@@ -176,7 +176,6 @@
 				</span>
       </div>
     </div>
-
     <div id="div_team" class="dropdown-menu">
       <form action="/amonsoft/controller/com/com7080" style="display: inline;">
         <button class="dropdown-item" type="submit">내 정보</button>
@@ -234,12 +233,22 @@
         <i class="fas fa-solid fa-plane sideIcon"></i><span>휴가</span>
     </div>
     --%>
-    <a href="/docList">
-      <div class="sideTr">
-        <i class="fas fa-solid fa-pen-nib sideIcon"></i>
-        <span>결재</span>
-      </div>
-    </a>
+    <c:if test="${sessionScope.role > 3}">
+      <a href="/docList">
+        <div class="sideTr">
+          <i class="fas fa-solid fa-pen-nib sideIcon"></i>
+          <span>결재</span>
+        </div>
+      </a>
+    </c:if>
+    <c:if test="${sessionScope.role <= 3}">
+      <a href="/docPendingList">
+        <div class="sideTr">
+          <i class="fas fa-solid fa-pen-nib sideIcon"></i>
+          <span>결재</span>
+        </div>
+      </a>
+    </c:if>
     <%--
 <div class="sideTr">
     <i class="fas fa-solid fa-dollar-sign sideIcon"></i><span>급여</span>

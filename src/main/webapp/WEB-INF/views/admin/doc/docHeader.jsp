@@ -106,6 +106,7 @@ a:active {text-decoration: none; color: #cccccc;}
 }
 </style>
 <script type="text/javascript">
+
 	function goWrite() {
 		window.location.href = "/docList";
 	}

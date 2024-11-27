@@ -2,10 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.amonsoft.mapper.doc.DocCommonMapper">
 
-    <select id="findDocumentsTotalCountByUserId" parameterType="String" resultType="int">
+    <select id="findDocumentsUnderApprovalTotalCountByUserId" parameterType="String" resultType="int">
         SELECT count(*)
           FROM document
          WHERE created_id = #{userId}
+           AND doc_status = '01'
     </select>
 
 
@@ -25,10 +26,17 @@
            ON d.doc_status = docstatus.code_detail_number
            AND docstatus.code_number = 'APV01'
         WHERE d.created_id = #{userId}
+          AND d.doc_status = '01'
          ORDER BY d.created_date DESC
          LIMIT #{limit} OFFSET #{offset}
     </select>
 
+    <select id="findCompleteDocumentsTotalCountByUserId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+         FROM document d
+        WHERE d.created_id = #{userId}
+          AND d.doc_status = '03'
+    </select>
 
     <select id="findCompleteDocuments" parameterType="map" resultType="camelcasemap">
         SELECT d.created_date
@@ -59,6 +67,7 @@
         WHERE d.current_approver_id = #{userId}
           AND s.status = '01'
     </select>
+
 
     <select id="findPendingApprovalDocuments" parameterType="map" resultType="camelcasemap">
         SELECT d.doc_id

@@ -16,7 +16,7 @@ public class DocCommonServiceImpl implements DocCommonService {
 
     @Override
     public int findDocumentsUnderApprovalTotalCountByUserId(String userId) {
-        return docCommonMapper.findDocumentsTotalCountByUserId(userId);
+        return docCommonMapper.findDocumentsUnderApprovalTotalCountByUserId(userId);
     }
 
     @Override
@@ -42,5 +42,10 @@ public class DocCommonServiceImpl implements DocCommonService {
     @Override
     public int findDocumentsPendingApprovalTotalCountByUserId(String userId) {
         return docCommonMapper.findDocumentsPendingApprovalTotalCountByUserId(userId);
+    }
+
+    @Override
+    public int findCompleteDocumentsTotalCountByUserId(String userId) {
+        return docCommonMapper.findCompleteDocumentsTotalCountByUserId(userId);
     }
 }

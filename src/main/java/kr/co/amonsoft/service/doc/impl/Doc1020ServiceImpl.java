@@ -26,7 +26,7 @@ public class Doc1020ServiceImpl implements Doc1020Service {
         List<Map<String, Object>> approvalStep = (List<Map<String, Object>>) approvalData.get("approvalData");
         String currentApproverId = approvalStep.stream()
                 .filter(step -> (Integer) step.get("approvalStepNo") == 2) // stepNo가 1인 데이터
-                .map(step -> (String) step.get("userId")) // approverId 추출
+                .map(step -> step.get("userId").toString()) // approverId 추출
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Approval step with stepNo 1 is missing"));
 

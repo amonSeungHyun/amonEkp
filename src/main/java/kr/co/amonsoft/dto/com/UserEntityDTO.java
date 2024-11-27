@@ -18,5 +18,6 @@ public class UserEntityDTO {
     private String address;                 // 주소
     private String password;                // 비밀번호
     private String roleNm;                // 직책
+    private String role; //직책코드
 
 }

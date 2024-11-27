@@ -40,6 +40,7 @@
              , m.phone_number as phoneNo
              , m.address as address
              , m.password as password
+             ,  CAST(m.role AS UNSIGNED) AS role
              , rol.code_detail_name as roleNm
         FROM user m
        INNER JOIN common_code_detail org
