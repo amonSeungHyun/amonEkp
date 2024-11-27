@@ -681,7 +681,7 @@
 				<div id="search_result" style="padding : 10px;">
 					<table id="documentTable" class="table table-bordered table-hover" style="margin-top: 20px;">
 						<thead>
-							<th style="width:7%">결재 분류</th>
+							<th style="width:15%">결재 분류</th>
 							<th class="th_100">결재 제목</th>
 							<th style="width: 10%">작성일</th>
 							<th style="width: 10%">결재 상태</th>
