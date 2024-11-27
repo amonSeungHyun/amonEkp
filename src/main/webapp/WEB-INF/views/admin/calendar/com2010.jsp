@@ -108,20 +108,19 @@
 		border: 1px solid #ccc; /* 테두리 추가 */
 	}
 
-
-
     .tooltip {
         position: absolute;
         z-index: 9999;
-        background: #fff8c6; /* 밝은 노란색 배경 */
-        color: #333; /* 검은색 글씨 */
-        border-radius: 8px; /* 모서리를 둥글게 */
-        padding: 10px; /* 내부 여백 */
-        text-align: left; /* 텍스트 왼쪽 정렬 */
-        font-size: 14px; /* 글씨 크기 */
-        max-width: 500px; /* 최대 너비 */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-        border: 1px solid #e3e3e3; /* 연한 테두리 */
+        background: #fff8c6;
+        color: #333;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        max-width: 500px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e3e3e3;
+        pointer-events: none;
+        margin-bottom: 70px;
     }
 
     .tooltip-inner {
@@ -145,6 +144,10 @@
         line-height: 1.5; /* 줄 간격 */
     }
 
+    .fc-event {
+        position: relative; /* 툴팁 위치 재계산 방지 */
+        z-index: 1; /* 툴팁과 겹치지 않도록 이벤트의 z-index 조정 */
+    }
 
 
 
@@ -284,12 +287,10 @@
                 const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1 필요
                 const day = String(date.getDate()).padStart(2, '0'); // 날짜를 두 자리로 변환
                 const currentDate = year + "-" + month + "-" + day; // YYYY-MM-DD 형식으로 변환
-                console.log("현재 날짜 (변환됨):", currentDate);
+
                 // 공휴일 배열에서 현재 날짜와 일치하는 공휴일 찾기
                 const holiday = koreanHolidays.find(h => h.date === currentDate);
-                console.log("공휴일 날짜 : ", holiday);
                 if (holiday) {
-
                     // 날짜 번호 뒤에 공휴일 이름 추가
                     const dayCellContent = $(info.el).find('.fc-daygrid-day-top');
                     if (dayCellContent.length) {
@@ -303,8 +304,8 @@
                     }
                 }
             },
-
             eventDidMount: function (info) {
+                $(info.el).tooltip('dispose'); // 기존 툴팁 제거
                 const title = '<div class="tooltip-inner">' +
                     '<div class="tooltip-title">' + info.event.title + '</div>' +
                     '<div class="tooltip-content">' +
@@ -317,20 +318,20 @@
                 $(info.el).tooltip({
                     html: true,
                     title: title,
-                    placement: 'top',
+                    container: 'body',
+                    placement: 'top', // 마우스 위로 표시
                     trigger: 'hover',
-                    container: 'body'
+                    delay: { show: 200, hide: 100 },
+                    template: '<div class="tooltip" role="tooltip"><div class="tooltip-inner"></div></div>'
                 });
+
             },
 
             // 이벤트 클릭 시 동작 추가
             eventClick: function (info) {
-                console.log("이벤트 클릭 시 info : ", info);
                 const docId = info.event.extendedProps.docId; // 이벤트 ID 가져오기
                 const docType = info.event.extendedProps.docType; // docType 가져오기
                 const referenceType = "doc"; // referenceType 고정값
-                console.log("이벤트 클릭 시 docId : ", docId);
-                console.log("이벤트 클릭 시 docType : ", docType);
                 // Redirect URL 생성 함수 호출
                 const goToUrl = goToUrUrl(docId, docType, referenceType);
 
@@ -347,27 +348,6 @@
 
         calendar.render();
 
-		// DateRangePicker 설정
-		function setupDateRangePicker(start, end) {
-			$('#daterange_register').daterangepicker({
-				timePicker: true,
-				timePicker24Hour: true,
-				startDate: start + " 09:00",
-				endDate: end + " 18:00",
-				locale: {
-					format: 'YYYY-MM-DD HH:mm',
-					separator: " ~ ",
-					applyLabel: "확인",
-					cancelLabel: "취소",
-					daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
-					monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-				}
-			}).on('apply.daterangepicker', function (ev, picker) {
-				$("input[name='start_date']").val(picker.startDate.format('YYYY-MM-DD HH:mm'));
-				$("input[name='end_date']").val(picker.endDate.format('YYYY-MM-DD HH:mm'));
-			});
-		}
-
         // Redirect URL 생성 함수
         function goToUrUrl(docId, docType, referenceType) {
             const urls = {
@@ -382,29 +362,6 @@
         }
 
 
-		// 이벤트 상세 정보 불러오기
-		function loadEventDetails(schedule_no) {
-			$.ajax({
-				url: "/admin/calendar/selectCalendarList",
-				data: { "schedule_no": schedule_no },
-				dataType: "JSON",
-				success: function (json) {
-					let start_date = json.startDate;
-					let end_date = json.endDate;
-					$("#daterange_modify").val(start_date + " ~ " + end_date);
-					$("form[name='schedule_modify_delete'] input[name='start_date']").val(start_date);
-					$("form[name='schedule_modify_delete'] input[name='end_date']").val(end_date);
-					$("#subject_modify").val(json.docTitle);
-					$("#category_modify").val(json.docTypeNm);
-					$("#place_modify").val(json.place);
-					$("#content_modify").val(json.content);
-					$("#schedule_no_modify").val(schedule_no);
-				},
-				error: function (request, status, error) {
-					console.log("Error:", error);
-				}
-			});
-		}
 	});
 </script>
 
