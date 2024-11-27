@@ -158,6 +158,7 @@
             { title: '추석 연휴', date: '2024-09-16' },
             { title: '추석', date: '2024-09-17' },
             { title: '추석 연휴', date: '2024-09-18' },
+            { title: '근로자의 날', date: '2024-10-01' },
             { title: '개천절', date: '2024-10-03' },
             { title: '한글날', date: '2024-10-09' },
             { title: '성탄절', date: '2024-12-25' }
@@ -218,7 +219,7 @@
                             }
 
                             const titleWithName = event.docType === '01'
-                                ? event.docTitle + "(" + event.userName + ")" : event.docTitle;
+                                ? event.docTitle + "(" + event.content + ")" : event.docTitle;
 
                             // 이벤트 날짜 필터링: 공휴일 제외
                             const startDate = new Date(event.startDate);
