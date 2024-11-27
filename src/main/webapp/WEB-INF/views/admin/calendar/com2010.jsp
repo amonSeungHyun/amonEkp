@@ -246,6 +246,7 @@
                                 end: date, // 단일 날짜 이벤트
                                 color: color,
                                 extendedProps: {
+                                    docId: event.docId,
                                     userId: event.userId,
                                     userName: event.userName,
                                     description: event.docTitle,
@@ -302,7 +303,28 @@
                     trigger: 'hover',
                     container: 'body'
                 });
+            },
+
+            // 이벤트 클릭 시 동작 추가
+            eventClick: function (info) {
+                console.log("이벤트 클릭 시 info : ", info);
+                const docId = info.event.extendedProps.docId; // 이벤트 ID 가져오기
+                const docType = info.event.extendedProps.docType; // docType 가져오기
+                const referenceType = "doc"; // referenceType 고정값
+                console.log("이벤트 클릭 시 docId : ", docId);
+                console.log("이벤트 클릭 시 docType : ", docType);
+                // Redirect URL 생성 함수 호출
+                const goToUrl = goToUrUrl(docId, docType, referenceType);
+
+                if (goToUrl) {
+                    console.log("이동할 화면 URL:", goToUrl);
+                    // 페이지 이동
+                    window.location.href = goToUrl;
+                } else {
+                    alert("유효하지 않은 docType입니다.");
+                }
             }
+
         });
 
         calendar.render();
@@ -327,6 +349,20 @@
 				$("input[name='end_date']").val(picker.endDate.format('YYYY-MM-DD HH:mm'));
 			});
 		}
+
+        // Redirect URL 생성 함수
+        function goToUrUrl(docId, docType, referenceType) {
+            const urls = {
+                "01": "/approval/annualLeaveView?docId=" + docId + "&referenceType=" + referenceType,
+                "02": "/approval/expenseDetailView?docId=" + docId + "&referenceType=" + referenceType,
+                "03": "/doc/doc1040View?docId=" + docId + "&referenceType=" + referenceType,
+                "05": "/doc/doc1050View?docId=" + docId + "&referenceType=" + referenceType,
+                "06": "/doc/doc1060View?docId=" + docId + "&referenceType=" + referenceType,
+            };
+
+            return urls[docType] || null; // docType이 유효하지 않을 경우 null 반환
+        }
+
 
 		// 이벤트 상세 정보 불러오기
 		function loadEventDetails(schedule_no) {

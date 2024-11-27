@@ -327,9 +327,13 @@ a:active {text-decoration: none; color: #cccccc;}
 	async function printTable() {
 		window.print();
 	}
+	function goBack() {
+		window.history.back(); // 브라우저의 이전 페이지로 이동
+	}
+
 </script>
 <div style="display: flex; padding-top: 30px; padding-left: 30px; padding-bottom: 40px;]" class="border-bottom">
-	 <span ><a class="mylink" href="javascript:location.href='/doc/selectWrite'" style="color: #404040; font-size: 23pt; font-weight: bold; padding-right: 20px;"><</a></span>
+	 <span ><a class="mylink" href="javascript:void(0);" onclick="goBack();" style="color: #404040; font-size: 23pt; font-weight: bold; padding-right: 20px;"><</a></span>
 	<c:if test="${empty documentCreatorInfo.docStatus}">
 		<span style="color:#404040; font-size: 23pt; font-weight: bold; margin-right:20px;" onclick="javascript:location.href='/workflow/modify'">작성하기</span>
 		<button type="button" class="headerBtn" onclick="goWrite();">
