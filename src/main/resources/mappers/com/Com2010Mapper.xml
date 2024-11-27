@@ -29,11 +29,30 @@
                       , d.doc_title as docTitle
                       , d.doc_type as docType
                       , ccd.code_detail_name as docTypeNm
-                      , d.updated_date as startDate
-                      , d.updated_date as endDate
+                      , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as startDate
+                      , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as endDate
         from transport_expense_detail ted
                  inner join document d
                             on ted.doc_id = d.doc_id
+                 inner join common_code_detail ccd
+                            on d.doc_type = ccd.code_detail_number
+                 inner join user u
+                            on d.created_id = u.user_id
+                                and ccd.code_number = 'APV02'
+        where 1 = 1
+          and d.doc_status = '03'
+        UNION ALL
+        select distinct(d.doc_id) as docId
+                      , u.user_id as userId
+                      , u.user_name as userName
+                      , d.doc_title as docTitle
+                      , d.doc_type as docType
+                      , ccd.code_detail_name as docTypeNm
+                      , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as startDate
+                      , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as endDate
+        from expense_detail ed
+                 inner join document d
+                            on ed.doc_id = d.doc_id
                  inner join common_code_detail ccd
                             on d.doc_type = ccd.code_detail_number
                  inner join user u

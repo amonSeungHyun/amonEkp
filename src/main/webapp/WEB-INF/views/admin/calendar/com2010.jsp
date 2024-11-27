@@ -144,77 +144,155 @@
 	$(document).ready(function () {
 		let calendarEl = $('#calendar')[0];
 
+        // 대한민국 공휴일 배열
+        const koreanHolidays = [
+            { title: '신정', date: '2024-01-01' },
+            { title: '설날 연휴', date: '2024-02-09' },
+            { title: '설날', date: '2024-02-10' },
+            { title: '설날 연휴', date: '2024-02-11' },
+            { title: '삼일절', date: '2024-03-01' },
+            { title: '어린이날', date: '2024-05-05' },
+            { title: '어린이날 대체공휴일', date: '2024-05-06' },
+            { title: '부처님 오신 날', date: '2024-05-15' },
+            { title: '현충일', date: '2024-06-06' },
+            { title: '광복절', date: '2024-08-15' },
+            { title: '추석 연휴', date: '2024-09-16' },
+            { title: '추석', date: '2024-09-17' },
+            { title: '추석 연휴', date: '2024-09-18' },
+            { title: '개천절', date: '2024-10-03' },
+            { title: '한글날', date: '2024-10-09' },
+            { title: '성탄절', date: '2024-12-25' }
+        ];
+
+        // 공휴일 이벤트 변환
+        // const holidayEvents = koreanHolidays.map(holiday => ({
+        //     title: holiday.title,
+        //     start: holiday.date,
+        //     color: '#FF0000', // 빨간색
+        //     allDay: true
+        // }));
+
 		// FullCalendar 설정
-		let calendar = new FullCalendar.Calendar(calendarEl, {
-			selectable: true,
-			locale: 'ko',
-			headerToolbar: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'dayGridMonth,timeGridWeek'
-			},
-			contentHeight: 'auto', // 자동 높이 조정
-			events: {
-				url: '/admin/calendar/selectCalendarList',
-				method: 'GET',
-				failure: function () {
-					alert("이벤트를 불러오는 중 오류가 발생했습니다.");
-				},
-				success: function (data) {
-					// docType에 따라 색상 지정
-					return data.map(event => {
-						let color;
-						switch (event.docType) {
-							case '01': // 휴가
-								color = '#FF6F7A'; // 빨간색
-								break;
-							case '02': // 지출
-								color = '#81D98E'; // 초록색
-								break;
-							case '03': // 출장
-								color = '#73C2F0'; // 파란색
-								break;
-							case '04': // 회의
-								color = '#FFFFBA'; // 노란색
-								break;
-							case '05': // 품의서
-								color = '#F3E76D'; // 밝은 초록색
-								break;
-							case '06': // 기타
-								color = '#B573FF'; // 진한 빨간색
-								break;
-							default:
-								color = '#89848a'; // 기본 회색
-								break;
-						}
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+            selectable: true,
+            locale: 'ko',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
+            contentHeight: 'auto', // 자동 높이 조정
 
-                        // 제목에 "(안민영)" 추가 조건
-                        const titleWithName = event.docType === '01'
-                            ? event.docTitle + "(" + event.userName + ")" : event.docTitle;
+            // 이벤트 소스 정의
+            eventSources: [
+                {
+                    url: '/admin/calendar/selectCalendarList', // 기존 데이터 URL
+                    method: 'GET',
+                    failure: function () {
+                        alert("이벤트를 불러오는 중 오류가 발생했습니다.");
+                    },
+                    success: function (data) {
+                        return data.flatMap(event => {
+                            let color;
+                            switch (event.docType) {
+                                case '01': // 휴가
+                                    color = '#FF6F7A'; // 빨간색
+                                    break;
+                                case '02': // 지출
+                                    color = '#81D98E'; // 초록색
+                                    break;
+                                case '03': // 출장
+                                    color = '#73C2F0'; // 파란색
+                                    break;
+                                case '04': // 회의
+                                    color = '#FFFFBA'; // 노란색
+                                    break;
+                                case '05': // 품의서
+                                    color = '#F3E76D'; // 밝은 초록색
+                                    break;
+                                case '06': // 기타
+                                    color = '#B573FF'; // 진한 빨간색
+                                    break;
+                                default:
+                                    color = '#89848a'; // 기본 회색
+                                    break;
+                            }
 
-						return {
-							id: event.docId,
-							title: titleWithName,
-							start: event.startDate,
-							end: event.endDate,
-							color: color, // docType에 따라 동적으로 색상 지정
-							extendedProps: {
-                                userId: event.userId,       // 유저아이디
-                                userName: event.userName, // 유저이름
-                                description: event.docTitle,
-								docType: event.docType,
-								docTypeNm: event.docTypeNm
-							}
-						};
-					});
-				}
-			},
-            eventDidMount: function(info) {
-                console.log(info); // 로그로 툴팁 데이터 확인
+                            const titleWithName = event.docType === '01'
+                                ? event.docTitle + "(" + event.userName + ")" : event.docTitle;
 
+                            // 이벤트 날짜 필터링: 공휴일 제외
+                            const startDate = new Date(event.startDate);
+                            const endDate = new Date(event.endDate);
+                            const filteredDates = [];
+
+                            // 공휴일 날짜 배열 생성
+                            const holidayDates = koreanHolidays.map(h => h.date);
+
+                            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                                const formattedDate = d.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+                                const dayOfWeek = d.getDay(); // 0: 일요일, 6: 토요일
+
+                                if (!holidayDates.includes(formattedDate) && dayOfWeek !== 0 && dayOfWeek !== 6) {
+                                    filteredDates.push(formattedDate); // 공휴일이 아닌 날짜만 추가
+                                }
+                            }
+
+                            // 각 날짜별로 개별 이벤트 생성 (필요시 조합 가능)
+                            return filteredDates.map(date => ({
+                                id: event.docId + '-' + date, // 고유 ID
+                                title: titleWithName,
+                                start: date,
+                                end: date, // 단일 날짜 이벤트
+                                color: color,
+                                extendedProps: {
+                                    userId: event.userId,
+                                    userName: event.userName,
+                                    description: event.docTitle,
+                                    docType: event.docType,
+                                    docTypeNm: event.docTypeNm
+                                }
+                            }));
+                        })
+                    }
+                },
+                // {
+                //     events: holidayEvents // 공휴일 추가
+                // }
+            ],
+
+            // 공휴일 날짜 옆 텍스트 추가
+            dayCellDidMount: function (info) {
+                // info.date를 YYYY-MM-DD 형식으로 변환
+                const date = info.date; // info.date는 Date 객체
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1 필요
+                const day = String(date.getDate()).padStart(2, '0'); // 날짜를 두 자리로 변환
+                const currentDate = year + "-" + month + "-" + day; // YYYY-MM-DD 형식으로 변환
+                console.log("현재 날짜 (변환됨):", currentDate);
+                // 공휴일 배열에서 현재 날짜와 일치하는 공휴일 찾기
+                const holiday = koreanHolidays.find(h => h.date === currentDate);
+                console.log("공휴일 날짜 : ", holiday);
+                if (holiday) {
+
+                    // 날짜 번호 뒤에 공휴일 이름 추가
+                    const dayCellContent = $(info.el).find('.fc-daygrid-day-top');
+                    if (dayCellContent.length) {
+                        // 날짜 번호를 빨간색으로 설정
+                        // 날짜 번호를 빨간색으로 설정 (스타일 적용 확실히)
+                        dayCellContent.css({
+                            'color': 'red',
+                            'font-weight': 'bold', // 강조 효과 추가
+                        });
+                        dayCellContent.append('<span style="color: red; font-size: 12px; margin-left: 5px; margin-top: 5px;">(' + holiday.title + ')</span>');
+                    }
+                }
+            },
+
+            eventDidMount: function (info) {
                 const title = '<div class="tooltip-inner">' +
                     '<div class="tooltip-title">' + info.event.title + '</div>' +
-                    '<div class="tooltip-content">' + (info.event.extendedProps.userName || " 이다 이 자석들아") + '</div>' +
+                    '<div class="tooltip-content">' + (info.event.extendedProps.userName || "N/A") + '</div>' +
                     '</div>';
 
                 $(info.el).tooltip({
@@ -225,21 +303,9 @@
                     container: 'body'
                 });
             }
-			// dateClick: function (info) {
-			// 	// 일정 등록 모달 띄우기
-			// 	$('#scheduleModal').modal('show');
-			// 	$("input[name='start_date']").val(info.dateStr + " 09:00");
-			// 	$("input[name='end_date']").val(info.dateStr + " 18:00");
-			// 	setupDateRangePicker(info.dateStr, info.dateStr);
-			// },
-			// eventClick: function (info) {
-			// 	// 일정 상세보기 모달 띄우기
-			// 	$('#modify_scheduleModal').modal('show');
-			// 	loadEventDetails(info.event.id);
-			// }
-		});
+        });
 
-		calendar.render();
+        calendar.render();
 
 		// DateRangePicker 설정
 		function setupDateRangePicker(start, end) {
@@ -303,13 +369,13 @@
         <span class="legend-color" style="background-color: #FF6F7A;"></span> 휴가
     </span>
 	<span class="legend-item">
-        <span class="legend-color" style="background-color: #B573FF;"></span> 지출
+        <span class="legend-color" style="background-color: #81D98E;"></span> 지출
     </span>
 	<span class="legend-item">
         <span class="legend-color" style="background-color: #73C2F0;"></span> 출장
     </span>
 	<span class="legend-item">
-        <span class="legend-color" style="background-color: #FFFFBA;"></span> 회의
+        <span class="legend-color" style="background-color: #B573FF;"></span> 교통비 청구서
     </span>
 	<span class="legend-item">
         <span class="legend-color" style="background-color: #F3E76D;"></span> 품의서
