@@ -48,4 +48,9 @@ public class DocCommonServiceImpl implements DocCommonService {
     public int findCompleteDocumentsTotalCountByUserId(String userId) {
         return docCommonMapper.findCompleteDocumentsTotalCountByUserId(userId);
     }
+
+    @Override
+    public List<Map<String, Object>> findDocumentUrls() {
+        return docCommonMapper.findDocumentUrls();
+    }
 }

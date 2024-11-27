@@ -554,14 +554,12 @@
 							   value="${vacationDetails.emergencyContact}" readonly>
 					</td>
 				</tr>
-
 				<tr>
 					<td class="col2">개인사유</td>
 					<td colspan="3">
 						<textarea class="input-field auto-expand" id="details" name="details" style="width:100%; resize:none; text-align:left;" readonly>${vacationDetails.personalReason}</textarea>
 					</td>
 				</tr>
-
 			</table>
 			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
 			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
@@ -569,12 +567,6 @@
 			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 :</p>
 		</div>
 		<!-- File upload area -->
-		<div class="file-area" id="attachArea">
-			<div class="filebox">
-				<label for="file">파일 찾기</label>
-				<input class="upload-name" value="첨부파일" placeholder="첨부파일">
-				<input type="file" id="file" multiple="multiple" name="attach">
-			</div>
-		</div>
+		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 	</form>
 </div>
