@@ -15,19 +15,19 @@
 
 <style>
 	/* 기본 스타일 */
-	/*#calendar {*/
-	/*	width: 80%;*/
-	/*	margin-top: 20px; !* 위 여백 *!*/
-	/*	margin-bottom: 50px; !* 아래 여백 *!*/
-	/*	margin-left: 50px; !* 위 여백 *!*/
-	/*	height: 600px;*/
-	/*}*/
+	#calendar {
+		width: 80%;
+		margin-top: 20px; /* 위 여백 */
+		margin-bottom: 50px; /* 아래 여백 */
+		margin-left: 50px; /* 위 여백 */
+		height: 600px;
+	}
 
-    #calendar {
-        width: 80%;
-        height: calc(100vh - 120px);
-        margin: 0 auto; /* 가로 중앙 정렬 */
-    }
+    /*#calendar {*/
+    /*    width: 80%;*/
+    /*    height: calc(100vh - 120px);*/
+    /*    margin: 0 auto; !* 가로 중앙 정렬 *!*/
+    /*}*/
 
     .fc-view-harness {
         height: 500px;
