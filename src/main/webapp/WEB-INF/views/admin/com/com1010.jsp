@@ -302,13 +302,15 @@
 		<div id="header_title">
 			<span class="memberTitle">공지사항</span>
 		</div>
-		<div id="button_title">
-			<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
-				<span>
-					<i class="fas fa-plus" style="margin: 0px; width: 20px;"></i>&nbsp;&nbsp;공지사항 등록하기
-				</span>
-			</button>
-		</div>
+		<c:if test="${not empty role}">
+			<div id="button_title">
+				<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
+					<span>
+						<i class="fas fa-plus" style="margin: 0px; width: 20px;"></i>&nbsp;&nbsp;공지사항 등록하기
+					</span>
+				</button>
+			</div>
+		</c:if>
 	</div>
 	
 	<!-- ========================== 공지사항 추가/수정 모달 시작 ========================== -->
@@ -379,10 +381,11 @@
 				<button class="btn" id="advanced-search-button" onclick="searchCom1010()" type="button" style="border:none; background-color: #66cc66; height: 30px; color: white;">
 				<i class="fa fa-search"></i>
 				</button> 
-				
-				<button class="btn" id="delete-button" onclick="deleteCom1010()" type="button" style="border:none; background-color: #ff6666; height: 30px; color: white; margin-left: 5px;">
-				    <i class="fa fa-trash"></i>
-				</button>
+				<c:if test="${not empty role}">
+					<button class="btn" id="delete-button" onclick="deleteCom1010()" type="button" style="border:none; background-color: #ff6666; height: 30px; color: white; margin-left: 5px;">
+					    <i class="fa fa-trash"></i>
+					</button>
+				</c:if>
 			</div>	
 		</div>
 	</div>

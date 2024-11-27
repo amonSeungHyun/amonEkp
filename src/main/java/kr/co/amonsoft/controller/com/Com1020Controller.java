@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,6 +33,8 @@ public class Com1020Controller {
 	@Autowired
 	private Com1020Service com1020Service;
     private final FileService fileService;
+    
+    private static final Set<String> ALLOWED_ROLES = Set.of("01", "02", "03");
 
 	@GetMapping(value = "/com/com1020")
     public String com1020(@AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -43,7 +46,12 @@ public class Com1020Controller {
 		
 		Map<String, Object> currentStepNo = new HashMap<>();
 		currentStepNo.put("currentStep", "1");
-
+		String roleCode = customUserDetails.getRole();
+		
+		//권한있는사람
+        if(ALLOWED_ROLES.contains(roleCode)){
+            model.addAttribute("role", roleCode);
+        }		
 		
 		model.addAttribute("fileList",fileList);
 		model.addAttribute("currentStepNo",currentStepNo);

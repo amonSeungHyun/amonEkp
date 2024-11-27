@@ -236,13 +236,15 @@ dd {
 		<div id="header_title">
 			<span class="memberTitle">공지사항 상세</span>
 		</div>
-		<div id="button_title">
-			<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
-				<span>
-					<i class="fas fa-plus" style="margin: 0px; width: 20px;"></i>&nbsp;&nbsp;공지사항 수정하기
-				</span>
-			</button>
-		</div>
+		<c:if test="${not empty role}">
+			<div id="button_title">
+				<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
+					<span>
+						<i class="fas fa-plus" style="margin: 0px; width: 20px;"></i>&nbsp;&nbsp;공지사항 수정하기
+					</span>
+				</button>
+			</div>
+		</c:if>
 	</div>
 	
 	<!-- ========================== 공지사항 추가/수정 모달 시작 ========================== -->

@@ -5,12 +5,14 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,10 +43,15 @@ public class Com1010Controller {
     private final FileService fileService;
     
     private final String UPLOAD_PATH = "C:\\test";
+    private static final Set<String> ALLOWED_ROLES = Set.of("01", "02", "03");
 
 	@GetMapping(value = "/amonsoft/controller/com/com1010")
-    public String com1010(HttpServletRequest request, ModelAndView mav) throws Exception {
-		
+    public String com1010(HttpServletRequest request, Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws Exception {
+		String roleCode = customUserDetails.getRole();
+		//권한있는사람
+        if(ALLOWED_ROLES.contains(roleCode)){
+            model.addAttribute("role", roleCode);
+        }		
         return "/admin/com/com1010";
     }
 	
