@@ -15,13 +15,26 @@
 
 <style>
 	/* 기본 스타일 */
-	#calendar {
-		width: 80%;
-		margin-top: 20px; /* 위 여백 */
-		margin-bottom: 50px; /* 아래 여백 */
-		margin-left: 50px; /* 위 여백 */
-		height: 600px;
-	}
+	/*#calendar {*/
+	/*	width: 80%;*/
+	/*	margin-top: 20px; !* 위 여백 *!*/
+	/*	margin-bottom: 50px; !* 아래 여백 *!*/
+	/*	margin-left: 50px; !* 위 여백 *!*/
+	/*	height: 600px;*/
+	/*}*/
+
+    #calendar {
+        width: 80%;
+        height: calc(100vh - 120px);
+        margin: 0 auto; /* 가로 중앙 정렬 */
+    }
+
+    .fc-view-harness {
+        height: 500px;
+    }
+    .fc-daygrid{
+        height: 500px;
+    }
 
 	/* 스타일 최적화 */
 	.fc-day-sun a {
@@ -56,10 +69,10 @@
 
 	/* 날짜 칸의 기본 높이 고정 */
 	.fc-daygrid-day-events {
-		height: 100px; /* 칸 높이 고정 */
+		height: 80px; /* 칸 높이 고정 */
 		position: relative;
 		/*overflow-x: visible !important; !* 가로 넘침 표시 *!*/
-		/*overflow-y: auto;*/
+		overflow-y: auto;
 		padding: 3px; /* 날짜 칸 내부 여백 */
 	}
 
@@ -396,14 +409,14 @@
 </script>
 
 <div id="peopleContent">
-	<div id="header">
-		<div id="header_title">
-			<a class="current" href="/admin/calendar/com2010"><span class="memberTitle">캘린더</span></a>
-		</div>
+<%--	<div id="header">--%>
+<%--		<div id="header_title">--%>
+<%--			<a class="current" href="/admin/calendar/com2010"><span class="memberTitle">캘린더</span></a>--%>
+<%--		</div>--%>
 
 
 
-	</div>
+<%--	</div>--%>
 
 	<div id="calendarLegend" class="mb-3">
     <span class="legend-item">
