@@ -37,6 +37,7 @@ public class Com1010ServiceImpl implements Com1010Service {
 	@Override
 	public void deleteCom1010(Map<String, Object> param) {
 		com1010Mapper.deleteCom1010(param);
+		com1010Mapper.deleteCom1010file(param);
 		
 	}
 

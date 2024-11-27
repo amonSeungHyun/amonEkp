@@ -84,4 +84,13 @@
 	
 	</delete>
 	
+	<delete id="deleteCom1010file" parameterType="Map">
+        DELETE FROM file WHERE reference_type = 'board' 
+           AND reference_id IN
+        <foreach item="boardNumber" collection="boardNumbers" open="(" separator="," close=")">
+            #{boardNumber}
+        </foreach>
+	
+	</delete>
+	
 </mapper>

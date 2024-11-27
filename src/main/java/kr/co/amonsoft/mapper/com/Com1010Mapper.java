@@ -14,4 +14,6 @@ public interface Com1010Mapper {
 	void insertCom1010(Map<String, Object> param);
 
 	void deleteCom1010(Map<String, Object> param);
+	
+	void deleteCom1010file(Map<String, Object> param);
 }
