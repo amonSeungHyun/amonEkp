@@ -25,11 +25,13 @@ public class DocCommonController {
     public String docListView(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         String userId = customUserDetails.getUserId();
 
+
         int totalCnt = docCommonService.findDocumentsUnderApprovalTotalCountByUserId(userId);
         Map<String, Object> pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
         pagingParams.put("userId",userId);
         List<Map<String, Object>> documents = docCommonService.findDocumentsUnderApproval(pagingParams);
 
+        model.addAttribute("documentUrls", docCommonService.findDocumentUrls());
         model.addAttribute("documents", documents);
         model.addAttribute("pager",pagingParams);
         return "/admin/doc/docList";
@@ -45,6 +47,8 @@ public class DocCommonController {
         pagingParams.put("userId",userId);
         List<Map<String, Object>> documents = docCommonService.findPendingApprovalDocuments(pagingParams);
 
+        model.addAttribute("documentUrls", docCommonService.findDocumentUrls());
+        model.addAttribute("admin",true);
         model.addAttribute("role", roleCode);
         model.addAttribute("documents", documents);
         model.addAttribute("pager",pagingParams);

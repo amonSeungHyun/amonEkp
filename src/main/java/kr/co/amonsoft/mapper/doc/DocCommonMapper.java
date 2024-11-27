@@ -23,6 +23,8 @@ public interface DocCommonMapper {
 
     int findCompleteDocumentsTotalCountByUserId(String userId);
 
+    List<Map<String,Object>> findDocumentUrls();
+
     void insertDocument(Map<String, Object> param);
 
     // 결재할때 메일 관련 ############################################################

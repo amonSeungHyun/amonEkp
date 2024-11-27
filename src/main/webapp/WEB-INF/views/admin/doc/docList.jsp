@@ -59,6 +59,18 @@
 	padding: 0px;
 	}
 
+	#wating, #mine, #complete {
+		color: gray;
+		border-bottom: none;
+	}
+
+	#wating.active,
+	#mine.active,
+	#complete.active {
+		color: black;
+		border-bottom: 4px solid #00cc00;
+	}
+
     input[type="checkbox"] {
         -webkit-appearance: none;
         position: relative;
@@ -438,6 +450,23 @@
 	button#delete:hover {
  	background-color: #efefef;
   }
+
+	.document-select{
+		width: 200px;
+		padding: .8em .5em;
+		font-family: inherit;
+		background: url(https://farm1.staticflickr.com/379/19928272501_4ef877c265_t.jpg) no-repeat 95% 50%;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		border: 1px solid #999;
+		border-radius: 0px;
+	}
+
+	select::-ms-expand {
+		/* for IE 11 */
+		display: none;
+	}
 </style>
 <script type="text/javascript">
 
@@ -484,13 +513,17 @@
 	}
 
 	function updateButtonStyles(activeType) {
-		// 버튼 스타일을 조건에 따라 동적으로 설정
-		$("#wating").css("color", activeType === "pending" ? "black" : "gray")
-				.css("border-bottom", activeType === "pending" ? "4px solid #00cc00" : "none");
-		$("#mine").css("color", activeType === "underApproval" ? "black" : "gray")
-				.css("border-bottom", activeType === "underApproval" ? "4px solid #00cc00" : "none");
-		$("#complete").css("color", activeType === "complete" ? "black" : "gray")
-				.css("border-bottom", activeType === "complete" ? "4px solid #00cc00" : "none");
+		// 모든 버튼의 스타일 초기화
+		$("#wating, #mine, #complete").removeClass("active");
+
+		// activeType에 따라 클래스 추가
+		if (activeType === "pending") {
+			$("#wating").addClass("active");
+		} else if (activeType === "underApproval") {
+			$("#mine").addClass("active");
+		} else if (activeType === "complete") {
+			$("#complete").addClass("active");
+		}
 	}
 
 	function selectDocumentSearchList(pageNum,type) {
@@ -586,9 +619,21 @@
 		// 생성된 URL로 이동
 		window.location.href = fullUrl;
 	}
+
+	function navigateToUrl() {
+		// 셀렉트 박스의 선택된 값을 가져옴
+		const selectedValue = $("#documentSelectUrl").val();
+
+		// 값이 있는 경우 해당 URL로 이동
+		if (selectedValue) {
+			window.location.href = selectedValue;
+		} else {
+			alert('이동할 문서를 선택해주세요.');
+		}
+	}
 </script>
 <div style="padding-top: 35px; padding-left: 40px; padding-bottom: 35px;">
-	<c:if test="${role <= 3}}">
+	<c:if test="${role <= 3}">
 		<span>
 			<a class="link" href="/docPendingList" onclick="setActiveLink(this)" style="font-size: 27pt; font-weight: bold;">
 				회사 문서함
@@ -600,14 +645,15 @@
 			내 문서함
 		</a>
 	</span>
-	<select>
-		<option>지출결의서</option>
-		<option>근태계</option>
-	</select>
-	<button type="button" class="headerBtn" style="margin-left : 0px; float:right; margin-right:10px;" onclick="javascript:location.href='/doc/selectWrite'">
+	<button type="button" class="headerBtn" style="margin-left : 20px; float:right; margin-right:10px;" onclick="navigateToUrl()">
 		<i class="bi bi-pencil-fill"></i>
 		작성하기
 	</button>
+	<select id="documentSelectUrl" class="document-select" style="float: right;  width: 200px; height: 45px; line-height: 20px;">
+		<c:forEach var="documentUrl" items="${documentUrls}">
+			<option value="${documentUrl.codeDescription}">${documentUrl.codeDetailName}</option>
+		</c:forEach>
+	</select>
 </div>
 <div class="border-top"></div>
 
@@ -615,19 +661,19 @@
  <div >
     	 <div style="padding:15px 10px 0px 35px;">
 			 <c:choose>
-				 <c:when test="${role <= 3}">
-					 <button class="bottom-line" id="wating" style="border-bottom : 4px solid #00cc00;" onclick="loadDocuments('pending')">
-						 <span id="subject" class="doc1" style="color:black;">결재 승인 대기 문서 ${role}</span><span id="number" class="num1"></span>
+				 <c:when test="${role <= 3 && not empty admin}">
+					 <button class="bottom-line active" id="wating"  onclick="loadDocuments('pending')">
+						 <span id="subject" class="doc1" >결재 승인 대기 문서</span><span id="number" class="num1"></span>
 					 </button>
 				 </c:when>
 				 <c:otherwise>
-					 <button class="bottom-line" id="mine" style="border-bottom : 4px solid #00cc00;" onclick="loadDocuments('underApproval')">
-						 <span id="subject" class="doc2" style="color:gray;">결재 중 문서 </span><span id="number" class="num2"></span>
+					 <button class="bottom-line active" id="mine"  onclick="loadDocuments('underApproval')">
+						 <span id="subject" class="doc2" >결재 중 문서 </span><span id="number" class="num2"></span>
 					 </button>
 				 </c:otherwise>
 			 </c:choose>
 	    		<button class="bottom-line" id="complete"  onclick="loadDocuments('complete')">
-	    			<span id=subject class="doc3" style="color:gray;">완료</span> <span id="number" class="num3"> </span>
+	    			<span id=subject class="doc3">완료</span> <span id="number" class="num3"> </span>
 	    		</button>
     	 </div>
 	    <div id="documentContent" class="border-top" >

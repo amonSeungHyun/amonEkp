@@ -17,4 +17,6 @@ public interface DocCommonService {
     int findDocumentsPendingApprovalTotalCountByUserId(String userId);
 
     int findCompleteDocumentsTotalCountByUserId(String userId);
+
+    List<Map<String,Object>> findDocumentUrls();
 }
