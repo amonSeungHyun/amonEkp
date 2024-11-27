@@ -100,39 +100,38 @@
     .tooltip {
         position: absolute;
         z-index: 9999;
-        background: #fff; /* 흰색 배경 */
-        color: #000; /* 검은색 글씨 */
-        border-radius: 5px; /* 모서리를 둥글게 */
+        background: #fff8c6; /* 밝은 노란색 배경 */
+        color: #333; /* 검은색 글씨 */
+        border-radius: 8px; /* 모서리를 둥글게 */
         padding: 10px; /* 내부 여백 */
         text-align: left; /* 텍스트 왼쪽 정렬 */
         font-size: 14px; /* 글씨 크기 */
-        max-width: 250px; /* 최대 너비 */
+        max-width: 500px; /* 최대 너비 */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-        border: 1px solid #ccc; /* 외곽선 추가 */
+        border: 1px solid #e3e3e3; /* 연한 테두리 */
     }
 
     .tooltip-inner {
         display: flex;
+        max-width: 1000px; /* 최대 너비 */
         flex-direction: column;
+        background: #fff8c6; /* 밝은 노란색 배경 */
     }
 
     .tooltip-title {
         font-weight: bold; /* 제목은 굵게 */
         font-size: 16px; /* 제목 글씨 크기 */
-        margin-bottom: 5px; /* 제목과 내용 사이 간격 */
-        color: #333; /* 제목 색상 */
-        background: #f5f5f5; /* 제목 배경색 */
-        padding: 5px;
-        border-radius: 3px; /* 제목 둥근 모서리 */
+        margin-bottom: 8px; /* 제목과 내용 사이 간격 */
+        color: #000; /* 제목 색상 */
         text-align: center; /* 제목 중앙 정렬 */
     }
 
     .tooltip-content {
         font-size: 14px; /* 내용 글씨 크기 */
-        color: #555; /* 내용 색상 */
+        color: #333; /* 내용 색상 */
         line-height: 1.5; /* 줄 간격 */
-        padding: 5px; /* 내용 내부 여백 */
     }
+
 
 
 
@@ -165,12 +164,12 @@
         ];
 
         // 공휴일 이벤트 변환
-        // const holidayEvents = koreanHolidays.map(holiday => ({
-        //     title: holiday.title,
-        //     start: holiday.date,
-        //     color: '#FF0000', // 빨간색
-        //     allDay: true
-        // }));
+        const holidayEvents = koreanHolidays.map(holiday => ({
+            title: holiday.title,
+            start: holiday.date,
+            color: '#FF0000', // 빨간색
+            allDay: true
+        }));
 
 		// FullCalendar 설정
         let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -246,20 +245,21 @@
                                 end: date, // 단일 날짜 이벤트
                                 color: color,
                                 extendedProps: {
-                                    docId: event.docId,
-                                    userId: event.userId,
-                                    userName: event.userName,
-                                    description: event.docTitle,
-                                    docType: event.docType,
-                                    docTypeNm: event.docTypeNm
+                                    docId: event.docId,                 //문서id
+                                    content: event.content,             //내용
+                                    userId: event.userId,               //작성자 id
+                                    userName: event.userName,           //작성자 명
+                                    description: event.docTitle,        //결재 제목
+                                    docType: event.docType,             //결재 유형
+                                    docTypeNm: event.docTypeNm          //결재 유형 명
                                 }
                             }));
                         })
                     }
                 },
-                // {
-                //     events: holidayEvents // 공휴일 추가
-                // }
+                {
+                    events: holidayEvents // 공휴일 추가
+                }
             ],
 
             // 공휴일 날짜 옆 텍스트 추가
@@ -293,7 +293,11 @@
             eventDidMount: function (info) {
                 const title = '<div class="tooltip-inner">' +
                     '<div class="tooltip-title">' + info.event.title + '</div>' +
-                    '<div class="tooltip-content">' + (info.event.extendedProps.userName || "N/A") + '</div>' +
+                    '<div class="tooltip-content">' +
+                    '<div class="tooltip-subtitle">작성자: ' + (info.event.extendedProps.userName || "정보 없음") + '</div>' +
+                    '<div class="tooltip-subtitle">결재: ' + (info.event.extendedProps.docTypeNm || "내용 없음") + '</div>' +
+                    '<div class="tooltip-subtitle">내용: ' + (info.event.extendedProps.content || "내용 없음") + '</div>' +
+                    '</div>' +
                     '</div>';
 
                 $(info.el).tooltip({

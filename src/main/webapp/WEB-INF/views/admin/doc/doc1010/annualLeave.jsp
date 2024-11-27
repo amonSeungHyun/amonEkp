@@ -592,7 +592,7 @@
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
 		<input id="docType" type="hidden" value="01">
-		<input id="docTitle" type="hidden" value="휴가신청서">
+		<input id="docTitle" type="hidden" value="휴가계">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">

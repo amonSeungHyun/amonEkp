@@ -10,6 +10,7 @@
                       , d.doc_title as docTitle
                       , d.doc_type as docType
                       , ccd.code_detail_name as docTypeNm
+                      , vd.vacation_type as content
                       , vd.start_date as startDate
                       , vd.end_date as endDate
         from vacation_detail vd
@@ -29,6 +30,7 @@
                       , d.doc_title as docTitle
                       , d.doc_type as docType
                       , ccd.code_detail_name as docTypeNm
+                      , ted.expense_amount as content
                       , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as startDate
                       , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as endDate
         from transport_expense_detail ted
@@ -48,6 +50,7 @@
                       , d.doc_title as docTitle
                       , d.doc_type as docType
                       , ccd.code_detail_name as docTypeNm
+                      , ed.expense_amount as content
                       , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as startDate
                       , DATE_FORMAT(STR_TO_DATE(d.updated_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') as endDate
         from expense_detail ed
