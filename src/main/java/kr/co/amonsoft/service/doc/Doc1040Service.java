@@ -11,5 +11,11 @@ public interface Doc1040Service {
     BigInteger insertApprovalRequest(Map<String, Object> param);
 
 	Map<String, Object> findApprovalRequestDetailsByDocId(BigInteger docId);
+	
+	List<Map<String,Object>> selectReferenceApproval(Map<String, Object> param);
+	
+	int selectReferenceApprovalCnt();
+
+	List<Map<String, Object>> selectReferenceApprovalView(Map<String, Object> param);
 
 }

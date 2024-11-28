@@ -208,7 +208,7 @@
 	                contentType: false,
 	                data: formData, 
 	                success: function (response) {
-	                    $("#modal_comCodeModal").modal("hide");
+	                    $("#modal_registMember").modal("hide");
 	                    Swal.fire({
 	                        icon: 'success',
 	                        title: '입력 완료',

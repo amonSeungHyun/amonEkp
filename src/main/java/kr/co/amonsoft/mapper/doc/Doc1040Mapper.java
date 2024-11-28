@@ -15,4 +15,10 @@ public interface Doc1040Mapper {
 	
 	Map<String,Object> findApprovalRequestDetailsByDocId(BigInteger docId);
 
+	List<Map<String,Object>> selectReferenceApproval(Map<String, Object> param);
+	
+	List<Map<String,Object>> selectReferenceApprovalView(Map<String, Object> param);
+	
+	int selectReferenceApprovalCnt();
+
 }

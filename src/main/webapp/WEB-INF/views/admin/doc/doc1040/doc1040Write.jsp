@@ -202,10 +202,73 @@
 		padding: 10px;
 		line-height: 1.2;
 	}
+	
+	#registMember {
+	    background: linear-gradient(to left, #5bd3ff, #88eb1e);
+	    color: white;
+	}
+	
+	.container {
+	    width: 50%;
+	    margin: 0 auto;
+	    text-align: center;
+	}
+	
+	.pagination {
+	    padding: 30px 0;
+	    display: flex;
+	    justify-content: center;
+	    gap: 10px;
+	}
+	
+	.pagination a {
+	    display: inline-block;
+	    width: 40px;
+	    height: 40px;
+	    padding-top: 7px;
+	    color: #2ecc71;
+	    font-weight: bold;
+	}
+	
+	.p12 a.last,
+	.p12 .is-active {
+	    border: 2px solid #2ecc71;
+	    background-color: #2ecc71;
+	    color: #fff;
+	    font-weight: bold;
+	    border-radius: 50%;
+	}
+	
+	.p12 a.box {
+	    border: 2px solid #2ecc71;
+	    color: #2ecc71;
+	    font-weight: bold;
+	    border-radius: 50%;
+	    margin-left: 5px;
+	    margin-right: 5px;
+	}
+	
+	#regist_member_btn {
+	    height: 50px;
+	    width: 100%;
+	    border-radius: 10px;
+	    color: white;
+	    background-color: #07B419;
+	}
+	#regist_member_btn > i {
+	    padding-right: 10px;
+	}
+	
 
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+	var referDocIds = "";
+	
 	$(document).ready (function(){
 		getApprovalId();
 		
@@ -220,6 +283,16 @@
 			adjustHeight(this);
 		});
 
+		$("#checkAll").on("click", function() {
+		    const isChecked = $(this).prop("checked");
+		    $("#documentTable tbody input[type='checkbox']").prop("checked", isChecked);
+		});
+		
+		$('.modal').on('hidden.bs.modal', function (e) {
+			$("#checkAll").prop("checked", false);
+		    $("#documentTable tbody input[type='checkbox']").prop("checked", false);
+		});
+		
 		/*textarea의 줄바꿈에 따라 td늘어나기*/
 		function adjustHeight(textarea) {
 			// Reset height to auto to get scrollHeight
@@ -245,6 +318,7 @@
 				approval_content: $('#approval_content').val(),
 				instructions: $('#instructions').val(),
 				userId: "<c:out value="${sessionScope.userId}" />",
+				reference_doc_id : referDocIds
 		}
 		data.push(rowData);
 		
@@ -269,6 +343,89 @@
 		});
 	}
 	
+
+	function selectDocumentSearchList(pageNum,type) {
+		$.ajax({
+			type: "GET",
+			url: "/doc/doc1040changeList",
+			dataType: "json",
+			data: {
+				pageNum: pageNum,
+			},
+			success: function(data) {
+				var tableBody = $("#documentTable tbody");
+				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
+				$.each(data.resultList, function(index, doc) {
+					var rowHtml = $('<tr data-doc-id="' + doc.docId+ '">')
+							.append('<td><input type="checkbox" class="row-check" /></td>')
+							.append('<td>' + doc.approvalId + '</td>')
+							.append('<td>' + doc.approvalTitle + '</td>')
+							.append('<td>' + doc.draftDate + '</td>')
+							.append('<td>' + doc.drafter + '</td>')
+					tableBody.append(rowHtml);
+				});
+				// 페이징 표시 함수 호출
+				pageNumDisplay(data.pager);
+			},
+			error: function(xhr, status, error) {
+				console.error("데이터 조회 실패:", error);
+			}
+		});
+	}
+
+	/*페이징 그리기*/
+	function pageNumDisplay(pager) {
+		var pageNumDiv = $("#pageNumDiv");
+		pageNumDiv.empty();
+		if (pager.startPage > pager.blockSize) {
+			pageNumDiv.append(
+					'<a href="javascript:selectDocumentSearchList(' + pager.prevPage + ');">' +
+					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>' +
+					'</a>'
+			);
+		}
+		for (var i = pager.startPage; i <= pager.endPage; i++) {
+			if (pager.pageNum !== i) {
+				pageNumDiv.append(
+						'<a class="page-numbox" href="javascript:selectDocumentSearchList(' + i + ');">' + i + '</a>'
+				);
+			} else {
+				pageNumDiv.append(
+						'<a class="page-num is-active" disabled>' + i + '</a>'
+				);
+			}
+		}
+		if (pager.endPage < pager.totalPage) {
+			pageNumDiv.append(
+					'<a href="javascript:selectDocumentSearchList(' + pager.nextPage + ');">' +
+					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>' +
+					'</a>'
+			);
+		}
+	}
+
+	function referApprovalId(){
+		const selectedDocId = [];
+		$("#documentTable tbody input[type='checkbox']:checked").each(function () {
+			const rowData = $(this).closest("tr").data("docId");
+			selectedDocId.push(rowData);
+		});
+		referDocIds = selectedDocId;
+		
+		const selectedDocTitle = [];
+		$("#documentTable tbody input[type='checkbox']:checked").each(function () {
+			const rowData = $(this).closest("tr").data("docTitle"); 
+			selectedDocTitle.push(rowData);
+		});
+		
+		$("#referenceDocIds").val(selectedDocTitle);
+		
+		$("#modal_registMember").modal("hide");
+		$(".modal-backdrop").remove();
+	    $("body").removeClass("modal-open"); // body의 스크롤 락도 해제
+	    $("body").css("padding-right", ""); 
+		
+	}	
 
 </script>
 <div class="contai" style="overflow-x: hidden;">
@@ -375,6 +532,23 @@
 					    <textarea id="instructions" name="instructions" style="height: 90pt; width: 100%; margin-top:5px; resize: none;" ></textarea>
 					</td>
 				</tr>
+				<tr style="height:29.2pt">
+					<td colspan="2" style="width:140.15pt; border-top:0.75pt solid #a0a0a0; border-right:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
+						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">참조할 품의서</p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div style="disply:flex;">
+							<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
+								<span>
+									<i class="fas fa-plus" style="margin: 0px; width: 20px;"></i>품의서 찾기
+								</span>
+							</button>
+							<input id="referenceDocIds" style="width:80%" readonly/>
+						</div>
+					</td>
+				</tr>
 				
 			</table>
 			
@@ -383,3 +557,88 @@
 		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 	</form>
 </div>
+
+	<!-- ========================== 품의서 추가/수정 모달 시작 ========================== -->
+	<div class="modal fade" id="modal_registMember">
+		<div class="modal-dialog modal-dialog-centered"  style="max-width : 1200px">
+			<div class="modal-content" style="padding: 5px;">
+				<!-- Modal header -->
+				<div class="modal-header">
+					<h2 id="modalTitle">결재 완료된 품의서</h2>
+					<button id="btn_close_registModal" type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<div id="documentContent" class="border-top" >
+						<div id="startContents" class="border-bottom startontents">
+							<div id="search_result" style="padding : 10px;">
+								<table id="documentTable" class="table table-bordered table-hover" style="margin-top: 20px;">
+									<colgroup>
+						        		<col style="width:5%">
+						        		<col style="width:20%">
+						        		<col style="width:50%">
+						        		<col style="width:15%">
+						        		<col style="width:10%">
+					        		</colgroup>
+									<thead>
+										<th><input type="checkbox" id="checkAll" /></th>
+										<th>품의번호</th>
+										<th>품의제목</th>
+										<th>기안일</th>
+										<th>기안자</th>
+									</thead>
+									<tbody>
+									<c:forEach var="doc" items="${documents}">
+										<tr data-doc-id="${doc.docId}" data-doc-title="${doc.approvalTitle}">
+											<td><input type="checkbox" class="row-check" /></td>
+											<td>${doc.approvalId}</td>
+											<td>${doc.approvalTitle}</td>
+											<td>${doc.draftDate}</td>
+											<td>${doc.drafter}</td>
+										</tr>
+									</c:forEach>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="container">
+							<div id="pageNumDiv" class="pagination p12">
+								<c:if test="${pager.startPage > pager.blockSize}">
+									<!-- 스크립트는 검색하는 param값-->
+									<a href="javascript:selectDocumentSearchList('${pager.prevPage}');" style="padding-top: 3px;">
+										<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>
+									</a>
+								</c:if>
+								<c:forEach var="i" begin="${pager.startPage}" end="${pager.endPage}">
+									<c:choose>
+										<c:when test="${pager.pageNum != i}">
+											<a class="page-numbox" href="javascript:selectDocumentSearchList('${i}');">${i}</a>
+										</c:when>
+										<c:otherwise>
+											<a class="page-num is-active" disabled>${i}</a>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
+								<c:if test="${pager.endPage < pager.totalPage}">
+									<a href="javascript:selectDocumentSearchList();" class="" style="padding-top: 3px;">
+										<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>
+									</a>
+								</c:if>
+							</div>
+						</div>
+				    </div>
+			    </div>
+				<!-- Modal footer -->
+				<div class="modal-footer"
+					 style="display: flex; justify-content: space-between;">
+					<%-- form 전송 --%>
+					<button type="button" class="btn" id="regist_member_btn" onclick="referApprovalId()">
+						<i class="fas fa-check" ></i><span id="modalButtonLabel">선택완료</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- ========================== 구성원 추가 모달 끝 ========================== -->
+	
