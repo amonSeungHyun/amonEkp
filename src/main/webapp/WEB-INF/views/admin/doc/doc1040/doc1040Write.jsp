@@ -261,11 +261,10 @@
 	
 
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script type="text/javascript">
 	var referDocIds = "";
 	
@@ -420,12 +419,15 @@
 		
 		$("#referenceDocIds").val(selectedDocTitle);
 		
-		$("#modal_registMember").modal("hide");
-		$(".modal-backdrop").remove();
-	    $("body").removeClass("modal-open"); // body의 스크롤 락도 해제
-	    $("body").css("padding-right", ""); 
-		
+		$(".modal").modal("hide");
+		closeModal()
 	}	
+	
+	function closeModal() {
+	    $('#modal_registMember').modal('hide'); // 모달 닫기
+	    $('.modal-backdrop').remove(); // 남은 backdrop 제거
+	    $('body').removeClass('modal-open'); // 스크롤 문제 방지
+	}
 
 </script>
 <div class="contai" style="overflow-x: hidden;">

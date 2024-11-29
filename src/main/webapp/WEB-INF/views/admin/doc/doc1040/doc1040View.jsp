@@ -258,32 +258,55 @@
 
 	            $("#approval_content").html(formattedContent1);
 	            $("#instructions").html(formattedContent2);
-	            
-	            $.ajax({
-	    			url: '/doc/selectReferenceApprovalView', // 데이터를 보낼 서버의 URL로 변경
-	    			type: 'POST',
-	    			contentType: 'application/json',
-	    			data: JSON.stringify({reference_doc_id: data.reference_doc_id}),
-	    			success: function(data) {
-	    				console.log("data >> ", data);
-	    	            console.log("result >> ", data.result);
-	    	            if(data.result.length>0){
-	    	            	var tableBody = $("#referTable tbody");
-	    					tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
-	    					$.each(data.result, function(index, doc) {
-	    						var rowHtml = $('<tr onclick="goDocView(' + doc.docId + ')">')
-	    								.append('<td>' + doc.approvalId + '</td>')
-	    								.append('<td>' + doc.approvalTitle + '</td>')
-	    								.append('<td>' + doc.draftDate + '</td>')
-	    								.append('<td>' + doc.drafter + '</td>')
-	    						tableBody.append(rowHtml);
-	    					});
-	    	            }
-	    			},
-	    			error: function (error) {
-	    				console.error('Error sending data:', error);
-	    			}
-	    		});
+	            if(data.reference_doc_id){
+		            $.ajax({
+		    			url: '/doc/selectReferenceApprovalView', // 데이터를 보낼 서버의 URL로 변경
+		    			type: 'POST',
+		    			contentType: 'application/json',
+		    			data: JSON.stringify({reference_doc_id: data.reference_doc_id}),
+		    			success: function(data) {
+		    				console.log("data >> ", data);
+		    	            console.log("result >> ", data.result);
+		    	            if(data.result.length>0){
+	    	            	$("#referDoc").append(
+		   	            		`<div class="modal-header">
+			    	    			<h2 id="modalTitle">참조된 품의서</h2>
+			    	    		</div>
+			    	    		<div style="display:flex; padding:10px;">
+			    	    			<table id="referTable" class="table table-bordered table-hover" style="margin-top: 20px;">
+			    	    				<colgroup>
+			    	    	        		<col style="width:20%">
+			    	    	        		<col style="width:50%">
+			    	    	        		<col style="width:20%">
+			    	    	        		<col style="width:10%">
+			    	            		</colgroup>
+			    	    				<thead>
+			    	    					<th>품의번호</th>
+			    	    					<th>품의제목</th>
+			    	    					<th>기안일</th>
+			    	    					<th>기안자</th>
+			    	    				</thead>
+			    	    				<tbody>
+			    	    				</tbody>
+			    	    			</table>
+			    	    		</div>`)
+		    	            	var tableBody = $("#referTable tbody");
+		    					tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
+		    					$.each(data.result, function(index, doc) {
+		    						var rowHtml = $('<tr onclick="goDocView(' + doc.docId + ')">')
+		    								.append('<td>' + doc.approvalId + '</td>')
+		    								.append('<td>' + doc.approvalTitle + '</td>')
+		    								.append('<td>' + doc.draftDate + '</td>')
+		    								.append('<td>' + doc.drafter + '</td>')
+		    						tableBody.append(rowHtml);
+		    					});
+		    	            }
+		    			},
+		    			error: function (error) {
+		    				console.error('Error sending data:', error);
+		    			}
+		    		});
+	            }
 			},
 			error: function (error) {
 				console.error('Error sending data:', error);
@@ -416,27 +439,6 @@
 		<!-- File upload area -->
 		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
 	</form>
-	<div>
-		<div class="modal-header">
-			<h2 id="modalTitle">참조된 품의서</h2>
-		</div>
-		<div style="display:flex;">
-			<table id="referTable" class="table table-bordered table-hover" style="margin-top: 20px;">
-				<colgroup>
-	        		<col style="width:20%">
-	        		<col style="width:50%">
-	        		<col style="width:20%">
-	        		<col style="width:10%">
-        		</colgroup>
-				<thead>
-					<th>품의번호</th>
-					<th>품의제목</th>
-					<th>기안일</th>
-					<th>기안자</th>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</div>
+	<div id="referDoc">
 	</div>
 </div>
