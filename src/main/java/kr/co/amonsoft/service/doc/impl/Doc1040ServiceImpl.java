@@ -1,6 +1,7 @@
 package kr.co.amonsoft.service.doc.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +49,30 @@ public class Doc1040ServiceImpl implements Doc1040Service {
         });
 		
         List<Map<String, Object>> approvalRequestData = (List<Map<String, Object>>) approvalData.get("data");
-        List<Integer> referenceDocIds = (List<Integer>)approvalRequestData.get(0).get("reference_doc_id");
-        String referenceDocIdsString = referenceDocIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+        
         
         approvalRequestData.forEach(detail -> {
+        	Object referenceDocIdObject = approvalRequestData.get(0).get("reference_doc_id");
+
+        	List<Integer> referenceDocIds = new ArrayList<>();
+        	if (referenceDocIdObject instanceof String) {
+        	    String referenceDocIdsString = (String) referenceDocIdObject;
+        	    if (!referenceDocIdsString.isBlank()) { // 빈 문자열 여부 확인
+        	        referenceDocIds = Arrays.stream(referenceDocIdsString.split(","))
+        	                                .filter(id -> !id.isBlank()) // 빈 항목 무시
+        	                                .map(Integer::parseInt)
+        	                                .collect(Collectors.toList());
+        	    }
+        	} else if (referenceDocIdObject instanceof List) {
+        	    referenceDocIds = (List<Integer>) referenceDocIdObject;
+        	}
+        	
+        	String referenceDocIdsString = "";
+        	if (referenceDocIds != null && !referenceDocIds.isEmpty()) {
+                 referenceDocIdsString = referenceDocIds.stream()
+                     .map(String::valueOf)
+                     .collect(Collectors.joining(","));
+             }
             detail.put("docId", docId);
             detail.put("userId", approvalData.get("userId"));
             detail.put("reference_doc_id", referenceDocIdsString);

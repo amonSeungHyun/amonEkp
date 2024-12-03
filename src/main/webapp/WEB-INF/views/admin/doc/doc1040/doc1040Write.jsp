@@ -364,7 +364,7 @@
 				var tableBody = $("#documentTable tbody");
 				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
 				$.each(data.resultList, function(index, doc) {
-					var rowHtml = $('<tr data-doc-id="' + doc.docId+ '">')
+					var rowHtml = $('<tr data-doc-id="' + doc.docId+ '" data-doc-title="' + doc.approvalTitle + '">')
 							.append('<td><input type="checkbox" class="row-check" /></td>')
 							.append('<td>' + doc.approvalId + '</td>')
 							.append('<td>' + doc.approvalTitle + '</td>')
@@ -425,7 +425,7 @@
 			const rowData = $(this).closest("tr").data("docTitle"); 
 			selectedDocTitle.push(rowData);
 		});
-		
+		console.log("selectedDocTitle >> ", selectedDocTitle);
 		$("#referenceDocIds").val(selectedDocTitle);
 		
 		closeModal()
