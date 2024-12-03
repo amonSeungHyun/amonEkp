@@ -292,6 +292,15 @@
 		    $("#documentTable tbody input[type='checkbox']").prop("checked", false);
 		});
 		
+		$('#modal_registMember').on('shown.bs.modal', function () {
+		    $('html').css('overflow', 'hidden'); // <html> 태그의 스크롤 비활성화
+		    $('body').css('padding-right', '17px');
+		    $('body').addClass('modal-open');
+		});
+
+		$('#modal_registMember').on('hidden.bs.modal', function () {
+		    $('html').css('overflow', '');       // <html> 태그의 스크롤 복원
+		});
 		/*textarea의 줄바꿈에 따라 td늘어나기*/
 		function adjustHeight(textarea) {
 			// Reset height to auto to get scrollHeight
@@ -419,7 +428,6 @@
 		
 		$("#referenceDocIds").val(selectedDocTitle);
 		
-		$(".modal").modal("hide");
 		closeModal()
 	}	
 	
@@ -427,6 +435,7 @@
 	    $('#modal_registMember').modal('hide'); // 모달 닫기
 	    $('.modal-backdrop').remove(); // 남은 backdrop 제거
 	    $('body').removeClass('modal-open'); // 스크롤 문제 방지
+	    $('html').css('overflow', ''); 
 	}
 
 </script>
