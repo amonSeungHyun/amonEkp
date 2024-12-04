@@ -9,19 +9,19 @@ import java.util.Map;
 @Mapper
 public interface DocCommonMapper {
 
-    int findDocumentsUnderApprovalTotalCountByUserId(String userId);
+    int findDocumentsUnderApprovalTotalCountByUserId(Map<String,Object> param);
 
     List<Map<String, Object>> findDocumentsUnderApproval(Map<String,Object> param);
 
-    List<Map<String, Object>> findCompleteDocuments(String userId);
+    List<Map<String, Object>> findCompleteDocuments(Map<String,Object> param);
 
     List<Map<String, Object>> findPendingApprovalDocuments(Map<String,Object> param);
 
     Map<String, Object> findTeamLeadersByUserOrganization(String userId);
 
-    int findDocumentsPendingApprovalTotalCountByUserId(String userId);
+    int findDocumentsPendingApprovalTotalCountByUserId(Map<String,Object> param);
 
-    int findCompleteDocumentsTotalCountByUserId(String userId);
+    int findCompleteDocumentsTotalCountByUserId(Map<String,Object> param);
 
     List<Map<String,Object>> findDocumentUrls();
 

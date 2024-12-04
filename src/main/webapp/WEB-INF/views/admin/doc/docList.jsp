@@ -4,7 +4,21 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!-- 공통 스타일 및 스크립트 -->
 <link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- moment.js -->
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+<!-- Date Range Picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+<!-- Favicon 설정 -->
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
 <style type="text/css">
 	div.row{
 			width: 100%;
@@ -467,44 +481,108 @@
 		/* for IE 11 */
 		display: none;
 	}
+
+	#searchPosition, #searchWord, #btn_search {
+		vertical-align: middle; /* 검색 필드 정렬 */
+	}
+
+	.custom-badge {
+		background-color: #239afe; /* 하늘색 */
+		color: white; /* 텍스트 색상 */
+		font-size: 16px; /* 폰트 크기 */
+		padding: 5px 1.5rem; /* 안쪽 여백 조정 (width, height 영향을 줌) */
+		border-radius: 2rem; /* 둥글기의 정도 */
+	}
+
+	.fail-badge {
+		background-color: #ff5A5A; /* 하늘색 */
+		color: white; /* 텍스트 색상 */
+		font-size: 16px; /* 폰트 크기 */
+		padding: 5px 1.5rem; /* 안쪽 여백 조정 (width, height 영향을 줌) */
+		border-radius: 2rem; /* 둥글기의 정도 */
+	}
+
+	.complete-badge {
+		background-color: #47c83e; /* 하늘색 */
+		color: white; /* 텍스트 색상 */
+		font-size: 16px; /* 폰트 크기 */
+		padding: 5px 1.5rem; /* 안쪽 여백 조정 (width, height 영향을 줌) */
+		border-radius: 2rem; /* 둥글기의 정도 */
+	}
+
+	.date-cell {
+		font-weight: bold;
+		font-size: 1.1rem;
+		color: #007bff;
+		background-color: #f8f9fa;
+		border-radius: 4px;
+		padding: 5px 10px;
+		display: inline-block;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
 </style>
 <script type="text/javascript">
 
 	$(document).ready(function() {
 		const activePath = localStorage.getItem('activePath') || window.location.pathname;
-
 		$("a.link").each(function() {
 			if ($(this).attr("href") === activePath) {
 				$(this).addClass("active");
 			}
 		});
+		//날짜 셋팅
+		searchDateChange()
 	});
 
+	function loadDocuments(docStatus, pageNum, isSearch = false) {
+		const params = {
+			pageNum: pageNum,
+			docStatus: docStatus
+		};
 
-	function loadDocuments(type) {
+		if (isSearch) {
+			const docTitle = $("#searchWord").val();
+			const docType = $("#searchDocumentType").val();
+			const startDate = $("#startDate").val();
+			const endDate = $("#endDate").val();
+
+			if (docTitle) params.docTitle = docTitle;
+			if (docType) params.docType = docType;
+			if (startDate) params.startDate = startDate;
+			if (endDate) params.endDate = endDate;
+		}
+
 		$.ajax({
 			type: "GET",
 			url: "/docList/changeList",
 			dataType: "json",
-			data: {
-				pageNum: 1,
-				type: type
-			},
+			data: params,
 			success: function(data) {
 				var tableBody = $("#documentTable tbody");
 				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
 				$.each(data.resultList, function(index, doc) {
+
+					var badgeClass = '';
+					// docStatus 값에 따라 클래스 지정
+					if (doc.docStatus === '02') {
+						badgeClass = 'badge custom-badge rounded-pill fs-4';
+					} else if (doc.docStatus === '03') {
+						badgeClass = 'badge complete-badge rounded-pill fs-4';
+					} else {
+						badgeClass = 'badge fail-badge rounded-pill fs-4';
+					}
+
 					var rowHtml = $('<tr>')
 							.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType + ")") // 클릭 시 상세보기 함수 호출
 							.append('<td>' + doc.docTypeName + '</td>') // 결재 분류
 							.append('<td>' + doc.docTitle + '</td>')    // 결재 제목
 							.append('<td>' + doc.createdDate + '</td>') // 작성일
-							.append('<td>' + doc.docStatusName + '</td>'); // 결재 상태
+							.append('<td><span class="' + badgeClass + '">' + doc.docStatusName + '</span></td>'); // 결재 상태
 					tableBody.append(rowHtml);
 				});
 				// 페이징 표시 함수 호출
-				updateButtonStyles(type);
-				pageNumDisplay(data.pager);
+				updateButtonStyles(docStatus);
+				pageNumDisplay(docStatus, data.pager, isSearch);
 			},
 			error: function(xhr, status, error) {
 				console.error("데이터 조회 실패:", error);
@@ -516,6 +594,8 @@
 		// 모든 버튼의 스타일 초기화
 		$("#wating, #mine, #complete").removeClass("active");
 
+		console.log(activeType)
+
 		// activeType에 따라 클래스 추가
 		if (activeType === "pending") {
 			$("#wating").addClass("active");
@@ -526,50 +606,31 @@
 		}
 	}
 
-	function selectDocumentSearchList(pageNum,type) {
-		$.ajax({
-			type: "GET",
-			url: "/docList/changeList",
-			dataType: "json",
-			data: {
-				pageNum: pageNum,
-				type: 'approval'
-			},
-			success: function(data) {
-				var tableBody = $("#documentTable tbody");
-				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
-				$.each(data.resultList, function(index, doc) {
-					var rowHtml = $('<tr>')
-							.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType + ")") // 클릭 시 상세보기 함수 호출
-							.append('<td>' + doc.docTypeName + '</td>') // 결재 분류
-							.append('<td>' + doc.docTitle + '</td>')    // 결재 제목
-							.append('<td>' + doc.createdDate + '</td>') // 작성일
-							.append('<td>' + doc.docStatusName + '</td>'); // 결재 상태
-					tableBody.append(rowHtml);
-				});
-				// 페이징 표시 함수 호출
-				pageNumDisplay(data.pager);
-			},
-			error: function(xhr, status, error) {
-				console.error("데이터 조회 실패:", error);
-			}
-		});
-	}
-
 	function setActiveLink(element) {
 		$("a.link").removeClass("active");
 		$(element).addClass("active");
-
 		localStorage.setItem('activePath', $(element).attr("href"));
 	}
 
+	function getActiveDocStatus() {
+		if ($("#wating").hasClass("active")) return 'pending';
+		if ($("#mine").hasClass("active")) return 'underApproval';
+		if ($("#complete").hasClass("active")) return 'complete';
+		return 'pending'; // 기본값
+	}
+
+	function searchDocuments(){
+		loadDocuments(getActiveDocStatus(), 1, true);
+	}
+
+
 	/*페이징 그리기*/
-	function pageNumDisplay(pager) {
+	function pageNumDisplay(docStatus, pager,  isSearch) {
 		var pageNumDiv = $("#pageNumDiv");
 		pageNumDiv.empty();
 		if (pager.startPage > pager.blockSize) {
 			pageNumDiv.append(
-					'<a href="javascript:selectDocumentSearchList(' + pager.prevPage + ');">' +
+					'<a href="javascript:loadDocuments(\'' + docStatus + '\', ' + pager.prevPage + ', ' + isSearch + ');">' +
 					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>' +
 					'</a>'
 			);
@@ -577,7 +638,7 @@
 		for (var i = pager.startPage; i <= pager.endPage; i++) {
 			if (pager.pageNum !== i) {
 				pageNumDiv.append(
-						'<a class="page-numbox" href="javascript:selectDocumentSearchList(' + i + ');">' + i + '</a>'
+						'<a class="page-numbox" href="javascript:loadDocuments(\'' + docStatus + '\', ' + i + ', ' + isSearch + ');">' + i + '</a>'
 				);
 			} else {
 				pageNumDiv.append(
@@ -587,13 +648,12 @@
 		}
 		if (pager.endPage < pager.totalPage) {
 			pageNumDiv.append(
-					'<a href="javascript:selectDocumentSearchList(' + pager.nextPage + ');">' +
+					'<a href="javascript:loadDocuments(\'' + docStatus + '\', ' + pager.nextPage + ', ' + isSearch + ');">' +
 					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>' +
 					'</a>'
 			);
 		}
 	}
-
 
 	function documentDetailView(docId, docType){
 		let docTypeCode = parseInt(docType);
@@ -630,6 +690,64 @@
 		} else {
 			alert('이동할 문서를 선택해주세요.');
 		}
+	}
+
+	function searchDateChange(){
+
+		// 오늘 날짜와 한 달 후 날짜 계산
+		const today = moment().format('YYYY-MM-DD');
+		const oneMonthLater = moment().add(1, 'months').format('YYYY-MM-DD');
+
+		// 시작 날짜와 종료 날짜 입력 요소
+		const startDateInput = $('#startDate');
+		const endDateInput = $('#endDate');
+
+		// 공통 설정
+		const datePickerOptions = {
+			singleDatePicker: true,
+			autoUpdateInput: true,
+			autoApply: true,
+			locale: {
+				format: 'YYYY-MM-DD',
+				daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
+				monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+				firstDay: 0
+			}
+		};
+
+		// 시작 날짜 초기화 및 설정
+		startDateInput.val(today); // 초기값 설정
+		startDateInput.daterangepicker(datePickerOptions).on('apply.daterangepicker', function (ev, picker) {
+			const selectedStartDate = picker.startDate.format('YYYY-MM-DD');
+			const selectedEndDate = endDateInput.val();
+
+			// 종료 날짜의 최소값을 moment 객체로 설정
+			endDateInput.data('daterangepicker').minDate = picker.startDate;
+
+			// 종료 날짜가 시작 날짜보다 이전이면 종료 날짜를 시작 날짜로 설정
+			if (selectedEndDate && moment(selectedStartDate).isAfter(moment(selectedEndDate))) {
+				endDateInput.val(selectedStartDate);
+			}
+		});
+
+		// 종료 날짜 초기화 및 설정
+		endDateInput.val(oneMonthLater); // 초기값 설정
+		endDateInput.daterangepicker(datePickerOptions).on('apply.daterangepicker', function (ev, picker) {
+			const selectedEndDate = picker.startDate.format('YYYY-MM-DD');
+			const selectedStartDate = startDateInput.val();
+
+			// 시작 날짜의 최대값을 moment 객체로 설정
+			startDateInput.data('daterangepicker').maxDate = picker.startDate;
+
+			// 시작 날짜가 종료 날짜보다 이후이면 시작 날짜를 종료 날짜로 설정
+			if (selectedStartDate && moment(selectedEndDate).isBefore(moment(selectedStartDate))) {
+				startDateInput.val(selectedEndDate);
+			}
+		});
+
+		// 초기 minDate 및 maxDate 설정
+		endDateInput.data('daterangepicker').minDate = moment(today);
+		startDateInput.data('daterangepicker').maxDate = moment(oneMonthLater);
 	}
 </script>
 <div style="padding-top: 35px; padding-left: 40px; padding-bottom: 35px;">
@@ -672,10 +790,27 @@
 					 </button>
 				 </c:otherwise>
 			 </c:choose>
-	    		<button class="bottom-line" id="complete"  onclick="loadDocuments('complete')">
-	    			<span id=subject class="doc3">완료</span> <span id="number" class="num3"> </span>
-	    		</button>
-    	 </div>
+			<button class="bottom-line" id="complete"  onclick="loadDocuments('complete',1)">
+				<span id=subject class="doc3">완료</span> <span id="number" class="num3"> </span>
+			</button>
+			 <!-- 검색 영역 -->
+			 <div style="display: inline-block; float: right; margin-right: 30px;" >
+				 <label for="searchDocumentType" style="margin-right: 5px; font-weight: bold;">문서</label>
+				 <select id="searchDocumentType" style="height: 30px; margin-right: 5px; border: solid 1px #66cc66; border-radius: 0.4rem;">
+					 <option value="">전체</option>
+					 <c:forEach var="documentUrl" items="${documentUrls}">
+						 <option value="${documentUrl.codeDetailNumber}">${documentUrl.codeDetailName}</option>
+					 </c:forEach>
+				 </select>
+				 <label for="searchWord" style="margin-right: 5px; font-weight: bold;">결재 제목</label>
+				 <input id="searchWord" name="searchWord" style="padding-left: 7px; height: 25px; width: 160px; margin-right: 5px; border: solid 1px #66cc66; border-radius: 0.4rem;" type="text" placeholder="제목" />
+				 <input type="text" class="input-field short daterange" id="startDate"  autocomplete="off"> ~
+				 <input type="text" class="input-field short daterange" id="endDate"   autocomplete="off">
+				 <button class="btn" id="btn_search" type="button" onclick="searchDocuments()" style="border:none; background-color: #66cc66; height: 30px; color: white;">
+					 <i class="fa fa-search"></i>
+				 </button>
+			 </div>
+		 </div>
 	    <div id="documentContent" class="border-top" >
 	    	<div id="startContents" class="border-bottom startontents">
 				<div id="search_result" style="padding : 10px;">
@@ -683,48 +818,71 @@
 						<thead>
 							<th style="width:15%">결재 분류</th>
 							<th class="th_100">결재 제목</th>
-							<th style="width: 10%">작성일</th>
+							<th style="width: 15%">작성일</th>
 							<th style="width: 10%">결재 상태</th>
 						</tr>
 						</thead>
 						<tbody>
-						<c:forEach var="doc" items="${documents}">
-							<tr onclick="documentDetailView(${doc.docId}, ${doc.docType})">
-								<td>${doc.docTypeName}</td>
-								<td>${doc.docTitle}</td>
-								<td>${doc.createdDate}</td>
-								<td>${doc.docStatusName}</td>
-							</tr>
-						</c:forEach>
+						<c:choose>
+							<c:when test="${empty documents}">
+								<tr>
+									<td colspan="4" style="text-align: center;">리스트가 존재하지 않습니다.</td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								<c:forEach var="doc" items="${documents}">
+									<tr onclick="documentDetailView(${doc.docId}, ${doc.docType})">
+										<td>${doc.docTypeName}</td>
+										<td>${doc.docTitle}</td>
+										<td><span>${doc.createdDate}</span></td>
+										<td>
+										<c:choose>
+											<c:when test="${doc.docStatus == '02'}">
+												<span class="badge custom-badge rounded-pill fs-4">${doc.docStatusName}</span>
+											</c:when>
+											<c:when test="${doc.docStatus == '03'}">
+												<span class="badge complete-badge rounded-pill fs-4">${doc.docStatusName}</span>
+											</c:when>
+											<c:otherwise>
+												<span class="badge fail-badge rounded-pill fs-4">${doc.docStatusName}</span>
+											</c:otherwise>
+										</c:choose>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:otherwise>
+						</c:choose>
 						</tbody>
 					</table>
 				</div>
 			</div>
-			<div class="container">
-				<div id="pageNumDiv" class="pagination p12">
-					<c:if test="${pager.startPage > pager.blockSize}">
-						<!-- 스크립트는 검색하는 param값-->
-						<a href="javascript:selectDocumentSearchList('${pager.prevPage}');" style="padding-top: 3px;">
-							<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>
-						</a>
-					</c:if>
-					<c:forEach var="i" begin="${pager.startPage}" end="${pager.endPage}">
-						<c:choose>
-							<c:when test="${pager.pageNum != i}">
-								<a class="page-numbox" href="javascript:selectDocumentSearchList('${i}');">${i}</a>
-							</c:when>
-							<c:otherwise>
-								<a class="page-num is-active" disabled>${i}</a>
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-					<c:if test="${pager.endPage < pager.totalPage}">
-						<a href="javascript:selectDocumentSearchList();" class="" style="padding-top: 3px;">
-							<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>
-						</a>
-					</c:if>
+			<c:if test="${not empty documents}">
+				<div class="container">
+					<div id="pageNumDiv" class="pagination p12">
+						<c:if test="${pager.startPage > pager.blockSize}">
+							<!-- 스크립트는 검색하는 param값-->
+							<a href="javascript:loadDocuments('${docStatus}', '${pager.prevPage}', false);" style="padding-top: 3px;">
+								<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>
+							</a>
+						</c:if>
+						<c:forEach var="i" begin="${pager.startPage}" end="${pager.endPage}">
+							<c:choose>
+								<c:when test="${pager.pageNum != i}">
+									<a class="page-numbox" href="javascript:loadDocuments('${docStatus}', '${i}', false);">${i}</a>
+								</c:when>
+								<c:otherwise>
+									<a class="page-num is-active" disabled>${i}</a>
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+						<c:if test="${pager.endPage < pager.totalPage}">
+							<a href="javascript:loadDocuments('${docStatus}', '${pager.nextPage}', false);" style="padding-top: 3px;">
+								<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>
+							</a>
+						</c:if>
+					</div>
 				</div>
-			</div>
+			</c:if>
 	    </div>
 	<!-- ajax 올릴 것 끝1 -->
 	</div>

@@ -15,8 +15,8 @@ public class DocCommonServiceImpl implements DocCommonService {
     private final DocCommonMapper docCommonMapper;
 
     @Override
-    public int findDocumentsUnderApprovalTotalCountByUserId(String userId) {
-        return docCommonMapper.findDocumentsUnderApprovalTotalCountByUserId(userId);
+    public int findDocumentsUnderApprovalTotalCountByUserId(Map<String,Object> param) {
+        return docCommonMapper.findDocumentsUnderApprovalTotalCountByUserId(param);
     }
 
     @Override
@@ -30,8 +30,8 @@ public class DocCommonServiceImpl implements DocCommonService {
     }
 
     @Override
-    public List<Map<String, Object>> findCompleteDocuments(String userId) {
-        return docCommonMapper.findCompleteDocuments(userId);
+    public List<Map<String, Object>> findCompleteDocuments(Map<String,Object> param) {
+        return docCommonMapper.findCompleteDocuments(param);
     }
 
     @Override
@@ -40,13 +40,13 @@ public class DocCommonServiceImpl implements DocCommonService {
     }
 
     @Override
-    public int findDocumentsPendingApprovalTotalCountByUserId(String userId) {
-        return docCommonMapper.findDocumentsPendingApprovalTotalCountByUserId(userId);
+    public int findDocumentsPendingApprovalTotalCountByUserId(Map<String,Object> param) {
+        return docCommonMapper.findDocumentsPendingApprovalTotalCountByUserId(param);
     }
 
     @Override
-    public int findCompleteDocumentsTotalCountByUserId(String userId) {
-        return docCommonMapper.findCompleteDocumentsTotalCountByUserId(userId);
+    public int findCompleteDocumentsTotalCountByUserId(Map<String,Object> param) {
+        return docCommonMapper.findCompleteDocumentsTotalCountByUserId(param);
     }
 
     @Override

@@ -549,7 +549,7 @@
 						
 						if(item.opproval_status == 0){
 							html += '</td>'+
-									'<td class="patop"><span class="badge badge-light rounded-pill">미승인</span></td>';
+									'<td class="patop"><span class="badge badge-blue rounded-pill">미승인</span></td>';
 						} else if(item.opproval_status == 2) {
 							html += '</td>'+
 							'<td class="patop"><span class="badge badge-danger rounded-pill">반려</span></td>';

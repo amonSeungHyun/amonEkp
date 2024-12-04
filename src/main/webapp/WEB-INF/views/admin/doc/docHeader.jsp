@@ -331,12 +331,15 @@ a:active {text-decoration: none; color: #cccccc;}
 		window.history.back(); // 브라우저의 이전 페이지로 이동
 	}
 
+	<!-- 여기서부터 팝업 function-->
+
+
 </script>
 <div style="display: flex; padding-top: 30px; padding-left: 30px; padding-bottom: 40px;]" class="border-bottom">
 	 <span ><a class="mylink" href="javascript:void(0);" onclick="goBack();" style="color: #404040; font-size: 23pt; font-weight: bold; padding-right: 20px;"><</a></span>
 	<c:if test="${empty documentCreatorInfo.docStatus}">
 		<span style="color:#404040; font-size: 23pt; font-weight: bold; margin-right:20px;" onclick="javascript:location.href='/workflow/modify'">작성하기</span>
-		<button type="button" class="headerBtn" onclick="goWrite();">
+		<button type="button" class="headerBtn" data-bs-toggle="modal" data-bs-target="#approverModal">
 			<i class="bi bi-send" style="margin-right: 10px;"></i>
 			결재선 지정
 		</button>
@@ -368,6 +371,32 @@ a:active {text-decoration: none; color: #cccccc;}
 		인쇄
 	</button>
 </div >
+<!-- modal -->
+<div class="modal fade" id="approverModal" tabindex="-1" aria-labelledby="approverModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="approverModalLabel">결재자 선택</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- jsTree -->
+				<div id="jstree"></div>
+				<!-- Selected approvers -->
+				<div id="selected-approvers">
+					<h5>선택된 결재자</h5>
+					<div id="approver-list">
+						<p>아직 선택된 결재자가 없습니다.</p>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				<button type="button" class="btn btn-primary" id="confirmSelection">확인</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">

@@ -4,20 +4,30 @@
     <select id="findDocumentUrls" resultType="camelcasemap">
         SELECT code_detail_name
              , code_description
+             , code_detail_number
          FROM common_code_detail ccd
         WHERE code_number = 'APV02'
         ORDER BY code_detail_number
     </select>
 
-    <select id="findDocumentsUnderApprovalTotalCountByUserId" parameterType="String" resultType="int">
+    <select id="findDocumentsUnderApprovalTotalCountByUserId" parameterType="map" resultType="int">
         SELECT count(*)
-          FROM document
+          FROM document d
          WHERE created_id = #{userId}
            AND doc_status = '02'
+        <if test="docType != null and docType != ''">
+            AND doc_type = #{docType}
+        </if>
+        <if test="docTitle != null and docTitle != ''">
+            AND doc_title LIKE CONCAT('%', #{docTitle}, '%') -- 검색어 포함
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND created_date BETWEEN #{startDate} AND #{endDate}
+        </if>
     </select>
 
     <select id="findDocumentsUnderApproval" parameterType="map" resultType="camelcasemap">
-        SELECT d.created_date
+        SELECT DATE_FORMAT(STR_TO_DATE(d.created_date, '%Y%m%d %H%i%s'), '%Y년 %m월 %d일 %H:%i') AS createdDate
              , doctype.code_detail_name as docTypeName
              , docstatus.code_detail_name as docStatusName
              , d.doc_title
@@ -33,19 +43,37 @@
            AND docstatus.code_number = 'APV01'
         WHERE d.created_id = #{userId}
           AND d.doc_status = '02'
+        <if test="docType != null and docType != ''">
+            AND d.doc_type = #{docType}
+        </if>
+        <if test="docTitle != null and docTitle != ''">
+            AND d.doc_title LIKE CONCAT('%', #{docTitle}, '%') -- 검색어 포함
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND d.created_date BETWEEN #{startDate} AND #{endDate}
+        </if>
          ORDER BY d.created_date DESC
          LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="findCompleteDocumentsTotalCountByUserId" parameterType="String" resultType="int">
+    <select id="findCompleteDocumentsTotalCountByUserId" parameterType="map" resultType="int">
         SELECT COUNT(*)
          FROM document d
         WHERE d.created_id = #{userId}
           AND d.doc_status = '03'
+        <if test="docType != null and docType != ''">
+            AND d.doc_type = #{docType}
+        </if>
+        <if test="docTitle != null and docTitle != ''">
+            AND d.doc_title LIKE CONCAT('%', #{docTitle}, '%') -- 검색어 포함
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND d.created_date BETWEEN #{startDate} AND #{endDate}
+        </if>
     </select>
 
     <select id="findCompleteDocuments" parameterType="map" resultType="camelcasemap">
-        SELECT d.created_date
+        SELECT DATE_FORMAT(STR_TO_DATE(d.created_date, '%Y%m%d %H%i%s'), '%Y년 %m월 %d일 %H:%i') AS createdDate
              , doctype.code_detail_name as docTypeName
              , docstatus.code_detail_name as docStatusName
              , d.doc_title
@@ -61,10 +89,19 @@
                         AND docstatus.code_number = 'APV01'
         WHERE d.created_id = #{userId}
           AND d.doc_status = '03'
+        <if test="docType != null and docType != ''">
+            AND d.doc_type = #{docType}
+        </if>
+        <if test="docTitle != null and docTitle != ''">
+            AND d.doc_title LIKE CONCAT('%', #{docTitle}, '%') -- 검색어 포함
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND d.created_date BETWEEN #{startDate} AND #{endDate}
+        </if>
         ORDER BY d.created_date DESC
     </select>
 
-    <select id="findDocumentsPendingApprovalTotalCountByUserId" parameterType="String" resultType="int">
+    <select id="findDocumentsPendingApprovalTotalCountByUserId" parameterType="map" resultType="int">
         SELECT COUNT(*)
           FROM document d
         INNER JOIN approval_step s
@@ -81,7 +118,8 @@
              , d.doc_type
              , doc_status.code_detail_name AS docStatusName
              , doc_type.code_detail_name AS docTypeName
-             , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
+             , DATE_FORMAT(STR_TO_DATE(d.created_date, '%Y%m%d %H%i%s'), '%Y년 %m월 %d일 %H:%i') AS createdDate
+              , d.doc_status
         FROM document d
         INNER JOIN approval_step s
             ON d.doc_id = s.doc_id

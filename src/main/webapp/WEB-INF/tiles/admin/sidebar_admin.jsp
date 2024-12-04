@@ -3,9 +3,11 @@
 <% String ctxPath = request.getContextPath(); %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
 <style type="text/css">
-  * {font-family: 'Pretendard', sans-serif; !important}
+  *  {font-family: 'Nanum Gothic', sans-serif;}
   div{
     /* border: 1px solid black; */
   }

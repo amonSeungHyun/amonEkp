@@ -32,8 +32,8 @@
 --%>
 
 <%--  ===== 스피너 및 datepicker 를 사용하기 위해  jquery-ui 사용하기 ===== --%>
-<link rel="stylesheet" type="text/css" href="/jquery-ui-1.13.1.custom/jquery-ui.css" />
-<script type="text/javascript" src="/jquery-ui-1.13.1.custom/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/jquery-ui-1.13.1.custom/jquery-ui.css" />
+<script type="text/javascript" src="/js/jquery-ui-1.13.1.custom/jquery-ui.js"></script>
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" type="text/css" href="/bootstrap-4.6.0-dist/css/bootstrap.min.css" >

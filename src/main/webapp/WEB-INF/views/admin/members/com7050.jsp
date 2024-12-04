@@ -888,15 +888,11 @@
 		</div>
 	</div>
 	<!-- ========================== 구성원 추가 모달 끝 ========================== -->
-
-
 	<div id="title">
 		<div id="bottomcate" style="float: none;">
-
 			<div style="display: inline-block; float:left; margin: 40px 0;">
 				<span id="totalCountText" style="font-weight: bold;"></span>
 			</div>
-
 			<div style="display: inline-block; float:right; margin: 0;">
 				<!-- 부서 -->
 				<label for="searchDepart" style="margin-right: 5px; font-weight: bold;">부서</label>
@@ -911,22 +907,15 @@
 				<!-- 검색어 입력 input 추가 -->
 				<label for="searchWord" style="margin-right: 5px; font-weight: bold;">이름</label>
 				<input id="searchWord" name="searchWord" style="padding-left: 7px; height: 25px; width: 160px; margin-right: 5px; border: solid 1px #66cc66; border-radius: 0.4rem;" type="text" placeholder="이름" />
-
 				<button class="btn" id="btn_search" type="button" style="border:none; background-color: #66cc66; height: 30px; color: white;">
 					<i class="fa fa-search"></i>
 				</button>
-
 				<button class="btn" id="delete-button" onclick="deleteMember()" type="button" style="border:none; background-color: #ff6666; height: 30px; color: white; margin-left: 5px;">
 					<i class="fa fa-trash"></i>
 				</button>
-
 			</div>
-
 		</div>
-
 	</div>
-
-
 	<!-- 게시판 리스트 시작 -->
 	<!-- 예시 데이터로 공지 사항 리스트 -->
 	<div id="contentList">
