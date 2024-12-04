@@ -5,12 +5,14 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import kr.co.amonsoft.service.apv.ApvCommonService;
 import kr.co.amonsoft.service.doc.DocCommonService;
 import kr.co.amonsoft.service.file.FileService;
+import kr.co.amonsoft.util.PageUtil;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,9 +46,19 @@ public class Doc1040Contorller {
     private final String UPLOAD_PATH = "C:\\test";
     
     @GetMapping("/doc/doc1040")
-    public String selectWrite(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
+    public String selectWrite(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
     	Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
+    	int totalCnt = 0;
+    	Map<String, Object> pagingParams;
+    	
+    	totalCnt = doc1040Service.selectReferenceApprovalCnt();
+        pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+        
+        List<Map<String, Object>> documents = doc1040Service.selectReferenceApproval(pagingParams);
         model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
+        model.addAttribute("documents", documents);
+        model.addAttribute("pager",pagingParams);
+        
         return "/admin/doc/doc1040/doc1040Write";
     }
     
@@ -109,4 +121,33 @@ public class Doc1040Contorller {
     	Map<String,Object> approvalRequestDetails = doc1040Service.findApprovalRequestDetailsByDocId(docId);
     	return approvalRequestDetails;
     }
+    
+    @ResponseBody
+    @RequestMapping(value = "/doc/selectReferenceApprovalView")
+    public Map<String,Object> selectReferenceApprovalView(@RequestBody Map<String,Object> param){
+    	Map<String,Object> result = new HashMap<>();
+    	List<Map<String,Object>> approvalRequestDetails = doc1040Service.selectReferenceApprovalView(param);
+    	result.put("result", approvalRequestDetails);
+    	return result;
+    }
+    
+    @ResponseBody
+    @GetMapping("/doc/doc1040changeList")
+    public Map<String,Object> doc1040changeList(@RequestParam(defaultValue = "1") int pageNum
+            , @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        int totalCnt = 0;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        List<Map<String, Object>> resultList;
+        Map<String, Object> pagingParams = new HashMap<String, Object>();
+
+    	totalCnt = doc1040Service.selectReferenceApprovalCnt();
+        pagingParams = PageUtil.getPagingParams(pageNum,totalCnt);
+        resultList = doc1040Service.selectReferenceApproval(pagingParams);
+
+        resultMap.put("resultList", resultList);
+        resultMap.put("pager", pagingParams);
+        
+        return resultMap;
+    }
+    
 }

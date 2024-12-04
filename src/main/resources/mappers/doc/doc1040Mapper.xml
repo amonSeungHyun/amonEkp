@@ -19,6 +19,7 @@
 			 , approval_title
 			 , approval_content
 			 , instructions
+			 , reference_doc_id
 			 , remark
 			 , created_id
 			 , created_date
@@ -33,6 +34,7 @@
 			 , #{approval_title}
 			 , #{approval_content}
 			 , #{instructions}
+			 , #{reference_doc_id}
 			 , #{remark}
 			 , #{userId}
 			 , DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
@@ -101,6 +103,7 @@
              , approval_title
              , approval_content
              , instructions
+             , reference_doc_id
              , remark
              , created_id
              , created_date
@@ -126,6 +129,45 @@
              , updated_date
           FROM transport_expense_detail
          WHERE doc_id = #{docId}
+    </select>
+    
+    <select id="selectReferenceApproval" parameterType="map" resultType="camelcasemap">
+        SELECT a.doc_id
+             , approval_id
+             , draft_date
+             , drafter
+             , approval_title
+          from approval_request a 
+		 inner join document d
+		    on a.doc_id = d.doc_id 
+		 where d.doc_type ='03' and d.doc_status ='03'
+ 		 ORDER BY d.created_date DESC
+         LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <select id="selectReferenceApprovalCnt" resultType="int">
+    	SELECT count(*)
+          from approval_request a 
+		 inner join document d
+		    on a.doc_id = d.doc_id 
+		 where d.doc_type ='03' and d.doc_status ='03'
+    </select>
+    
+    <select id="selectReferenceApprovalView" parameterType="map" resultType="camelcasemap">
+        SELECT a.doc_id
+             , approval_id
+             , draft_date
+             , drafter
+             , approval_title
+          from approval_request a 
+		 inner join document d
+		    on a.doc_id = d.doc_id 
+		 where d.doc_type ='03' and d.doc_status ='03'
+		   AND d.doc_id IN
+		<foreach item="item" collection="reference_doc_id" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+ 		 ORDER BY d.created_date DESC
     </select>
     
 </mapper>

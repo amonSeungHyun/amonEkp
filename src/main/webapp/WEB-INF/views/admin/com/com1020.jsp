@@ -236,7 +236,7 @@ dd {
 		<div id="header_title">
 			<span class="memberTitle">공지사항 상세</span>
 		</div>
-		<c:if test="${not empty role}">
+		<c:if test="${role <= 3 }">
 			<div id="button_title">
 				<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
 					<span>

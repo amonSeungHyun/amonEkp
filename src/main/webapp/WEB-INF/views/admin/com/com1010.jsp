@@ -208,7 +208,7 @@
 	                contentType: false,
 	                data: formData, 
 	                success: function (response) {
-	                    $("#modal_comCodeModal").modal("hide");
+	                    $("#modal_registMember").modal("hide");
 	                    Swal.fire({
 	                        icon: 'success',
 	                        title: '입력 완료',
@@ -302,7 +302,7 @@
 		<div id="header_title">
 			<span class="memberTitle">공지사항</span>
 		</div>
-		<c:if test="${not empty role}">
+		<c:if test="${role <= 3 }">
 			<div id="button_title">
 				<button id="registMember" type="button" class="btn" data-toggle="modal" data-target="#modal_registMember">
 					<span>
@@ -381,7 +381,7 @@
 				<button class="btn" id="advanced-search-button" onclick="searchCom1010()" type="button" style="border:none; background-color: #66cc66; height: 30px; color: white;">
 				<i class="fa fa-search"></i>
 				</button> 
-				<c:if test="${not empty role}">
+				<c:if test="${role <= 3 }">
 					<button class="btn" id="delete-button" onclick="deleteCom1010()" type="button" style="border:none; background-color: #ff6666; height: 30px; color: white; margin-left: 5px;">
 					    <i class="fa fa-trash"></i>
 					</button>
