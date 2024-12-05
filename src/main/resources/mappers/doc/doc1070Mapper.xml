@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.amonsoft.mapper.doc.Doc1070Mapper">
+
+    <select id="findResignationDetailsByDocId" resultType="camelcasemap">
+        SELECT doc_id
+             , resignation_detail_id
+             , resignation_date
+             , resignation_reason
+             , u.user_name
+             , u.job_start_date
+             , p.code_detail_name as position_name
+             , org.code_detail_name as org_name
+             , rd.phone_number
+             , u.user_name
+             , CONCAT(SUBSTR(rd.created_date, 1, 4), '년', ' ', SUBSTR(rd.created_date, 5, 2), '월', ' ', SUBSTR(rd.created_date, 7, 2), '일') as created_date
+             , rd.updated_id
+             , rd.updated_date
+        FROM resignation_detail rd
+        LEFT OUTER JOIN user u
+          on rd.created_id = u.user_id
+        LEFT OUTER JOIN
+             (
+              SELECT ccd.code_detail_number
+                   , ccd.code_detail_name
+                FROM common_code cc
+               INNER JOIN common_code_detail ccd
+                  ON cc.code_number = ccd.code_number
+               WHERE cc.code_number = 'COM01'
+             ) org
+          ON u.organization_id = org.code_detail_number
+        LEFT OUTER JOIN
+             (
+              SELECT ccd.code_detail_number
+                   , ccd.code_detail_name
+                FROM common_code cc
+               INNER JOIN common_code_detail ccd
+                  ON cc.code_number = ccd.code_number
+               WHERE cc.code_number = 'COM02'
+             ) p
+          ON u.position_code = p.code_detail_number
+       WHERE doc_id = #{docId}
+    </select>
+
+    <insert id="insertResignationDetail" parameterType="map">
+        INSERT INTO resignation_detail
+        (
+               doc_id
+             , resignation_date
+             , resignation_reason
+             , phone_number
+             , created_id
+             , created_date
+             , updated_id
+             , updated_date
+        )
+        VALUES (
+               #{docId}
+             , #{resignationDate}
+             , #{resignationReason}
+             , #{phoneNo}
+             , #{userId}
+             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+             , #{userId}
+             , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+        )
+    </insert>
+
+    <select id="verifyDuplicateItem" parameterType="string" resultType="int">
+
+        SELECT COUNT(*)
+          FROM document D
+         INNER JOIN user U
+            ON D.created_id = U.user_id
+         WHERE D.doc_type = '04'
+           AND U.user_id = #{userId}
+          AND NOT EXISTS
+              (
+               SELECT 1
+                 FROM document A
+                WHERE D.doc_id = A.doc_id
+                  AND A.doc_type = '04'
+                  AND A.doc_status = '04'
+              )
+    </select>
+
+</mapper>

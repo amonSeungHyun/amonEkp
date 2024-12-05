@@ -128,6 +128,11 @@ a:active {text-decoration: none; color: #cccccc;}
 					data : collectApprovalRequest(),
 					ajaxUrl: "/doc/insertApprovalRequest",
 				};
+			case "04":	// 사직서
+				return {
+					data : collectResignationData(),
+					ajaxUrl: "/approval/insertResignationDetail",
+				};
 			case "05":	// 법인카드
 				return {
 					data : collectcorporateCardDetailData(),
@@ -149,6 +154,7 @@ a:active {text-decoration: none; color: #cccccc;}
 			"01": "/approval/annualLeaveView?docId=" + docId + "&referenceType=doc",
 			"02": "/approval/expenseDetailView?docId=" + docId + "&referenceType=doc",
 			"03": "/doc/doc1040View?docId=" + docId + "&referenceType=doc",
+			"04": "/doc/doc1070View?docId=" + docId + "&referenceType=doc",
 			"05": "/doc/doc1050View?docId=" + docId + "&referenceType=doc",
 			"06": "/doc/doc1060View?docId=" + docId + "&referenceType=doc",
 		};
@@ -229,6 +235,8 @@ a:active {text-decoration: none; color: #cccccc;}
 					},
 					error: function (error) {
 						console.error('Error sending data:', error);
+						let msg = error.responseJSON.resultMsg;
+						alert(msg);
 					}
 				});
 			}

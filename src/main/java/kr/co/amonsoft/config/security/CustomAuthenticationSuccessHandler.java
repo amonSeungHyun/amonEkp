@@ -80,6 +80,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             request.getSession().setAttribute("userId", userEntity.getUserId());
             request.getSession().setAttribute("username", userEntity.getUserName());
             request.getSession().setAttribute("positionNm", userEntity.getPositionNm());
+            request.getSession().setAttribute("jobStartDate", userEntity.getJobStartDate());
             request.getSession().setAttribute("phoneNo", userEntity.getPhoneNo());
             request.getSession().setAttribute("department", userEntity.getDepartment());
             request.getSession().setAttribute("address", userEntity.getAddress());
