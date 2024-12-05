@@ -87,11 +87,19 @@
           AND doc_id = #{docId}
     </update>
 
+    <update id="updateDocumentToRejectedStatus" parameterType="int">
+        UPDATE document
+        SET updated_id = #{approverId}
+          , updated_date = DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
+          , doc_status = '04'
+        WHERE doc_id= #{docId}
+    </update>
+
     <update id="updateDocumentCompletionStatus" parameterType="int">
         UPDATE document
         SET updated_id = #{approverId}
           , updated_date = DATE_FORMAT(NOW(), '%Y%m%d %H%i%s')
-          , doc_status= '03'
+          , doc_status = '03'
         WHERE doc_id= #{docId}
     </update>
 

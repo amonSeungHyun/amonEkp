@@ -51,7 +51,7 @@ public class ApvCommonServiceImpl implements ApvCommonService {
         String roleCode = String.valueOf(param.get("roleCode"));
         //반려일때
         if(status.equals("04")) {
-            stepUpdateResult =  apvCommonMapper.updateDocumentCompletionStatus(docId);
+            stepUpdateResult =  apvCommonMapper.updateDocumentToRejectedStatus(docId);
         }else{
             //대표님 결재
             if (roleCode.equals("01")) {
