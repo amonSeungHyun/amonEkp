@@ -673,7 +673,7 @@
 		} else if (docTypeCode === 3) {
 			fullUrl = "/doc/doc1040View?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 4) {
-			fullUrl = "/doc/doc1040View?docId=" + docId + "&referenceType=" + referenceType ;
+			fullUrl = "/doc/doc1070View?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 5) {
 			fullUrl = "/doc/doc1050View?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 6) {
