@@ -107,8 +107,15 @@ a:active {text-decoration: none; color: #cccccc;}
 </style>
 <script type="text/javascript">
 
-	function goWrite() {
-		window.location.href = "/docList";
+	function goBackToList() {
+		const previousApprovalStatus = localStorage.getItem('previousApprovalStatus') || 'pending'; // 기본값을 설정 (예: 'pending')
+		console.log(previousApprovalStatus)
+		alert(previousApprovalStatus);
+		if (previousApprovalStatus === "pending") {
+			window.location.href = "/docPendingList";
+		} else {
+			window.location.href = "/docList";
+		}
 	}
 
 	function getDocumentConfig(docCode) {
@@ -152,7 +159,6 @@ a:active {text-decoration: none; color: #cccccc;}
 			"05": "/doc/doc1050View?docId=" + docId + "&referenceType=doc",
 			"06": "/doc/doc1060View?docId=" + docId + "&referenceType=doc",
 		};
-		console.log(docType);
 		return urls[docType];
 	}
 
@@ -332,6 +338,107 @@ a:active {text-decoration: none; color: #cccccc;}
 	}
 
 	<!-- 여기서부터 팝업 function-->
+	function initializeJsTree() {
+		const treeData = [
+			{ "id": "1", "parent": "#", "text": "1본부" },
+			{ "id": "1-1", "parent": "1", "text": "Child node 1 (1본부)" },
+			{ "id": "1-2", "parent": "1", "text": "Child node 2 (1본부)" },
+			{ "id": "2", "parent": "#", "text": "2본부" },
+			{ "id": "2-1", "parent": "2", "text": "Child node 1 (2본부)" },
+			{ "id": "2-2", "parent": "2", "text": "Child node 2 (2본부)" },
+			{ "id": "3", "parent": "#", "text": "3본부" },
+			{ "id": "3-1", "parent": "3", "text": "Child node 1 (3본부)" },
+			{ "id": "3-2", "parent": "3", "text": "Child node 2 (3본부)" }
+		];
+
+		$('#jstree').jstree({
+			'core': {
+				'data': treeData
+			}
+		});
+
+		// 노드 선택 이벤트 연결
+		$('#jstree').on('select_node.jstree', function (e, data) {
+			handleNodeSelect(data);
+		});
+	}
+
+	function initializeJsTree() {
+		$('#jstree').jstree({
+			'core': {
+				'data': treeData
+			}
+		});
+
+		// 노드 선택 이벤트 연결
+		$('#jstree').on('select_node.jstree', function (e, data) {
+			handleNodeSelect(data);
+		});
+	}
+
+	function handleNodeSelect(data) {
+		const nodeId = data.node.id;
+		const nodeText = data.node.text;
+
+		// 선택된 결재자 목록을 DOM 요소에 저장
+		const selectedApprovers = getSelectedApprovers();
+
+		// 중복 추가 방지
+		if (!selectedApprovers.some(item => item.id === nodeId)) {
+			selectedApprovers.push({ id: nodeId, text: nodeText });
+			updateApproverList(selectedApprovers);
+		}
+	}
+
+	function getSelectedApprovers() {
+		const approversJson = $('#approver-list').data('selectedApprovers');
+		return approversJson ? approversJson : [];
+	}
+
+	function setSelectedApprovers(selectedApprovers) {
+		$('#approver-list').data('selectedApprovers', selectedApprovers);
+	}
+
+	function updateApproverList(selectedApprovers) {
+		const approverList = $('#approver-list');
+		approverList.empty();
+
+		selectedApprovers.forEach((approver, index) => {
+			const approverItem = $(`
+            <div class="approver-item">
+                <span>${index + 1}. ${approver.text}</span>
+                <button class="btn btn-danger btn-sm remove-approver" data-id="${approver.id}">제거</button>
+            </div>
+        `);
+			approverList.append(approverItem);
+		});
+
+		// 선택된 결재자 목록 저장
+		setSelectedApprovers(selectedApprovers);
+
+		// 제거 버튼 이벤트 연결
+		bindRemoveApproverEvents();
+	}
+
+	function bindRemoveApproverEvents() {
+		$('.remove-approver').off('click').on('click', function () {
+			const idToRemove = $(this).data('id');
+			let selectedApprovers = getSelectedApprovers();
+
+			// 해당 ID를 목록에서 제거
+			selectedApprovers = selectedApprovers.filter(item => item.id !== idToRemove);
+
+			// 목록 업데이트
+			updateApproverList(selectedApprovers);
+		});
+	}
+
+
+	function handleConfirmSelection() {
+		const selectedApprovers = getSelectedApprovers();
+		console.log("선택된 결재자:", selectedApprovers);
+		$('#approverModal').modal('hide'); // 모달 닫기
+	}
 
 
 </script>
@@ -362,7 +469,7 @@ a:active {text-decoration: none; color: #cccccc;}
 			</button>
 		</c:if>
 	</c:if>
-	<button type="button" class="headerBtn" onclick="goWrite();">
+	<button type="button" class="headerBtn" onclick="goBackToList();">
 		<i class="bi bi-send" style="margin-right: 10px;"></i>
 		목록
 	</button>

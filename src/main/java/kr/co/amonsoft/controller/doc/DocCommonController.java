@@ -36,7 +36,7 @@ public class DocCommonController {
 
         model.addAttribute("documentUrls", docCommonService.findDocumentUrls());
         model.addAttribute("documents", documents);
-        model.addAttribute("docStatus", "underApproval");
+        model.addAttribute("approvalStatus", "underApproval");
         model.addAttribute("pager",pagingParams);
         return "/admin/doc/docList";
     }
@@ -59,7 +59,7 @@ public class DocCommonController {
         model.addAttribute("admin",true);
         model.addAttribute("role", roleCode);
         model.addAttribute("documents", documents);
-        model.addAttribute("docStatus", "pending");
+        model.addAttribute("approvalStatus", "pending");
         model.addAttribute("pager",pagingParams);
         return "/admin/doc/docList";
     }
@@ -76,7 +76,7 @@ public class DocCommonController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         String roleCode = customUserDetails.getRole();
-        String docStatus = param.getOrDefault("docStatus", "");
+        String approvalStatus = param.getOrDefault("approvalStatus", "");
         int pageNum = Integer.parseInt(param.getOrDefault("pageNum", "1"));
 
         String userId = customUserDetails.getUserId();
@@ -89,7 +89,7 @@ public class DocCommonController {
         List<Map<String, Object>> resultList;
 
         // 문서 타입별 처리
-        switch (docStatus) {
+        switch (approvalStatus) {
             case "pending":
                 if (Set.of("01", "02", "03").contains(roleCode)) {
                     totalCnt = docCommonService.findDocumentsPendingApprovalTotalCountByUserId(pagingParams);
@@ -105,7 +105,6 @@ public class DocCommonController {
                 pagingParams.putAll(PageUtil.getPagingParams(pageNum, totalCnt));
                 resultList = docCommonService.findCompleteDocuments(pagingParams);
                 break;
-
             default:
                 totalCnt = docCommonService.findDocumentsUnderApprovalTotalCountByUserId(pagingParams);
                 pagingParams.putAll(PageUtil.getPagingParams(pageNum, totalCnt));

@@ -534,10 +534,10 @@
 		searchDateChange()
 	});
 
-	function loadDocuments(docStatus, pageNum, isSearch = false) {
+	function loadDocuments(approvalStatus, pageNum, isSearch = false) {
 		const params = {
 			pageNum: pageNum,
-			docStatus: docStatus
+			approvalStatus: approvalStatus
 		};
 
 		if (isSearch) {
@@ -560,29 +560,36 @@
 			success: function(data) {
 				var tableBody = $("#documentTable tbody");
 				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
-				$.each(data.resultList, function(index, doc) {
+				if (data.resultList && data.resultList.length > 0) {
+					$.each(data.resultList, function (index, doc) {
 
-					var badgeClass = '';
-					// docStatus 값에 따라 클래스 지정
-					if (doc.docStatus === '02') {
-						badgeClass = 'badge custom-badge rounded-pill fs-4';
-					} else if (doc.docStatus === '03') {
-						badgeClass = 'badge complete-badge rounded-pill fs-4';
-					} else {
-						badgeClass = 'badge fail-badge rounded-pill fs-4';
-					}
+						var badgeClass = '';
+						// docStatus 값에 따라 클래스 지정
+						if (doc.docStatus === '02') {
+							badgeClass = 'badge custom-badge rounded-pill fs-4';
+						} else if (doc.docStatus === '03') {
+							badgeClass = 'badge complete-badge rounded-pill fs-4';
+						} else {
+							badgeClass = 'badge fail-badge rounded-pill fs-4';
+						}
 
-					var rowHtml = $('<tr>')
-							.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType + ")") // 클릭 시 상세보기 함수 호출
-							.append('<td>' + doc.docTypeName + '</td>') // 결재 분류
-							.append('<td>' + doc.docTitle + '</td>')    // 결재 제목
-							.append('<td>' + doc.createdDate + '</td>') // 작성일
-							.append('<td><span class="' + badgeClass + '">' + doc.docStatusName + '</span></td>'); // 결재 상태
-					tableBody.append(rowHtml);
-				});
-				// 페이징 표시 함수 호출
-				updateButtonStyles(docStatus);
-				pageNumDisplay(docStatus, data.pager, isSearch);
+						var rowHtml = $('<tr>')
+								.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType +","+ approvalStatus + ")") // 클릭 시 상세보기 함수 호출
+								.append('<td>' + doc.docTypeName + '</td>') // 결재 분류
+								.append('<td>' + doc.docTitle + '</td>')    // 결재 제목
+								.append('<td>' + doc.createdDate + '</td>') // 작성일
+								.append('<td><span class="' + badgeClass + '">' + doc.docStatusName + '</span></td>'); // 결재 상태
+						tableBody.append(rowHtml);
+					});
+					// 페이징 표시 함수 호출
+					pageNumDisplay(approvalStatus, data.pager, isSearch);
+				}else{
+					var emptyRow = $('<tr>')
+							.append('<td colspan="4" style="text-align: center;">리스트가 존재하지 않습니다.</td>');
+					tableBody.append(emptyRow);
+				}
+				updateButtonStyles(approvalStatus);
+				pageNumDisplay(approvalStatus, data.pager, isSearch);
 			},
 			error: function(xhr, status, error) {
 				console.error("데이터 조회 실패:", error);
@@ -590,18 +597,18 @@
 		});
 	}
 
-	function updateButtonStyles(activeType) {
+	function updateButtonStyles(approvalStatus) {
 		// 모든 버튼의 스타일 초기화
 		$("#wating, #mine, #complete").removeClass("active");
 
-		console.log(activeType)
+		console.log(approvalStatus)
 
 		// activeType에 따라 클래스 추가
-		if (activeType === "pending") {
+		if (approvalStatus === "pending") {
 			$("#wating").addClass("active");
-		} else if (activeType === "underApproval") {
+		} else if (approvalStatus === "underApproval") {
 			$("#mine").addClass("active");
-		} else if (activeType === "complete") {
+		} else  {
 			$("#complete").addClass("active");
 		}
 	}
@@ -625,12 +632,12 @@
 
 
 	/*페이징 그리기*/
-	function pageNumDisplay(docStatus, pager,  isSearch) {
+	function pageNumDisplay(approvalStatus, pager,  isSearch) {
 		var pageNumDiv = $("#pageNumDiv");
 		pageNumDiv.empty();
 		if (pager.startPage > pager.blockSize) {
 			pageNumDiv.append(
-					'<a href="javascript:loadDocuments(\'' + docStatus + '\', ' + pager.prevPage + ', ' + isSearch + ');">' +
+					'<a href="javascript:loadDocuments(\'' + approvalStatus + '\', ' + pager.prevPage + ', ' + isSearch + ');">' +
 					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>' +
 					'</a>'
 			);
@@ -638,7 +645,7 @@
 		for (var i = pager.startPage; i <= pager.endPage; i++) {
 			if (pager.pageNum !== i) {
 				pageNumDiv.append(
-						'<a class="page-numbox" href="javascript:loadDocuments(\'' + docStatus + '\', ' + i + ', ' + isSearch + ');">' + i + '</a>'
+						'<a class="page-numbox" href="javascript:loadDocuments(\'' + approvalStatus + '\', ' + i + ', ' + isSearch + ');">' + i + '</a>'
 				);
 			} else {
 				pageNumDiv.append(
@@ -648,14 +655,14 @@
 		}
 		if (pager.endPage < pager.totalPage) {
 			pageNumDiv.append(
-					'<a href="javascript:loadDocuments(\'' + docStatus + '\', ' + pager.nextPage + ', ' + isSearch + ');">' +
+					'<a href="javascript:loadDocuments(\'' + approvalStatus + '\', ' + pager.nextPage + ', ' + isSearch + ');">' +
 					'<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>' +
 					'</a>'
 			);
 		}
 	}
 
-	function documentDetailView(docId, docType){
+	function documentDetailView(docId, docType, approvalStatus){
 		let docTypeCode = parseInt(docType);
         let referenceType = "doc";
 		// 상태 코드에 따른 파라미터 설정
@@ -675,6 +682,9 @@
 			// docType이 예상치 못한 값일 경우 기본 URL로 설정
 			fullUrl = "/defaultView?docId=" + docId;
 		}
+
+		alert(approvalStatus);
+		localStorage.setItem('previousApprovalStatus', approvalStatus);
 
 		// 생성된 URL로 이동
 		window.location.href = fullUrl;
@@ -831,7 +841,7 @@
 							</c:when>
 							<c:otherwise>
 								<c:forEach var="doc" items="${documents}">
-									<tr onclick="documentDetailView(${doc.docId}, ${doc.docType})">
+									<tr onclick="documentDetailView(${doc.docId}, ${doc.docType}, '${approvalStatus}')">
 										<td>${doc.docTypeName}</td>
 										<td>${doc.docTitle}</td>
 										<td><span>${doc.createdDate}</span></td>
@@ -861,14 +871,14 @@
 					<div id="pageNumDiv" class="pagination p12">
 						<c:if test="${pager.startPage > pager.blockSize}">
 							<!-- 스크립트는 검색하는 param값-->
-							<a href="javascript:loadDocuments('${docStatus}', '${pager.prevPage}', false);" style="padding-top: 3px;">
+							<a href="javascript:loadDocuments('${approvalStatus}', '${pager.prevPage}', false);" style="padding-top: 3px;">
 								<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&lt;</button>
 							</a>
 						</c:if>
 						<c:forEach var="i" begin="${pager.startPage}" end="${pager.endPage}">
 							<c:choose>
 								<c:when test="${pager.pageNum != i}">
-									<a class="page-numbox" href="javascript:loadDocuments('${docStatus}', '${i}', false);">${i}</a>
+									<a class="page-numbox" href="javascript:loadDocuments('${approvalStatus}', '${i}', false);">${i}</a>
 								</c:when>
 								<c:otherwise>
 									<a class="page-num is-active" disabled>${i}</a>
@@ -876,7 +886,7 @@
 							</c:choose>
 						</c:forEach>
 						<c:if test="${pager.endPage < pager.totalPage}">
-							<a href="javascript:loadDocuments('${docStatus}', '${pager.nextPage}', false);" style="padding-top: 3px;">
+							<a href="javascript:loadDocuments('${approvalStatus}', '${pager.nextPage}', false);" style="padding-top: 3px;">
 								<button type="button" class="btn btn-secondary" style="background-color: #2ecc71; border-color: #2ecc71">&gt;</button>
 							</a>
 						</c:if>
