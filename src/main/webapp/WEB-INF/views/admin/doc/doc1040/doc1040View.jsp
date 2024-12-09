@@ -275,8 +275,8 @@
 			    	    		<div style="display:flex; padding:10px;">
 			    	    			<table id="referTable" class="table table-bordered table-hover" style="margin-top: 20px;">
 			    	    				<colgroup>
-			    	    	        		<col style="width:20%">
-			    	    	        		<col style="width:50%">
+			    	    	        		<col style="width:25%">
+			    	    	        		<col style="width:45%">
 			    	    	        		<col style="width:20%">
 			    	    	        		<col style="width:10%">
 			    	            		</colgroup>
