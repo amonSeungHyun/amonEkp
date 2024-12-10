@@ -8,12 +8,12 @@
 <% String ctxPath = request.getContextPath(); %>
 
 <jsp:include page="/WEB-INF/views/admin/doc/docHeader.jsp"></jsp:include>
-<link rel="stylesheet" type="text/css" href="/css/doc/doc1050.css">
+
 
 <style type="text/css">
   /* CSS 정리된 스타일 */
   p { margin:0pt 0pt 8pt }
-  table { margin-top:0pt; margin-bottom:8pt }
+  table { margin-top:0pt; margin-bottom:8pt; width: 1200px;}
   /* Additional styles for table formatting and inputs */
   .filebox .upload-name {
     display: inline-block;
@@ -213,9 +213,6 @@
     line-height: 1.2;
   }
 
-  p { margin:0pt 0pt 8pt }
-  table { margin-top:0pt; margin-bottom:8pt }
-
   /* 유형 */
   .checkbox-group {
     display: flex;
@@ -290,9 +287,9 @@
   <form name="writeFrm" enctype="multipart/form-data">
     <input id="docId" type="hidden" value="${docId}"/>
     <input id="docType" type="hidden" value="04">
-    <div class="table-area">
+    <div id="printableTable" class="table-area">
       <table class="first-table">
-        <tr style="height:17.1pt">
+        <tr class="firstTr" style="height:17.1pt;">
           <td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
             <p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
               <a href="#" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000">사직서</span></strong></a>
@@ -313,7 +310,7 @@
             <p class="a7 font-malgungothic" style="text-align:center; line-height:normal">대표</p>
           </td>
         </tr>
-        <tr style="height:39.15pt">
+        <tr class="secondTr" style="height:39.15pt">
           <c:forEach var="approvalStep" items="${approvalSteps}" >
             <c:if test="${approvalStep.status == '03'}">
               <td class="col1 approval-image-td">
@@ -331,14 +328,14 @@
             </c:if>
           </c:forEach>
         </tr>
-        <tr style="height:22.05pt">
+        <tr class="thirdTr" style="height:22.05pt">
           <c:forEach var="approvalStep" items="${approvalSteps}" >
             <td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="${approvalStep.stepNo}" data-user-id="${approvalStep.approvalId}">${approvalStep.userName} / ${approvalStep.positionName}</td>
           </c:forEach>
         </tr>
       </table>
       <table class="col-table">
-        <tr style="height:22.5pt">
+        <tr class="firstTr" style="height:22.5pt">
           <td class="col2">
             <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">성&#xa0;&#xa0;&#xa0; 명</p>
           </td>
@@ -348,7 +345,7 @@
           </td>
           <td class="col3"><c:out value="${resignationDetails.positionName}" /></td>
         </tr>
-        <tr style="height:22.55pt">
+        <tr class="secondTr" style="height:22.55pt">
           <td class="col2">
             <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">부&#xa0;&#xa0;&#xa0; 서</p>
           </td>
@@ -362,7 +359,7 @@
         </tr>
       </table>
       <table class="col-table">
-        <tr style="height:22.55pt">
+        <tr class="secondTr" style="height:22.55pt">
           <td class="col2">
             <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">입사일</p>
           </td>
@@ -393,6 +390,7 @@
         </tr>
       </table>
       <p class="a7 font-malgungothic text-center">상가 본인은 위와 같은 사정으로 사직서를 제출하오니 조치하여 주시기 바랍니다.</p>
+      <p class="a7 font-malgungothic text-center">${resignationDetails.createdDate}</p>
       <p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : ${resignationDetails.userName}</p>
     </div>
     <!-- File upload area -->

@@ -221,6 +221,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
   $(document).ready (function(){
+	  calculateTotal();
+	  
     $("#file").on('change',function(){
       var fileName = $("#file").val();
       $(".upload-name").val(fileName);
@@ -241,9 +243,46 @@
       // Set the td height to match the textarea height
       $(textarea).closest('td').height(textarea.scrollHeight);
     }
+    
   });
 
 
+	function numberToKorean(num) {
+		const units = ["", "만", "억", "조"];
+		let result = "";
+		let count = 0;
+
+		while (num > 0) {
+			const part = num % 10000;
+			if (part > 0) {
+				result = part + units[count] + result;
+			}
+			num = Math.floor(num / 10000);
+			count++;
+		}
+
+		return result + "원";
+	}
+
+	/*숫자 소수점함수*/
+	function formatNumberWithCommas(num) {
+		return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+
+	/*합계 계산 함수*/
+	function calculateTotal() {
+		let total = 0;
+
+		// Loop through all `textarea` elements with id starting `expenseAmount_`
+		$('[id^=expenseAmount_]').each(function () {
+			const value = $(this).val();
+			total += parseInt(value) || 0;
+		});
+
+		// Update display for Korean and numeric formats
+		$('#koreanAmount').text(numberToKorean(total));
+		$('#numericAmount').text(formatNumberWithCommas(total));
+	}
 
 </script>
 <div class="contai" style="overflow-x: hidden;">
@@ -337,7 +376,9 @@
             <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">총 금 액</p>
           </td>
           <td colspan="4" style="width:335.3pt; border-top:0.75pt solid #a0a0a0; border-left:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle">
-            <p class="a font-malgungothic" style="margin-right:5pt; margin-left:5pt; line-height:normal; font-size:9pt">일금 ____ 원정 (\____)</p>
+            <p class="a font-malgungothic" style="margin-right:5pt; margin-left:5pt; line-height:normal; font-size:12pt">
+            	일금 <span id="koreanAmount">____</span>  (￦<span id="numericAmount">____</span>)
+            </p>
           </td>
         </tr>
         <tr style="height:22.5pt">
@@ -374,7 +415,8 @@
             </td>
             <td class="detail-col1 header-cell font-malgungothic text-center">
               <c:if test="${i <= expenseDetails.size()}">
-                ${expenseDetails[i - 1].expenseAmount}
+              	<input type="hidden" id="expenseAmount_${i}" value="${expenseDetails[i - 1].expenseAmount}">
+              	<fmt:formatNumber value="${expenseDetails[i - 1].expenseAmount}" type="number" groupingUsed="true" />
               </c:if>
             </td>
             <td class="detail-col1 header-cell font-malgungothic text-center">
@@ -388,7 +430,7 @@
       <p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
       <p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
       <p class="a7 font-malgungothic text-center">${documentCreatorInfo.createdDate}</p>
-      <p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>>
+      <p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
     </div>
     <!-- File upload area -->
     <jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>

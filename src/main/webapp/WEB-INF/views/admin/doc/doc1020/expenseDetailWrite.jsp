@@ -150,7 +150,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
   $(document).ready (function(){
-
+	
+	addCommaOnInput();
+	  
     $('textarea').each(function() {
       adjustHeight(this);
     }).on('input', function() {
@@ -205,7 +207,7 @@
         expenseItem: $('#expenseItem_' + i).val(),
         storeName: $('#storeName_' + i).val(),
         usageDetail: $('#usageDetail_' + i).val(),
-        expenseAmount: $('#expenseAmount_' + i).val(),
+        expenseAmount: $('#expenseAmount_' + i).val().replace(/,/g, ''),
         remark: $('#remark_' + i).val(),
       };
       data.push(rowData);
@@ -217,14 +219,27 @@
   function formatNumberWithCommas(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
-
+	
+  /* 입력 필드에서 천 단위 추가 */
+  function addCommaOnInput() {
+    $('[id^=expenseAmount_]').on('input', function () {
+      let value = $(this).val().replace(/,/g, ''); // 기존 콤마 제거
+      if (!isNaN(value) && value !== '') {
+        $(this).val(formatNumberWithCommas(value));
+      } else {
+        $(this).val(''); // 숫자가 아니면 초기화
+      }
+      calculateTotal(); // 입력값 변경 시 총합 업데이트
+    });
+  }
+  
   /*합계 계산 함수*/
   function calculateTotal() {
     let total = 0;
 
     // Loop through all `textarea` elements with id starting `expenseAmount_`
     $('[id^=expenseAmount_]').each(function () {
-      const value = $(this).val();
+      const value = $(this).val().replace(/,/g, '');
       total += parseInt(value) || 0;
     });
 

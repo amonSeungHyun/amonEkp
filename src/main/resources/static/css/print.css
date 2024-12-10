@@ -1,0 +1,189 @@
+p { margin:0pt 0pt 8pt }
+
+table { margin-top:0pt; margin-bottom:8pt; width: 1200px;border-collapse: collapse;}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+.contai {
+    overflow-x: hidden;
+}
+
+.table-area {
+    border:0.75pt solid #000000;
+    border-collapse:collapse;
+    margin:10px;
+    float: left;
+}
+
+.first-table{
+    width : 780px;
+    margin: 20px;
+}
+
+.first-table .firstTr {
+    height:17.1pt;
+}
+
+.first-table .secondTr {
+    height:39.15pt;
+}
+
+.first-table .thirdTr {
+    height:22.05pt;
+}
+
+.approval-step {
+    text-align:center;
+    line-height:normal;
+}
+
+.col-table .firstTr {
+    height:22.5pt;
+}
+
+.first-table td {
+    border-right:0.75pt solid #000000;
+    padding-right:0.22pt;
+    padding-left:0.6pt;
+    vertical-align:middle;
+}
+
+.first-table p {
+    text-align:center;
+    line-height:normal;
+}
+
+.first-table a {
+    text-decoration:none;
+}
+
+/* amy */
+.approval-image-td{
+    text-align: center;
+    vertical-align: center;
+}
+
+.approval-image{
+    width: 80px;
+    height:80px;
+}
+
+.col-table{
+    border-collapse: collapse; /* 테두리 중첩 방지 */
+    width: 780px;
+    margin: 20px;
+    border: 0.75pt solid #cccccc;
+}
+
+.col-table .firstTr {
+    height:22.5pt;
+}
+
+.col-table .secondTr {
+    height:22.55pt;
+}
+
+.col1{
+    width:64.85pt;
+    border-top:0.75pt solid #000000;
+    border-right:0.75pt solid #a0a0a0;
+    border-left:0.75pt solid #000000;
+    border-bottom:0.75pt solid #a0a0a0;
+    padding-right:0.22pt;
+    padding-left:0.22pt;
+    vertical-align:middle;
+}
+
+.col2{
+    width:77.25pt;
+    border-right:0.75pt solid #a0a0a0;
+    border-bottom:0.75pt solid #a0a0a0;
+    padding-right:0.22pt;
+    padding-left:0.22pt;
+    vertical-align:middle;
+}
+
+.col3{
+    width:158.55pt;
+    border-right:0.75pt solid #a0a0a0;
+    border-left:0.75pt solid #a0a0a0;
+    border-bottom:0.75pt solid #a0a0a0;
+    padding-right:0.22pt;
+    padding-left:0.22pt;
+    vertical-align:middle;
+}
+.font-malgungothic {
+    font-family: '맑은 고딕';
+}
+
+.first-table span {
+    color:#000000;
+}
+
+.first-table .a7 {
+    text-align:center;
+    line-height:normal;
+}
+
+/* Style for the textarea */
+textarea {
+    width: 100%; /* Make textarea take full width of the cell */
+    height: 100%; /* Adjust height as needed */
+    border: none; /* Remove border */
+    background-color: transparent; /* Make background transparent */
+    resize: none; /* Disable resizing */
+    overflow: hidden; /* Hide overflow */
+    text-align: center; /* Center-align text if needed */
+    padding: 0;
+    line-height: 1.2;
+}
+
+.col-table td {
+    border: 1px solid #cccccc; /* 테두리 색상 설정 (연한 회색) */
+    padding: 10px; /* 셀 내 여백 조정 */
+    vertical-align: middle;
+}
+
+.col-table .a7 {
+    margin-right:5pt;
+    margin-left:5pt;
+    text-align:center;
+    line-height:normal;
+}
+
+/* 기본 설정: 초기 높이 유지 */
+.auto-expand {
+    overflow: hidden; /* 스크롤바 제거 */
+    min-height: 50px; /* 최소 높이 설정 */
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* 날짜 필드 스타일 */
+.input-field.short {
+    width: 200px; /* input 필드 너비 조정 */
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* 연락처 입력 필드 테두리 제거 */
+.input-field.no-border {
+    width: 100%;
+    padding: 8px;
+    border: none; /* 테두리 제거 */
+    box-sizing: border-box;
+}
+
+
