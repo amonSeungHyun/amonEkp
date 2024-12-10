@@ -363,7 +363,7 @@
             <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">제 목</p>
           </td>
           <td colspan="4" style="width:335.3pt; border-top:0.75pt solid #a0a0a0; border-left:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle">
-            <input id="docTitle" type="text" style="width:500px; margin-left: 10px"  value="${documentCreatorInfo.docTitle}" readonly>
+            ${documentCreatorInfo.docTitle}
           </td>
         </tr>
         <tr style="height:22.5pt">
@@ -428,7 +428,7 @@
         </c:forEach>
       </table>
       <p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
-      <p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
+      <p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 증빙 첨부</p>
       <p class="a7 font-malgungothic text-center">${documentCreatorInfo.createdDate}</p>
       <p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
     </div>
