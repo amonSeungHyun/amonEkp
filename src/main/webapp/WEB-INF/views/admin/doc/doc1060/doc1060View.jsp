@@ -232,7 +232,7 @@
 						<td class="detail-col1 header-cell font-malgungothic text-center">
 							<c:if test="${i <= transportExpenseDetails.size()}">
 							 	<input type="hidden" id="expenseAmount_${i}" value="${transportExpenseDetails[i - 1].expenseAmount}">
-								${transportExpenseDetails[i - 1].expenseAmount}
+							 	<fmt:formatNumber value="${transportExpenseDetails[i - 1].expenseAmount}" type="number" groupingUsed="true" />
 							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">

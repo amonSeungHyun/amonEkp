@@ -253,10 +253,16 @@
 			success: function(data) {
 				console.log("data >> ", data)
 
-				const formattedContent1 = "<pre>" + decodeHtmlEntities(data.approval_content) + "</pre>";
-	            const formattedContent2 = "<pre>" + decodeHtmlEntities(data.instructions) + "</pre>";
+				const formattedContent1 = decodeHtmlEntities(data.approval_content) ;
+	            const formattedContent2 = decodeHtmlEntities(data.instructions) ;
 
-	            $("#approval_content").html(formattedContent1);
+	            const linkedText = formattedContent1.replace(
+	                    /(https?:\/\/[^\s]+)/g, 
+	                    '<a href="$1" target="_blank">$1</a>'
+	                );
+
+	            
+	            $("#approval_content").html(linkedText);
 	            $("#instructions").html(formattedContent2);
 	            if(data.reference_doc_id){
 		            $.ajax({
@@ -411,7 +417,7 @@
 					</td>
 				</tr>
 			</table>
-			<table class="col-table">
+			<table class="col-table" >
 				<tr style="height:29.2pt">
 					<td colspan="2" style="width:140.15pt; border-top:0.75pt solid #a0a0a0; border-right:0.75pt solid #a0a0a0; border-bottom:0.75pt solid #a0a0a0; padding-right:0.22pt; padding-left:0.22pt; vertical-align:middle; background-color:#f3f3f3">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">품의내용</p>
@@ -419,7 +425,8 @@
 				</tr>
 				<tr style="height:330px">
 					<td colspan="2" style="height: 330px !important; ">
-				    	<p id="approval_content" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p>
+						<div id="approval_content" style="height: 330px; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
+				    	<!--   <p id="approval_content" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p> -->
 					</td>
 				</tr>
 				<tr style="height:29.2pt">
@@ -429,7 +436,7 @@
 				</tr>
 				<tr style="height:90pt">
 					<td colspan="2" style="height: 90pt !important; ">
-				    	<p id="instructions" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p>
+						<div id="instructions" style="height: 90pt; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
 					</td>
 				</tr>
 				

@@ -235,7 +235,7 @@
 						<td class="detail-col1 header-cell font-malgungothic text-center">
 							<c:if test="${i <= doc1050Details.size()}">
 								<input type="hidden" id="corpAmount_${i}" value="${doc1050Details[i - 1].corpAmount}">
-								${doc1050Details[i - 1].corpAmount}
+								<fmt:formatNumber value="${doc1050Details[i - 1].corpAmount}" type="number" groupingUsed="true" />
 							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">
