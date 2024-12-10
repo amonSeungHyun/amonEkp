@@ -449,7 +449,7 @@
 	<form name="writeFrm" enctype="multipart/form-data">
 		<input id="docId" type="hidden" value="${docId}"/>
 		<input id="docType" type="hidden" value="01">
-		<div class="table-area">
+		<div id="printableTable" class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
