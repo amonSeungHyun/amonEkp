@@ -24,5 +24,6 @@ public class MemberListDTO {
     private String password;                // 비밀번호
     private String role;                    // 권한
     private String roleNm;                    // 권한
+    private String email;
 
 }

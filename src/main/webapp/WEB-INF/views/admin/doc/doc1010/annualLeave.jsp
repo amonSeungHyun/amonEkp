@@ -688,12 +688,15 @@
 					</td>
 				</tr>
 			</table>
-			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
-			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
-			<p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
+<%--			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>--%>
+<%--			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>--%>
+			<p class="a7 font-malgungothic text-center" ><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
 			<p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : <c:out value="${sessionScope.username}"/></p>
 		</div>
 		<!-- File upload area -->
-		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
+		<div class="file-area" style="float: left; width: 25%; margin-left: 10px;">
+			<!-- 파일 업로드 컴포넌트 -->
+			<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
+		</div>
 	</form>
 </div>

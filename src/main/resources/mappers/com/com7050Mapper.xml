@@ -5,7 +5,11 @@
     <!-- 구성원 조회 -->
     <select id="selectMemberList" parameterType="map" resultType="kr.co.amonsoft.dto.com.MemberListDTO">
         <!-- selectMemberList(구성원 조회) -->
-            SELECT m.user_name as userName
+        select *
+          from
+        (
+            SELECT ROW_NUMBER() OVER(ORDER BY m.job_start_date ASC) rowNum
+                 , m.user_name as userName
                  , m.user_id as userId
                  , m.employment_status as employmentStatus
                  , emp.code_detail_name as employmentStatusNm
@@ -20,21 +24,22 @@
                  , COALESCE(m.address_details, '') as addressDetails
                  , m.role as role
                  , rol.code_detail_name as roleNm
-    --              , m.password as password
-              FROM user m
-             INNER JOIN common_code_detail org
-                ON m.organization_id = org.code_detail_number
-               AND org.code_number = 'COM01'
-             INNER JOIN common_code_detail posi
-                ON m.position_code = posi.code_detail_number
-               AND posi.code_number = 'COM02'
-             INNER JOIN common_code_detail rol
-                ON m.role = rol.code_detail_number
-               AND rol.code_number = 'COM03'
-             INNER JOIN common_code_detail emp
-                ON m.employment_status = emp.code_detail_number
-               AND emp.code_number = 'COM04'
-             WHERE 1 = 1
+                 , m.email as email
+                 --              , m.password as password
+             FROM user m
+            INNER JOIN common_code_detail org
+               ON m.organization_id = org.code_detail_number
+              AND org.code_number = 'COM01'
+            INNER JOIN common_code_detail posi
+               ON m.position_code = posi.code_detail_number
+              AND posi.code_number = 'COM02'
+            INNER JOIN common_code_detail rol
+               ON m.role = rol.code_detail_number
+              AND rol.code_number = 'COM03'
+            INNER JOIN common_code_detail emp
+               ON m.employment_status = emp.code_detail_number
+              AND emp.code_number = 'COM04'
+            WHERE 1 = 1
             <if test="searchDepart != null and searchDepart != ''">
                 AND m.organization_id = #{searchDepart}
             </if>
@@ -45,9 +50,10 @@
                 AND m.user_name LIKE CONCAT('%', #{searchWord}, '%')
             </if>
             <if test="userId != null and userId != ''">
-	            AND m.user_id = #{userId}
-	        </if>
-             ORDER BY m.user_id ASC
+                AND m.user_id = #{userId}
+            </if>
+            ORDER BY rowNum ASC
+        ) AS SUB
              LIMIT #{limit} OFFSET #{offset}
     </select>
 

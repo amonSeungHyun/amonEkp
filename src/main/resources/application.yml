@@ -23,10 +23,14 @@ spring:
       restart:
         enabled: true
   mail:
-    host: 192.168.0.52
+    host: smtp.gmail.com
     port: 587
-    username: anrh0213@amonsoft.co.kr
-    password: dpdlahs1!A
+#    host: 192.168.0.52
+#    port: 587
+    username: admin@amonsoft.co.kr
+    password: aiaz rrwd fsww jrgl
+#    username: anrh0213@amonsoft.co.kr
+#    password: dpdlahs1!A
     properties:
       mail:
         smtp:
