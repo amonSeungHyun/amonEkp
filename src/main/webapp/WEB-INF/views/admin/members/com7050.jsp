@@ -41,6 +41,7 @@
 		<%-- ===== 달력 하나만 출력 시작 =====  --%>
 		$("input.daterange").daterangepicker({
 			"singleDatePicker": true,
+			"autoUpdateInput": false, // 값을 자동으로 업데이트하지 않음
 			"locale": {
 				"format": "YYYY-MM-DD", // 날짜표현 형식
 				"separator": " - ",
@@ -54,8 +55,19 @@
 				"monthNames": ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
 				"firstDay": 1
 			}
+		}).on('apply.daterangepicker', function(ev, picker) {
+			// 날짜 선택 시 입력 필드에 값을 설정
+			$(this).val(picker.startDate.format('YYYY-MM-DD'));
 		});
 		<%-- ===== 달력 하나만 출력 끝 =====  --%>
+
+		// 사용자가 입력 필드에서 값을 삭제할 경우 이벤트 추가
+		$("input.daterange").on('input', function() {
+			if ($(this).val().trim() === "") {
+				// 값이 비어 있을 경우 달력 내부 값도 초기화
+				$(this).val(''); // 입력 필드 값 비우기
+			}
+		});
 
 		// 구성원 등록 모달에서 드롭다운으로 나오는 속성 클릭 시
 		$(document).on("click","button.btn_label",function(){
@@ -65,6 +77,7 @@
 				$(this).parent().parent().find("div.regist_value").text(selected);
 			// }
 		});
+
 
 		// 구성원 등록 모달 닫기 시
 		$('.modal').on('hidden.bs.modal', function (e) {
