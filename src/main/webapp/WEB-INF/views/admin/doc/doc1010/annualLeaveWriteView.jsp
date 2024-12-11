@@ -454,7 +454,7 @@
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
 						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<a href="#" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000">휴가계</span></strong></a>
+							<a href="#" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000;font-size:60px;">휴가계</span></strong></a>
 						</p>
 					</td>
 					<td class="col1">
@@ -523,6 +523,13 @@
 			<!-- 새로운 휴가 신청 부분 추가 -->
 			<table class="col-table">
 				<tr>
+					<td class="col2">제목</td>
+					<td colspan="3">
+						<input type="text" id="docTitle" class="input-field no-border" name="docTitle"
+							   value="${vacationDetails.docTitle}" readonly>
+					</td>
+				</tr>
+				<tr>
 					<td class="col2">유형</td>
 					<td colspan="3">
 						<div class="checkbox-group">
@@ -561,10 +568,8 @@
 					</td>
 				</tr>
 			</table>
-			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
-			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
 			<p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
-			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 :</p>
+			<p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : <c:out value="${sessionScope.username}"/></p>
 		</div>
 		<!-- File upload area -->
 		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>

@@ -3,20 +3,23 @@
 <mapper namespace="kr.co.amonsoft.mapper.doc.Doc1010Mapper">
 
     <select id="findVacationDetailsByDocId" resultType="camelcasemap">
-        SELECT doc_id
-             , vacation_detail_id
-             , start_date
-             , end_date
-             , vacation_type
-             , emergency_contact
-             , personal_reason
-             , vacation_period
-             , created_id
-             , created_date
-             , updated_id
-             , updated_date
-        FROM vacation_detail
-        WHERE doc_id = #{docId}
+        SELECT vd.doc_id
+             , vd.vacation_detail_id
+             , vd.start_date
+             , vd.end_date
+             , vd.vacation_type
+             , vd.emergency_contact
+             , vd.personal_reason
+             , vd.vacation_period
+             , vd.created_id
+             , vd.created_date
+             , vd.updated_id
+             , vd.updated_date
+             , d.doc_title
+        FROM vacation_detail vd
+     inner join document d
+                on vd.doc_id = d.doc_id
+        WHERE vd.doc_id = #{docId}
     </select>
 
 

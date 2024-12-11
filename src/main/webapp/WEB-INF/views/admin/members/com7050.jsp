@@ -93,6 +93,16 @@
 			$("#regist_frm")[0].reset(); // 폼 초기화
 			$("#userId").val(""); // 사용자 ID 초기화
 
+			// 부서, 직위, 권한 초기화
+			$("#department").val(""); // 부서 선택 초기화
+			$("#title_department .regist_value").text("부서 선택");
+
+			$("#positionCode").val(""); // 직위 선택 초기화
+			$("#title_positionCode .regist_value").text("직위 선택");
+
+			$("#role").val(""); // 권한 선택 초기화
+			$("#title_role .regist_value").text("권한 선택");
+
 			departmentList(); // 부서 조회
 			positionList(); // 직위 조회
 			roleList(); // 권한 조회
@@ -525,8 +535,7 @@
 									title: '중복된 이메일',
 									text: '해당 이메일은 이미 사용 중입니다.'
 								});
-							} else {
-
+							} else if(json.result !== 0) {
 								Swal.fire({
 									icon: 'success',
 									title: '입력 완료',
@@ -640,14 +649,23 @@
 					type: "POST",
 					dataType: "JSON",
 					success: function (response) {
-						Swal.fire({
-							icon: 'success',
-							title: '수정 완료',
-							text: '구성원 수정 완료했습니다.'
-						});
-						$("#modal_registMember").modal("hide");
-						selectMemberList();
-						// window.location.reload();
+						if(response.duplicateEmail){
+							// 중복 이메일 처리
+							Swal.fire({
+								icon: 'warning',
+								title: '중복된 이메일',
+								text: '해당 이메일은 이미 사용 중입니다.'
+							});
+						} else{
+							Swal.fire({
+								icon: 'success',
+								title: '수정 완료',
+								text: '구성원 수정 완료했습니다.'
+							});
+							$("#modal_registMember").modal("hide");
+							selectMemberList();
+							// window.location.reload();
+						}
 					},
 					error: function (request, status, error) {
 						Swal.fire({
