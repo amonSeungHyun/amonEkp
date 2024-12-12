@@ -7,9 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -17,6 +21,12 @@ import java.util.Map;
 public class ApvCommonController {
 
     private final ApvCommonService apvCommonService;
+
+    @GetMapping("/approval/organizationAndUserInfo")
+    public ResponseEntity<List<Map<String, Object>>> findByOrganizationAndUserInfo (){
+        List<Map<String, Object>> organizationAndUserInfo = apvCommonService.findByOrganizationAndUserInfo();
+        return ResponseEntity.ok(organizationAndUserInfo);
+    }
 
     @PostMapping("/approval/updateApprovalStep")
     public ResponseEntity<Integer> updateApprovalStep(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody Map<String,Object> param){
@@ -29,4 +39,8 @@ public class ApvCommonController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(docId);
         }
     }
+
+
+
+
 }

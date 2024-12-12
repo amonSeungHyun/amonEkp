@@ -683,7 +683,6 @@
 			fullUrl = "/defaultView?docId=" + docId;
 		}
 
-		alert(approvalStatus);
 		localStorage.setItem('previousApprovalStatus', approvalStatus);
 
 		// 생성된 URL로 이동

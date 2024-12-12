@@ -17,6 +17,8 @@ public interface ApvCommonMapper {
 
     Map<String, Object> findStepNoByDocIdAndUserId(Map<String, Object> stepNoMap);
 
+    List<Map<String, Object>> findByOrganizationAndUserInfo();
+
     int updateApprovalStatus(Map<String, Object> param);
 
     int updateDocumentCompletionStatus(int docId);

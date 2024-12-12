@@ -41,6 +41,11 @@ public class ApvCommonServiceImpl implements ApvCommonService {
         return apvCommonMapper.findStepNoByDocIdAndUserId(stepNoMap);
     }
 
+    @Override
+    public List<Map<String, Object>> findByOrganizationAndUserInfo() {
+        return apvCommonMapper.findByOrganizationAndUserInfo();
+    }
+
     @Transactional
     @Override
     public int updateApprovalStatus(Map<String,Object> param) {

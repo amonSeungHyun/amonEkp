@@ -14,6 +14,8 @@ public interface ApvCommonService {
 
     Map<String, Object> findStepNoByDocIdAndUserId(BigInteger docId, String userId);
 
+    List<Map<String, Object>> findByOrganizationAndUserInfo();
+
     int updateApprovalStatus(Map<String, Object> param);
 
 }

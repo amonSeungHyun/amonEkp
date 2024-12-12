@@ -8,6 +8,9 @@ plugins {
 group = 'kr.co.amonsoft'
 version = '0.0.1-SNAPSHOT'
 
+bootWar.enabled = true
+war.enabled = false
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -55,9 +58,11 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper' // 추가
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.3'
     implementation 'javax.servlet:jstl' // 추가
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
 
     // log4j2 dependency
@@ -66,7 +71,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
 //    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:2.0.0' // 변경된 jstl 의존성
-    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0' // Glassfish의 JSTL 구현체 추가
+//    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0' // Glassfish의 JSTL 구현체 추가
 
     //tiles
     implementation 'org.apache.tiles:tiles-api:3.0.8'

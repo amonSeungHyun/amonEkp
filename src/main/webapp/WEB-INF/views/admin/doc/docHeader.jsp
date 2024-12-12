@@ -24,6 +24,74 @@ a:active {text-decoration: none; color: #cccccc;}
 		margin-right: 20px;
 	}
 
+	/* Modal 공통 스타일 */
+	.modal-body {
+		display: flex; /* jsTree와 오른쪽 영역을 가로로 배치 */
+		gap: 20px; /* 각 영역 간 간격 */
+	}
+
+	/* jsTree Container */
+	#jstree-container {
+		flex: 1; /* jsTree가 왼쪽에서 더 많은 공간 차지 */
+		border: 1px solid #ddd;
+		padding: 10px;
+	}
+
+	/* Right Section */
+	#right-container {
+		flex: 1; /* 오른쪽 전체 영역 */
+		display: flex; /* 선택된 결재자와 프리셋을 나란히 배치 */
+		flex-direction: column;
+		gap: 20px; /* 선택된 결재자와 프리셋 간 간격 */
+	}
+
+	/* 선택된 결재자 */
+	#selected-approvers {
+		flex: 1;
+		border: 1px solid #ddd;
+		padding: 10px;
+		background-color: #f9f9f9;
+	}
+
+	/* 프리셋 영역 */
+	#preset-container {
+		flex: 1;
+		border: 1px solid #ddd;
+		padding: 10px;
+		background-color: #f9f9f9;
+	}
+
+	/* 프리셋 컨트롤 스타일 */
+	.preset-controls {
+		display: flex;
+		gap: 10px;
+	}
+
+	#presetName {
+		flex: 1;
+		padding: 5px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+	}
+
+	#preset-list ul {
+		list-style: none;
+		padding: 0;
+		margin-top: 10px;
+		border-top: 1px solid #ddd;
+		padding-top: 10px;
+	}
+
+	#preset-list ul li {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 5px;
+	}
+
+	#preset-list ul li button {
+		margin-left: 10px;
+	}
 /* 인쇄용 스타일 */
 @media print {
 	@page {
@@ -105,7 +173,13 @@ a:active {text-decoration: none; color: #cccccc;}
 	}
 }
 </style>
+
 <script type="text/javascript">
+	$(document).ready(function(){
+		initializeJsTree()
+		console.log(typeof jQuery);
+		console.log(typeof $.fn.jstree);
+	});
 
 	function goBackToList() {
 		const previousApprovalStatus = localStorage.getItem('previousApprovalStatus') || 'pending'; // 기본값을 설정 (예: 'pending')
@@ -345,55 +419,86 @@ a:active {text-decoration: none; color: #cccccc;}
 		window.history.back(); // 브라우저의 이전 페이지로 이동
 	}
 
+
 	<!-- 여기서부터 팝업 function-->
 	function initializeJsTree() {
-		const treeData = [
-			{ "id": "1", "parent": "#", "text": "1본부" },
-			{ "id": "1-1", "parent": "1", "text": "Child node 1 (1본부)" },
-			{ "id": "1-2", "parent": "1", "text": "Child node 2 (1본부)" },
-			{ "id": "2", "parent": "#", "text": "2본부" },
-			{ "id": "2-1", "parent": "2", "text": "Child node 1 (2본부)" },
-			{ "id": "2-2", "parent": "2", "text": "Child node 2 (2본부)" },
-			{ "id": "3", "parent": "#", "text": "3본부" },
-			{ "id": "3-1", "parent": "3", "text": "Child node 1 (3본부)" },
-			{ "id": "3-2", "parent": "3", "text": "Child node 2 (3본부)" }
-		];
+		$.ajax({
+			url: '/approval/organizationAndUserInfo', // 컨트롤러 URL
+			method: 'GET',
+			success: function (data) {
+				const treeData = [];
+				const orgMap = {};
 
-		$('#jstree').jstree({
-			'core': {
-				'data': treeData
+				console.log(data);
+
+				data.forEach(row => {
+					// 조직 정보 추가
+					if (!orgMap[row.organizationId]) {
+						orgMap[row.organizationId] = {
+							id: row.organizationId,
+							parent: "#", // 최상위 노드
+							text: row.organizationName,
+						};
+						treeData.push(orgMap[row.organizationId]);
+					}
+
+					// 사용자 정보 추가
+					treeData.push({
+						id: row.userId,
+						parent: row.organizationId, // 조직 ID를 부모로 설정
+						text: row.userName,
+					});
+				});
+
+				// 서버로부터 데이터 수신 후 jstree 초기화
+				$('#jstree').jstree({
+					'core': {
+						'data': treeData
+					}
+				});
+
+				$('#jstree').on('select_node.jstree', function (e, data) {
+					if (data.node.children.length === 0) {
+						// 자식 노드인 경우만 동작
+						handleNodeSelect({
+							id: data.node.id,
+							text: data.node.text
+						});
+					} else {
+						// 부모 노드인 경우 열거나 닫기만 수행
+						$('#jstree').jstree("toggle_node", data.node);					}
+				});
+			},
+			error: function (xhr, status, error) {
+				console.error("Error fetching tree data:", error);
 			}
 		});
 
-		// 노드 선택 이벤트 연결
-		$('#jstree').on('select_node.jstree', function (e, data) {
-			handleNodeSelect(data);
-		});
 	}
 
-	function initializeJsTree() {
-		$('#jstree').jstree({
-			'core': {
-				'data': treeData
-			}
-		});
 
-		// 노드 선택 이벤트 연결
-		$('#jstree').on('select_node.jstree', function (e, data) {
-			handleNodeSelect(data);
-		});
-	}
+	function handleNodeSelect(node) {
+		console.log('nodeId:', node.id);
+		console.log('nodeText:', node.text);
 
-	function handleNodeSelect(data) {
-		const nodeId = data.node.id;
-		const nodeText = data.node.text;
+		let maxApprovers = 4; //최대 선택가능 인원수
+		const currentUserId = $("#currentUserId").val()
 
 		// 선택된 결재자 목록을 DOM 요소에 저장
 		const selectedApprovers = getSelectedApprovers();
+		if (selectedApprovers.length >= maxApprovers) {
+			alert("최대 " + maxApprovers + "명의 결재자만 선택할 수 있습니다.");
+			return;
+		}
+
+		if (data.node.id === currentUserId) {
+			alert("자기 자신은 선택할 수 없습니다.");
+			return;
+		}
 
 		// 중복 추가 방지
-		if (!selectedApprovers.some(item => item.id === nodeId)) {
-			selectedApprovers.push({ id: nodeId, text: nodeText });
+		if (!selectedApprovers.some(item => item.id === node.id)) {
+			selectedApprovers.push({ id: node.id, text: node.text  });
 			updateApproverList(selectedApprovers);
 		}
 	}
@@ -403,21 +508,21 @@ a:active {text-decoration: none; color: #cccccc;}
 		return approversJson ? approversJson : [];
 	}
 
-	function setSelectedApprovers(selectedApprovers) {
-		$('#approver-list').data('selectedApprovers', selectedApprovers);
-	}
-
 	function updateApproverList(selectedApprovers) {
 		const approverList = $('#approver-list');
 		approverList.empty();
 
 		selectedApprovers.forEach((approver, index) => {
-			const approverItem = $(`
-            <div class="approver-item">
-                <span>${index + 1}. ${approver.text}</span>
-                <button class="btn btn-danger btn-sm remove-approver" data-id="${approver.id}">제거</button>
-            </div>
-        `);
+			console.log(approver)
+			const approverItem =
+					'<div class="approver-item">' +
+						'<span>' + (index + 1) + '. ' + approver.text + '</span>' +
+						'<select>' +
+							'<option>승인</option>' +
+							'<option>합의</option>' +
+						'</select>' +
+						'<button class="btn btn-danger btn-sm remove-approver" data-id="' + approver.id + '">제거</button>' +
+					'</div>';
 			approverList.append(approverItem);
 		});
 
@@ -426,6 +531,10 @@ a:active {text-decoration: none; color: #cccccc;}
 
 		// 제거 버튼 이벤트 연결
 		bindRemoveApproverEvents();
+	}
+
+	function setSelectedApprovers(selectedApprovers) {
+		$('#approver-list').data('selectedApprovers', selectedApprovers);
 	}
 
 	function bindRemoveApproverEvents() {
@@ -441,6 +550,21 @@ a:active {text-decoration: none; color: #cccccc;}
 		});
 	}
 
+	//1단계에 자기 계정 넣기
+	function addCurrentUserAsFirstApprover() {
+		const selectedApprovers = getSelectedApprovers();
+
+		if (!selectedApprovers.some(item => item.id === currentUserId)) {
+			selectedApprovers.unshift({
+				id: currentUserId,
+				text: "본인" // 사용자 이름을 "본인"으로 표시
+			});
+		}
+
+		updateApproverList(selectedApprovers);
+	}
+
+
 
 	function handleConfirmSelection() {
 		const selectedApprovers = getSelectedApprovers();
@@ -451,6 +575,7 @@ a:active {text-decoration: none; color: #cccccc;}
 
 </script>
 <div style="display: flex; padding-top: 30px; padding-left: 30px; padding-bottom: 40px;]" class="border-bottom">
+	 <input type="hidden" id="currentUserId" value="${sessionScope.userId}">
 	 <span ><a class="mylink" href="javascript:void(0);" onclick="goBack();" style="color: #404040; font-size: 23pt; font-weight: bold; padding-right: 20px;"><</a></span>
 	<c:if test="${empty documentCreatorInfo.docStatus}">
 		<span style="color:#404040; font-size: 23pt; font-weight: bold; margin-right:20px;" onclick="javascript:location.href='/workflow/modify'">작성하기</span>
@@ -488,7 +613,7 @@ a:active {text-decoration: none; color: #cccccc;}
 </div >
 <!-- modal -->
 <div class="modal fade" id="approverModal" tabindex="-1" aria-labelledby="approverModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog modal-xl"> <!-- modal-xl로 너비 확장 -->
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="approverModalLabel">결재자 선택</h5>
@@ -496,12 +621,31 @@ a:active {text-decoration: none; color: #cccccc;}
 			</div>
 			<div class="modal-body">
 				<!-- jsTree -->
-				<div id="jstree"></div>
-				<!-- Selected approvers -->
-				<div id="selected-approvers">
-					<h5>선택된 결재자</h5>
-					<div id="approver-list">
-						<p>아직 선택된 결재자가 없습니다.</p>
+				<div id="jstree-container">
+					<div id="jstree"></div>
+				</div>
+
+				<!-- Right section -->
+				<div id="right-container">
+					<!-- Selected Approvers -->
+					<div id="selected-approvers">
+						<h5>선택된 결재자</h5>
+						<div id="approver-list">
+							<p>아직 선택된 결재자가 없습니다.</p>
+						</div>
+					</div>
+
+					<!-- Preset Section -->
+					<div id="preset-container">
+						<h5>프리셋</h5>
+						<div class="preset-controls">
+							<input type="text" id="presetName" class="form-control" placeholder="프리셋 이름 입력" />
+							<button class="btn btn-primary btn-sm" id="savePreset">저장</button>
+						</div>
+						<div id="preset-list">
+							<h6>저장된 프리셋</h6>
+							<ul></ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -512,6 +656,4 @@ a:active {text-decoration: none; color: #cccccc;}
 		</div>
 	</div>
 </div>
-
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">

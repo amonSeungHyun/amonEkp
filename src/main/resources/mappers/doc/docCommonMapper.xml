@@ -142,14 +142,14 @@
              , cd_detail.code_detail_name as employmentStatusName
              , position_detail.code_detail_name as positionName
         FROM user u
-                 INNER JOIN user o
-                            ON u.organization_id = o.organization_id
-                 LEFT JOIN common_code_detail cd_detail
-                           ON u.employment_status = cd_detail.code_detail_number
-                               AND cd_detail.code_number = 'COM04'
-                 LEFT JOIN common_code_detail position_detail
-                           ON u.position_code = position_detail.code_detail_number
-                               AND position_detail.code_number = 'COM02'
+         INNER JOIN user o
+                    ON u.organization_id = o.organization_id
+         LEFT JOIN common_code_detail cd_detail
+                   ON u.employment_status = cd_detail.code_detail_number
+                       AND cd_detail.code_number = 'COM04'
+         LEFT JOIN common_code_detail position_detail
+                   ON u.position_code = position_detail.code_detail_number
+                       AND position_detail.code_number = 'COM02'
         WHERE o.user_id = #{userId}
           AND u.role = '03'
           AND cd_detail.code_detail_number = '01'

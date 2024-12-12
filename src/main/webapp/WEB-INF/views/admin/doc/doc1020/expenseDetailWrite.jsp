@@ -147,7 +147,6 @@
   }
 
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
   $(document).ready (function(){
 
@@ -262,17 +261,78 @@
         </tr>
         <tr style="height:39.15pt">
           <td class="col1 centered-cell">
-            <img src="/image/approval.png" class="centered-image">
+            <c:choose>
+              <c:when test="${sessionScope.role > 3}">
+                <img src="/image/approval.png" class="centered-image">
+              </c:when>
+              <c:otherwise>
+                <img src="/image/none.png" class="centered-image">
+              </c:otherwise>
+            </c:choose>
           </td>
-          <td class="col1"></td>
-          <td class="col1"></td>
+          <td class="col1">
+            <c:choose>
+              <c:when test="${sessionScope.role == 3}">
+                <img src="/image/approval.png" class="centered-image">
+              </c:when>
+              <c:when test="${sessionScope.role > 3}">
+              </c:when>
+              <c:otherwise>
+                <img src="/image/none.png" class="centered-image">
+              </c:otherwise>
+            </c:choose>
+          </td>
+          <td class="col1">
+            <c:choose>
+              <c:when test="${sessionScope.role == 2}">
+                <img src="/image/approval.png" class="centered-image">
+              </c:when>
+              <c:otherwise>
+              </c:otherwise>
+            </c:choose>
+          </td>
           <td class="col1"></td>
         </tr>
         <tr style="height:22.05pt">
-          <td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-approval-status="03" data-user-id="${sessionScope.userId}" ><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
-          <td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-approval-status="01" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}</td>
-          <td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-approval-status="01" data-user-id="2015103001">최선영 / 이사</td>
-          <td class="col1"><p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="4" data-approval-status="01" data-user-id="1999103001">이길호 / 대표</td>
+          <c:choose>
+            <c:when test="${sessionScope.role > 3}">
+              <td class="col1">
+                <p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-approval-status="03" data-user-id="${sessionScope.userId}" ><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
+              <td class="col1">
+            </c:when>
+            <c:otherwise>
+              <td class="col1">
+              </td>
+            </c:otherwise>
+          </c:choose>
+          <c:choose>
+            <c:when test="${sessionScope.role == 3}">
+              <td class="col1">
+                <p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-approval-status="03" data-user-id="${sessionScope.userId}" ><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
+              <td class="col1">
+            </c:when>
+              <c:when test="${sessionScope.role > 3}">
+              <td class="col1">
+                <p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="2" data-approval-status="01" data-user-id="${leaderInfo.userId}">${leaderInfo.userName} / ${leaderInfo.positionName}
+              </td>
+              </c:when>
+              <c:when test="${sessionScope.role < 3}">
+                <td></td>
+              </c:when>
+          </c:choose>
+          <td class="col1">
+            <c:choose>
+              <c:when test="${sessionScope.role == 2}">
+                  <p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="1" data-approval-status="03" data-user-id="${sessionScope.userId}" ><c:out value="${sessionScope.username}" /> / <c:out value="${sessionScope.positionNm}" /></td>
+              </c:when>
+              <c:otherwise>
+                <p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="3" data-approval-status="01" data-user-id="2015103001">최선영 / 이사</p>
+              </c:otherwise>
+            </c:choose>
+           </td>
+          <td class="col1">
+            <p class="a7 font-malgungothic approval-step" style="text-align:center; line-height:normal" data-approval-step="4" data-approval-status="01" data-user-id="1999103001">이길호 / 대표
+          </td>
         </tr>
       </table>
       <table class="col-table">

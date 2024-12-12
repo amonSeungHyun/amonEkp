@@ -1,0 +1,30 @@
+spring:
+  # Maria DB ??
+  datasource:
+    hikari:
+      maximum-pool-size: 4
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://211.180.247.168:3306/amon
+    username: amon
+    password: dpdlahs1!
+  devtools:
+    livereload:
+      enabled: true
+    remote:
+      restart:
+        enabled: true
+  mail:
+    host: 192.168.0.52
+    port: 587
+    username: anrh0213@amonsoft.co.kr
+    password: dpdlahs1!A
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+tiles:
+  config:
+    path: /WEB-INF/tiles/tiles-definitions.xml

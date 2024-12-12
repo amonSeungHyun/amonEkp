@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local  # 기본 활성화 프로파일 (local 환경)
   mvc:
     view:
       prefix: /WEB-INF/views/
@@ -8,31 +10,6 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
-  # Maria DB ??
-  datasource:
-    hikari:
-      maximum-pool-size: 4
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:log4jdbc:mariadb://211.180.247.168:3306/amon
-    username: amon
-    password: dpdlahs1!
-  devtools:
-    livereload:
-      enabled: true
-    remote:
-      restart:
-        enabled: true
-  mail:
-    host: 192.168.0.52
-    port: 587
-    username: anrh0213@amonsoft.co.kr
-    password: dpdlahs1!A
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
 mybatis:
   config-location: classpath:mybatis-config.xml
@@ -43,11 +20,4 @@ logging:
     org.apache.ibatis: DEBUG
     org.mybatis: DEBUG
   config: classpath:config/log4j2-local.yml
-
-
-
-
-
-
-
 

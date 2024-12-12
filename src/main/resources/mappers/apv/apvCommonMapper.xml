@@ -6,7 +6,7 @@
              , o.organization_name
              , posi_detail.code_detail_name               as positionName
              , d.doc_status
-             , DATE_FORMAT(d.created_date, '%Y년 %m월 %d일') AS createdDate
+             , DATE_FORMAT(STR_TO_DATE(d.created_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') AS createdDate
              , d.doc_title
         FROM user u
                  INNER JOIN document d
@@ -19,6 +19,19 @@
         WHERE d.doc_id = #{docId}
     </select>
 
+    <select id="findByOrganizationAndUserInfo" resultType="camelcasemap">
+        select u.organization_id
+             , u.user_name
+             , u.user_id
+             , posi_detail.code_detail_name    as positionName
+             , o.organization_name
+        FROM user u
+        INNER JOIN organization o
+            ON u.organization_id = o.organization_id
+        INNER JOIN common_code_detail posi_detail
+            ON u.position_code = posi_detail.code_detail_number
+           AND posi_detail.code_number = 'COM02'
+    </select>
 
     <select id="findApprovalStepsByDocId" resultType="camelcasemap">
         SELECT a.doc_id
