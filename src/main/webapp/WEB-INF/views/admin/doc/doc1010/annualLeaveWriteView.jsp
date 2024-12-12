@@ -501,22 +501,24 @@
 					<td class="col2">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">성&#xa0;&#xa0;&#xa0; 명</p>
 					</td>
-					<td class="col3"><c:out value="${sessionScope.username}"/></td>
+					<td class="col3"><c:out value="${vacationDetails.userName}"/></td>
 					<td class="col2">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">직&#xa0;&#xa0;&#xa0; 급</p>
 					</td>
-					<td class="col3"><c:out value="${sessionScope.positionNm}" /></td>
+					<td class="col3"><c:out value="${vacationDetails.positionName}" /></td>
 				</tr>
 				<tr style="height:22.55pt">
 					<td class="col2">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">부&#xa0;&#xa0;&#xa0; 서</p>
 					</td>
-					<td class="col3"><c:out value="${sessionScope.department}" /></td>
+					<td class="col3"><c:out value="${vacationDetails.organizationName}" /></td>
 					<td class="col2">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">작성일</p>
 					</td>
 					<td class="col3">
-						<fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" />
+						<c:set var="createdDateStr" value="${vacationDetails.createdDate}" />
+						<c:set var="formattedDate" value="${fn:substring(createdDateStr, 0, 4)}년 ${fn:substring(createdDateStr, 4, 6)}월 ${fn:substring(createdDateStr, 6, 8)}일 ${fn:substring(createdDateStr, 9, 11)}:${fn:substring(createdDateStr, 11, 13)}" />
+						<p class="a7 font-malgungothic text-left">${formattedDate}</p>
 					</td>
 				</tr>
 			</table>
@@ -568,8 +570,10 @@
 					</td>
 				</tr>
 			</table>
-			<p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
-			<p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : <c:out value="${sessionScope.username}"/></p>
+				<c:set var="createdDateStr" value="${vacationDetails.createdDate}" />
+				<c:set var="formattedDate" value="${fn:substring(createdDateStr, 0, 4)}년 ${fn:substring(createdDateStr, 4, 6)}월 ${fn:substring(createdDateStr, 6, 8)}일 ${fn:substring(createdDateStr, 9, 11)}:${fn:substring(createdDateStr, 11, 13)}" />
+				<p class="a7 font-malgungothic text-center">${formattedDate}</p>
+			<p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : ${vacationDetails.userName}</p>
 		</div>
 		<!-- File upload area -->
 		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>

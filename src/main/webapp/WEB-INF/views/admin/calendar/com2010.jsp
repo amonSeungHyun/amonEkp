@@ -20,7 +20,7 @@
         margin-top: 20px; /* 위 여백 */
         margin-bottom: 50px; /* 아래 여백 */
         margin-left: 50px; /* 위 여백 */
-        height: 600px;
+        height: 500px;
     }
 
     /*#calendar {*/
@@ -279,6 +279,21 @@
                 }
             ],
 
+            // 캘린더 렌더링 후 마지막 줄 숨기기
+            datesSet: function () {
+                let rows = document.querySelectorAll('.fc-daygrid-body tr'); // 모든 주를 나타내는 행
+
+                // 모든 줄을 초기화 (숨기거나 변경된 스타일을 초기화)
+                rows.forEach(row => {
+                    row.style.display = ''; // 모든 행을 초기화하여 다시 표시
+                });
+
+                // 6줄일 때만 마지막 줄 숨기기
+                if (rows.length === 6) {
+                    rows[5].style.display = 'none';
+                }
+            },
+
             // 공휴일 날짜 옆 텍스트 추가
             dayCellDidMount: function (info) {
                 // info.date를 YYYY-MM-DD 형식으로 변환
@@ -386,24 +401,27 @@
     <%--	</div>--%>
 
     <div id="calendarLegend" class="mb-3">
-    <span class="legend-item">
+    <span class="legend-item" onclick="location.href='/admin/doc/doc1010/annualLeave'" style="cursor: pointer;">
         <span class="legend-color" style="background-color: #FF6F7A;"></span> 휴가
     </span>
-        <span class="legend-item">
-        <span class="legend-color" style="background-color: #81D98E;"></span> 지출
+    <span class="legend-item" onclick="location.href='/doc/expenseDetailWrite'" style="cursor: pointer;">
+        <span class="legend-color" style="background-color: #81D98E;"></span> 개인지출증빙내역서
     </span>
-        <span class="legend-item">
-        <span class="legend-color" style="background-color: #73C2F0;"></span> 출장
-    </span>
-        <span class="legend-item">
+    <span class="legend-item" onclick="location.href='/doc/doc1060'" style="cursor: pointer;">
         <span class="legend-color" style="background-color: #B573FF;"></span> 교통비 청구서
     </span>
-        <span class="legend-item">
+    <span class="legend-item" onclick="location.href='/doc/doc1040'" style="cursor: pointer;">
         <span class="legend-color" style="background-color: #F3E76D;"></span> 품의서
     </span>
-        <span class="legend-item">
-        <span class="legend-color" style="background-color: #89848a;"></span> 기타
+    <span class="legend-item" onclick="location.href='/doc/doc1050'" style="cursor: pointer;">
+        <span class="legend-color" style="background-color: #81D98E;"></span> 법인카드사용내역서
     </span>
+<%--    <span class="legend-item">--%>
+<%--        <span class="legend-color" style="background-color: #73C2F0;"></span> 출장--%>
+<%--    </span>--%>
+<%--    <span class="legend-item">--%>
+<%--        <span class="legend-color" style="background-color: #89848a;"></span> 기타--%>
+<%--    </span>--%>
     </div>
     <div id="calendar"></div>
 

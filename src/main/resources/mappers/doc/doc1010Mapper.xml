@@ -16,10 +16,21 @@
              , vd.updated_id
              , vd.updated_date
              , d.doc_title
+             , u.user_name
+             , org.code_detail_name as organization_name
+             , posi.code_detail_name as position_name
         FROM vacation_detail vd
-     inner join document d
-                on vd.doc_id = d.doc_id
-        WHERE vd.doc_id = #{docId}
+       INNER JOIN document d
+          ON vd.doc_id = d.doc_id
+       INNER JOIN user u
+          ON d.created_id = u.user_id
+       INNER JOIN common_code_detail org
+          ON u.organization_id = org.code_detail_number
+         AND org.code_number = 'COM01'
+       INNER JOIN common_code_detail posi
+          ON u.position_code = posi.code_detail_number
+         AND posi.code_number = 'COM02'
+       WHERE vd.doc_id = #{docId}
     </select>
 
 
