@@ -258,7 +258,7 @@
 
 	            const linkedText = formattedContent1.replace(
 	                    /(https?:\/\/[^\s]+)/g, 
-	                    '<a href="$1" target="_blank">$1</a>'
+	                    '<a href="$1" target="_blank" style="color:blue; text-decoration:underline;">$1</a>'
 	                );
 
 	            
@@ -425,7 +425,7 @@
 				</tr>
 				<tr style="height:330px">
 					<td colspan="2" style="height: 330px !important; ">
-						<div id="approval_content" style="height: 330px; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
+						<div id="approval_content" style="height: 450px; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
 				    	<!--   <p id="approval_content" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p> -->
 					</td>
 				</tr>
@@ -436,7 +436,7 @@
 				</tr>
 				<tr style="height:90pt">
 					<td colspan="2" style="height: 90pt !important; ">
-						<div id="instructions" style="height: 90pt; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
+						<div id="instructions" style="height: 120pt; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
 					</td>
 				</tr>
 				
