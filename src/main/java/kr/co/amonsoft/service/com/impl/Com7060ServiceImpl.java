@@ -91,6 +91,7 @@ public class Com7060ServiceImpl implements Com7060Service {
         result = com7060Mapper.insertMember(param);
         param.put("duplicateEmail", false);
         param.put("result", result);
+        log.info("등록 결과 :: {}", param);
 
         return param;
     }
@@ -98,8 +99,22 @@ public class Com7060ServiceImpl implements Com7060Service {
     @Override
     public Map<String, Object> updateMember(Map<String, Object> param) {
         log.info("[구성원 서비스단] UPDATE 전 param : {}", param);
-        com7060Mapper.updateMember(param);
-        return Map.of();
+        int result = 0;
+
+        String email = param.get("email").toString();
+        int duplicateEmail = com7060Mapper.duplicateEmail(email);
+
+        if(duplicateEmail != 0){
+            // 중복 여부를 Map에 추가
+            param.put("duplicateEmail", true);
+            return param;
+        }
+
+        result = com7060Mapper.updateMember(param);
+        param.put("duplicateEmail", false);
+        log.info("수정 결과 :: {}", param);
+        param.put("result", result);
+        return param;
     }
 
 

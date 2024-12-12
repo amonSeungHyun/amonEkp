@@ -61,10 +61,12 @@ public class Doc1010Contorller {
     @GetMapping("/approval/annualLeaveView")
     public String annualLeaveView(@AuthenticationPrincipal CustomUserDetails customUserDetails
             , @RequestParam BigInteger docId
+            , @RequestParam String referenceType
             , Model model) {
         log.info("##################################################");
         log.info("휴가계 결재 화면 진입");
         log.info(docId.toString());
+        log.info(referenceType);
         log.info("##################################################");
 
         List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
@@ -73,7 +75,9 @@ public class Doc1010Contorller {
         Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         Map<String, Object> currentStepNo = apvCommonService.findCurrentStepNo(docId);
         Map<String, Object> userStepNo = apvCommonService.findStepNoByDocIdAndUserId(docId, customUserDetails.getUserId());
+        List<Map<String,Object>> fileList = fileService.findFileDatas(docId, referenceType);
 
+        model.addAttribute("fileList",fileList);
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("vacationDetails", vacationDetails);
@@ -97,7 +101,7 @@ public class Doc1010Contorller {
 
         param.put("userId",userId);
         BigInteger docId = doc1010Service.insertApprovalDocument(param);
-
+        param.put("referenceId",docId);
         if(files != null && !files.isEmpty()) {
             fileService.uploadFiles(files, UPLOAD_PATH, param);
         }

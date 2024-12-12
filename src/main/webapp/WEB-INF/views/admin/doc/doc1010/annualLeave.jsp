@@ -592,13 +592,12 @@
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm" enctype="multipart/form-data">
 		<input id="docType" type="hidden" value="01">
-		<input id="docTitle" type="hidden" value="휴가계">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
-						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<strong><span class="font-malgungothic" style="color:#000000">휴가계</span></strong>
+						<p class="a7" style="text-align:center; line-height:normal; font-size:30px">
+							<strong><span class="font-malgungothic" style="color:#000000;font-size:60px;">휴가계</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -657,6 +656,12 @@
 			</table>
 			<!-- 새로운 휴가 신청 부분 추가 -->
 			<table class="col-table">
+				<tr>
+					<td class="col2">제목</td>
+					<td colspan="3">
+						<input type="text" id="docTitle" class="input-field no-border" name="docTitle" placeholder="제목 입력" style="width: 100%;">
+					</td>
+				</tr>
 				<tr>
 					<td class="col2">유형</td>
 					<td colspan="3">
