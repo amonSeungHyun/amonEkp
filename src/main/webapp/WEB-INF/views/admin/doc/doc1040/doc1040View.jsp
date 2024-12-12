@@ -424,8 +424,8 @@
 					</td>
 				</tr>
 				<tr style="height:330px">
-					<td colspan="2" style="height: 330px !important; ">
-						<div id="approval_content" style="height: 450px; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
+					<td colspan="2" style="height: 450px !important; ">
+						<div id="approval_content" style="height: 100%; width: 100%; margin-top:10px; margin-bottom:10px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all;"></div>
 				    	<!--   <p id="approval_content" style="width:100%; height:100%; margin-top:5px; margin-bottom:5px;"></p> -->
 					</td>
 				</tr>
@@ -435,8 +435,8 @@
 					</td>
 				</tr>
 				<tr style="height:90pt">
-					<td colspan="2" style="height: 90pt !important; ">
-						<div id="instructions" style="height: 120pt; width: 100%; margin-top:5px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; overflow-y: auto;"></div>
+					<td colspan="2" style="height: 120pt !important; ">
+						<div id="instructions" style="height: 100%; width: 100%; margin-top:10px; margin-bottom:10px; white-space:pre-wrap; word-wrap: break-word; word-break: break-all; "></div>
 					</td>
 				</tr>
 				
