@@ -69,4 +69,9 @@ public class ApvCommonServiceImpl implements ApvCommonService {
         apvCommonMapper.updateCurrentApproverId(docId);
         return (approvalUpdateResult > 0 && stepUpdateResult > 0) ? 1 : 0;
     }
+
+    @Override
+    public void insertApproverPreset(Map<String, Object> param) {
+        apvCommonMapper.insertApproverPreset(param);
+    }
 }

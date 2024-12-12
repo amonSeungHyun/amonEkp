@@ -178,8 +178,6 @@ a:active {text-decoration: none; color: #cccccc;}
 <script type="text/javascript">
 	$(document).ready(function(){
 		initializeJsTree()
-		console.log(typeof jQuery);
-		console.log(typeof $.fn.jstree);
 	});
 
 	function goBackToList() {
@@ -492,7 +490,7 @@ a:active {text-decoration: none; color: #cccccc;}
 			return;
 		}
 
-		if (data.node.id === currentUserId) {
+		if (node.id === currentUserId) {
 			alert("자기 자신은 선택할 수 없습니다.");
 			return;
 		}
@@ -516,9 +514,9 @@ a:active {text-decoration: none; color: #cccccc;}
 		selectedApprovers.forEach((approver, index) => {
 			console.log(approver)
 			const approverItem =
-					'<div class="approver-item">' +
+					'<div class="approver-item" data-step-order="' + (index + 1) + '" data-approver-id="' + approver.id + '">' +
 						'<span>' + (index + 1) + '. ' + approver.text + '</span>' +
-						'<select>' +
+						'<select class="approval-type">' +
 							'<option>승인</option>' +
 							'<option>합의</option>' +
 						'</select>' +
@@ -551,26 +549,64 @@ a:active {text-decoration: none; color: #cccccc;}
 		});
 	}
 
-	//1단계에 자기 계정 넣기
-	function addCurrentUserAsFirstApprover() {
-		const selectedApprovers = getSelectedApprovers();
-
-		if (!selectedApprovers.some(item => item.id === currentUserId)) {
-			selectedApprovers.unshift({
-				id: currentUserId,
-				text: "본인" // 사용자 이름을 "본인"으로 표시
-			});
-		}
-
-		updateApproverList(selectedApprovers);
-	}
-
+	//1단계에 자기 계정 넣기(추후 수정될수있어서 일단 냅둠)
+	// function addCurrentUserAsFirstApprover() {
+	// 	const selectedApprovers = getSelectedApprovers();
+	//
+	// 	if (!selectedApprovers.some(item => item.id === currentUserId)) {
+	// 		selectedApprovers.unshift({
+	// 			id: currentUserId,
+	// 			text: "본인" // 사용자 이름을 "본인"으로 표시
+	// 		});
+	// 	}
+	// 	updateApproverList(selectedApprovers);
+	// }
 
 
 	function handleConfirmSelection() {
 		const selectedApprovers = getSelectedApprovers();
 		console.log("선택된 결재자:", selectedApprovers);
 		$('#approverModal').modal('hide'); // 모달 닫기
+	}
+
+	/* 프리셋 저장 함수 */
+	function insertPreset(){
+		const presetName = $('#presetName').val();
+		if (!presetName) {
+			alert('프리셋 이름을 입력하세요.');
+			return;
+		}
+
+		const approvers = [];
+		$('.approver-item').each(function (index, element) {
+			const $element = $(element);
+			approvers.push({
+				step_order: $element.data('step-order'), // step order 가져오기
+				approver_id: $element.data('approver-id'), // approver ID 가져오기
+				approval_type: $element.find('.approval-type').val() // data-approval-type 가져오기
+			});
+		});
+
+		const presetData = {
+			preset_name: presetName,
+			approvers: approvers
+		};
+
+		console.log('presetData',presetData);
+
+		$.ajax({
+			url: '/savePreset', // 프리셋 저장 API URL
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(presetData),
+			success: function (response) {
+				alert('프리셋이 저장되었습니다.');
+			},
+			error: function (xhr, status, error) {
+				console.error('프리셋 저장 오류:', error);
+				alert('프리셋 저장에 실패했습니다.');
+			}
+		});
 	}
 
 
@@ -646,7 +682,7 @@ a:active {text-decoration: none; color: #cccccc;}
 						<h5>프리셋</h5>
 						<div class="preset-controls">
 							<input type="text" id="presetName" class="form-control" placeholder="프리셋 이름 입력" />
-							<button class="btn btn-primary btn-sm" id="savePreset">저장</button>
+							<button class="btn btn-primary btn-sm" id="savePreset" onclick="insertPreset()">저장</button>
 						</div>
 						<div id="preset-list">
 							<h6>저장된 프리셋</h6>

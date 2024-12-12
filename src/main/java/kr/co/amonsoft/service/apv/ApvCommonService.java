@@ -18,4 +18,6 @@ public interface ApvCommonService {
 
     int updateApprovalStatus(Map<String, Object> param);
 
+    void insertApproverPreset(Map<String, Object> param);
+
 }

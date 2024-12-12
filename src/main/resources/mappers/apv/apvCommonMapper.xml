@@ -95,6 +95,10 @@
                , DATE_FORMAT(NOW(), '%Y%m%d %H%i%s'))
     </insert>
 
+    <insert id="insertApproverPreset" parameterType="map">
+
+    </insert>
+
     <update id="updateApprovalStatus" parameterType="map">
         UPDATE approval_step
         SET status= #{status}

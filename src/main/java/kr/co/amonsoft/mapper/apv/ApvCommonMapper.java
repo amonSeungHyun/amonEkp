@@ -30,4 +30,6 @@ public interface ApvCommonMapper {
     void insertApprovalStep(Map<String, Object> approvalStep);
 
     int updateDocumentToRejectedStatus(int docId);
+
+    void insertApproverPreset(Map<String, Object> param);
 }

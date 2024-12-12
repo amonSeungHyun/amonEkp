@@ -28,6 +28,12 @@ public class ApvCommonController {
         return ResponseEntity.ok(organizationAndUserInfo);
     }
 
+    @PostMapping("/approval/insertApproverPreset")
+    public ResponseEntity<String> insertApproverPreset (@RequestBody Map<String,Object> param){
+        apvCommonService.insertApproverPreset(param);
+        return ResponseEntity.ok("프리셋이 성공적으로 저장되었습니다.");
+    }
+
     @PostMapping("/approval/updateApprovalStep")
     public ResponseEntity<Integer> updateApprovalStep(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody Map<String,Object> param){
         int docId = Integer.parseInt(String.valueOf(param.get("docId")));
