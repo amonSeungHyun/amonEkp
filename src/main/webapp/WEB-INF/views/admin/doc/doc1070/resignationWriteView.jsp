@@ -291,8 +291,8 @@
       <table class="first-table">
         <tr class="firstTr" style="height:17.1pt;">
           <td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
-            <p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-              <a href="#" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000">사직서</span></strong></a>
+            <p class="a7" style="text-align:center; line-height:normal; font-size:30px">
+              <a href="#" style="text-decoration:none"><strong><span class="font-malgungothic" style="color:#000000;font-size:60px;">사직서</span></strong></a>
             </p>
           </td>
           <td class="col1">
@@ -359,6 +359,12 @@
         </tr>
       </table>
       <table class="col-table">
+        <tr>
+          <td class="col2" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">제목</td>
+          <td colspan="3">
+            <c:out value="${resignationDetails.docTitle}"></c:out>
+          </td>
+        </tr>
         <tr class="secondTr" style="height:22.55pt">
           <td class="col2">
             <p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">입사일</p>
