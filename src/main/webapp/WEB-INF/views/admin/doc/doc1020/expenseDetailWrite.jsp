@@ -149,7 +149,9 @@
 </style>
 <script type="text/javascript">
   $(document).ready (function(){
-
+	
+	addCommaOnInput();
+	  
     $('textarea').each(function() {
       adjustHeight(this);
     }).on('input', function() {
@@ -204,7 +206,7 @@
         expenseItem: $('#expenseItem_' + i).val(),
         storeName: $('#storeName_' + i).val(),
         usageDetail: $('#usageDetail_' + i).val(),
-        expenseAmount: $('#expenseAmount_' + i).val(),
+        expenseAmount: $('#expenseAmount_' + i).val().replace(/,/g, ''),
         remark: $('#remark_' + i).val(),
       };
       data.push(rowData);
@@ -216,14 +218,27 @@
   function formatNumberWithCommas(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
-
+	
+  /* 입력 필드에서 천 단위 추가 */
+  function addCommaOnInput() {
+    $('[id^=expenseAmount_]').on('input', function () {
+      let value = $(this).val().replace(/,/g, ''); // 기존 콤마 제거
+      if (!isNaN(value) && value !== '') {
+        $(this).val(formatNumberWithCommas(value));
+      } else {
+        $(this).val(''); // 숫자가 아니면 초기화
+      }
+      calculateTotal(); // 입력값 변경 시 총합 업데이트
+    });
+  }
+  
   /*합계 계산 함수*/
   function calculateTotal() {
     let total = 0;
 
     // Loop through all `textarea` elements with id starting `expenseAmount_`
     $('[id^=expenseAmount_]').each(function () {
-      const value = $(this).val();
+      const value = $(this).val().replace(/,/g, '');
       total += parseInt(value) || 0;
     });
 
@@ -415,7 +430,7 @@
         </c:forEach>
       </table>
       <p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
-      <p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
+      <p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 증빙 첨부</p>
       <p class="a7 font-malgungothic text-center"><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy년 MM월 dd일" /></p>
       <p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : <c:out value="${sessionScope.username}"/></p>
     </div>

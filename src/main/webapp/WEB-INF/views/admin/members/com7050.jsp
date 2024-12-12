@@ -41,6 +41,7 @@
 		<%-- ===== 달력 하나만 출력 시작 =====  --%>
 		$("input.daterange").daterangepicker({
 			"singleDatePicker": true,
+			"autoUpdateInput": false, // 값을 자동으로 업데이트하지 않음
 			"locale": {
 				"format": "YYYY-MM-DD", // 날짜표현 형식
 				"separator": " - ",
@@ -54,8 +55,19 @@
 				"monthNames": ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
 				"firstDay": 1
 			}
+		}).on('apply.daterangepicker', function(ev, picker) {
+			// 날짜 선택 시 입력 필드에 값을 설정
+			$(this).val(picker.startDate.format('YYYY-MM-DD'));
 		});
 		<%-- ===== 달력 하나만 출력 끝 =====  --%>
+
+		// 사용자가 입력 필드에서 값을 삭제할 경우 이벤트 추가
+		$("input.daterange").on('input', function() {
+			if ($(this).val().trim() === "") {
+				// 값이 비어 있을 경우 달력 내부 값도 초기화
+				$(this).val(''); // 입력 필드 값 비우기
+			}
+		});
 
 		// 구성원 등록 모달에서 드롭다운으로 나오는 속성 클릭 시
 		$(document).on("click","button.btn_label",function(){
@@ -65,6 +77,7 @@
 				$(this).parent().parent().find("div.regist_value").text(selected);
 			// }
 		});
+
 
 		// 구성원 등록 모달 닫기 시
 		$('.modal').on('hidden.bs.modal', function (e) {
@@ -79,6 +92,16 @@
 			$("#modalButtonLabel").text("입력완료");
 			$("#regist_frm")[0].reset(); // 폼 초기화
 			$("#userId").val(""); // 사용자 ID 초기화
+
+			// 부서, 직위, 권한 초기화
+			$("#department").val(""); // 부서 선택 초기화
+			$("#title_department .regist_value").text("부서 선택");
+
+			$("#positionCode").val(""); // 직위 선택 초기화
+			$("#title_positionCode .regist_value").text("직위 선택");
+
+			$("#role").val(""); // 권한 선택 초기화
+			$("#title_role .regist_value").text("권한 선택");
 
 			departmentList(); // 부서 조회
 			positionList(); // 직위 조회
@@ -213,9 +236,9 @@
 				tableBody.empty();  // 기존 데이터를 지우고 새로운 데이터를 추가
 
 				if (data.resultList.length > 0) {
-					$("#totalCountText").text("총 " + data.pager.totalCnt + " 건");
+					$("#totalCountText").text("총 " + data.pager.totalCnt + " 명");
 				} else {
-					$("#totalCountText").text("총 0 건");
+					$("#totalCountText").text("총 0 명");
 				}
 
 				console.log("dfsadf");
@@ -226,13 +249,14 @@
 					let rowHtml = $('<tr>')
 							.attr('data-member-data', JSON.stringify(item)) // 각 행에 데이터 바인딩
 							.append('<td><input type="checkbox" class="row-check"/></td>') // 체크박스 추가
+							.append('<td>' + item.rowNum + '</td>')
 							.append('<td>' + item.userName + '</td>')
 							.append('<td>' + item.userId + '</td>')
 							.append('<td>' + item.employmentStatusNm + '</td>')
 							.append('<td>' + item.positionNm + '</td>')
 							.append('<td>' + item.department + '</td>')
 							.append('<td>' + item.jobStartDate + '</td>')
-							.append('<td>' + item.jobEndDate + '</td>')
+							.append('<td>' + item.email + '</td>')
 							.append('<td>' + item.phoneNo + '</td>')
 							// .append('<td>' + item.address + item.addressDetails + '</td>')
 							.append('<td class="address-cell" title="' + item.address + ' ' + item.addressDetails + '">' + item.address + ' ' + item.addressDetails + '</td>')
@@ -457,6 +481,17 @@
 		let role = $("input[name='role']").val();
 		let address = $("input[name='address']").val(); // 추가된 주소 필드
 
+		// 이메일 형식 검증
+		const emailRegex = /^[a-zA-Z0-9._%+-]+@amonsoft\.co\.kr$/;
+		if (!emailRegex.test(email)) {
+			regist_flag = false;
+			Swal.fire({
+				icon: 'warning',
+				title: '이메일 형식 오류',
+				text: '@amonsoft.co.kr 형식의 이메일만 입력 가능합니다.'
+			});
+			return; // 잘못된 이메일 형식일 경우 등록 중단
+		}
 
 		if(name.trim() == "" || hireDate.trim()==""|| phoneNo.trim() == "" ||department.trim() == "" || position.trim() == "" ){
 			regist_flag = false;
@@ -464,6 +499,14 @@
 				icon: 'warning',
 				title: '필수 정보를 입력해주세요.',
 				text: '필수 정보를 입력해주세요.'
+			});
+		}
+
+		if(email.trim() == ""){
+			regist_flag = false;
+			Swal.fire({
+				icon: 'warning',
+				title: '이메일 입력은 필수입니다.',
 			});
 		}
 
@@ -485,26 +528,22 @@
 						type: "POST",
 						dataType: "JSON",
 						success: function (json) {
-							Swal.fire({
-								icon: 'success',
-								title: '입력 완료',
-								text: '데이터가 성공적으로 저장되었습니다.'
-							});
-							$('#modal_registMember').modal('hide'); // 모달을 닫기
-							selectMemberList();
-							// window.location.reload(); // 페이지 새로고침 (필요시)
-
-							// if(json.duplicateEmail == 1){
-							// 	alert('중복된 이메일입니다.');
-							// 	return;
-							// }
-							// else{
-							// 	if(json.registResult == 1){
-							// 		alert('가입 성공!');
-							// 		window.location.reload();
-							// 	}
-							// }
-
+							if (json.duplicateEmail) {
+								// 중복 이메일 처리
+								Swal.fire({
+									icon: 'warning',
+									title: '중복된 이메일',
+									text: '해당 이메일은 이미 사용 중입니다.'
+								});
+							} else if(json.result !== 0) {
+								Swal.fire({
+									icon: 'success',
+									title: '입력 완료',
+									text: '데이터가 성공적으로 저장되었습니다.'
+								});
+								$('#modal_registMember').modal('hide'); // 모달을 닫기
+								selectMemberList();
+							}
 						},
 						error: function (request, status, error) {
 							Swal.fire({
@@ -582,6 +621,17 @@
 	// 구성원 정보 수정 함수 (추가된 부분)
 	function updateEmployee() {
 		let formValues = $("form[name=regist_frm]").serialize();
+		// 이메일 형식 검증
+		const emailRegex = /^[a-zA-Z0-9._%+-]+@amonsoft\.co\.kr$/;
+		if (!emailRegex.test($("input[name='email']").val())) {
+			regist_flag = false;
+			Swal.fire({
+				icon: 'warning',
+				title: '이메일 형식 오류',
+				text: '@amonsoft.co.kr 형식의 이메일만 입력 가능합니다.'
+			});
+			return; // 잘못된 이메일 형식일 경우 등록 중단
+		}
 
 		Swal.fire({
 			title: '수정하시겠습니까?',
@@ -599,14 +649,23 @@
 					type: "POST",
 					dataType: "JSON",
 					success: function (response) {
-						Swal.fire({
-							icon: 'success',
-							title: '수정 완료',
-							text: '구성원 수정 완료했습니다.'
-						});
-						$("#modal_registMember").modal("hide");
-						selectMemberList();
-						// window.location.reload();
+						if(response.duplicateEmail){
+							// 중복 이메일 처리
+							Swal.fire({
+								icon: 'warning',
+								title: '중복된 이메일',
+								text: '해당 이메일은 이미 사용 중입니다.'
+							});
+						} else{
+							Swal.fire({
+								icon: 'success',
+								title: '수정 완료',
+								text: '구성원 수정 완료했습니다.'
+							});
+							$("#modal_registMember").modal("hide");
+							selectMemberList();
+							// window.location.reload();
+						}
 					},
 					error: function (request, status, error) {
 						Swal.fire({
@@ -755,7 +814,7 @@
 	</div>
 	<!-- ========================== 구성원 추가/수정 모달 시작 ========================== -->
 	<div class="modal fade" id="modal_registMember">
-		<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
 			<div class="modal-content" style="padding: 5px;">
 				<!-- Modal header -->
 				<div class="modal-header">
@@ -768,17 +827,17 @@
 					<form id="regist_frm" name="regist_frm">
 						<input type="hidden" name="userId" id="userId" /> <!-- 추가된 부분: 사용자 ID 저장 -->
 						<div id="div_regist">
-							<div style="display: flex; justify-content: space-between;">
-								<div>
+							<div style="display: flex; justify-content: space-between;gap: 10px;">
+								<div style="width:40%;">
 									<div class="regitst_title"> 이름<span style="color: red;">*</span>
 									</div>
 									<input name="name" class="input_modal" type="text" autocomplete="off" placeholder="이름 입력" maxlength="15" />
 								</div>
-								<div>
+								<div style="width:60%;">
 									<div class="regitst_title">
-										이메일
+										이메일 	<span style="color: red;">*</span>
 									</div>
-									<input name="email" class="input_modal" type="text" autocomplete="off" placeholder="이메일 입력" maxlength="50" />
+									<input name="email" class="input_modal" style="width: 100%;" type="text" autocomplete="off" placeholder="이메일 입력" maxlength="50" />
 								</div>
 							</div>
 
@@ -924,13 +983,14 @@
 			<table class="table table-bordered table-hover">
 				<thead>
 				<th><input type="checkbox" id="checkAll" /></th>
+				<th>NO</th>
 				<th>이름</th>
 				<th>ID</th>
 				<th>재직여부</th>
 				<th>직급</th>
 				<th>부서</th>
 				<th>입사일</th>
-				<th>퇴사일</th>
+				<th>이메일</th>
 				<th>연락처</th>
 				<th>주소</th>
 				<th>비밀번호</th>

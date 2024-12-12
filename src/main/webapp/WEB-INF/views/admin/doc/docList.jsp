@@ -667,7 +667,7 @@
         let referenceType = "doc";
 		// 상태 코드에 따른 파라미터 설정
 		if (docTypeCode === 1) {
-			fullUrl = "/approval/annualLeaveView?docId=" + docId;
+			fullUrl = "/approval/annualLeaveView?docId=" + docId + "&referenceType=" + referenceType;
 		} else if (docTypeCode === 2) {
 			fullUrl = "/approval/expenseDetailView?docId=" + docId + "&referenceType=" + referenceType ;
 		} else if (docTypeCode === 3) {

@@ -175,8 +175,7 @@
 			// amy
 			resignationDate: $("#jobEndDate").val(),
 			phoneNo: $("#phoneNo").val().replace(/-/g, ''),
-			resignationReason: $("#resignationReason").val(),
-			docTitle: $("#docTitle").val()
+			resignationReason: $("#resignationReason").val()
 		}
 		data.push(rowData);
 		return data;
@@ -209,13 +208,12 @@
 <div class="contai" style="overflow-x: hidden;">
 	<form name="writeFrm">
 		<input id="docType" type="hidden" value="04">
-		<input id="docTitle" type="hidden" value="사직서">
 		<div class="table-area">
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
-						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<strong><span class="font-malgungothic" style="color:#000000">사직서</span></strong>
+						<p class="a7" style="text-align:center; line-height:normal; font-size:30px">
+							<strong><span class="font-malgungothic" style="color:#000000;font-size:60px;">사직서</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -273,6 +271,12 @@
 				</tr>
 			</table>
 			<table class="col-table">
+				<tr>
+					<td class="col2" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">제목</td>
+					<td colspan="3">
+						<input type="text" id="docTitle" class="input-field no-border" name="docTitle" placeholder="제목 입력">
+					</td>
+				</tr>
 				<tr style="height:22.55pt">
 					<td class="col2">
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">입사일</p>
@@ -290,7 +294,6 @@
 					<td class="col2" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">연락처</td>
 					<td colspan="3">
 						<input type="text" class="input-field no-border" id="phoneNo" name="phoneNo" oninput="formatPhoneNumber(this)" placeholder="연락처 입력">
-						<%--<c:out value="${sessionScope.phoneNo}" />--%>
 					</td>
 				</tr>
 				<tr>

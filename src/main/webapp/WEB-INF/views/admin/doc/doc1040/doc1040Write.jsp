@@ -528,8 +528,8 @@
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">품의내용</p>
 					</td>
 				</tr>
-				<tr style="height:330px">
-					<td colspan="2" style="height: 330px !important; ">
+				<tr style="height:450px">
+					<td colspan="2" style="height: 450px !important; ">
 					    <textarea id="approval_content" name="approval_content" style="height: 330px; width: 100%; margin-top:5px; resize: none;"></textarea>
 					</td>
 				</tr>
@@ -538,8 +538,8 @@
 						<p class="a7 font-malgungothic" style="margin-right:5pt; margin-left:5pt; text-align:center; line-height:normal">지시사항</p>
 					</td>
 				</tr>
-				<tr style="height:90pt">
-					<td colspan="2" style="height: 90pt !important; ">
+				<tr style="height:120pt">
+					<td colspan="2" style="height: 120pt !important; ">
 					    <textarea id="instructions" name="instructions" style="height: 90pt; width: 100%; margin-top:5px; resize: none;" ></textarea>
 					</td>
 				</tr>

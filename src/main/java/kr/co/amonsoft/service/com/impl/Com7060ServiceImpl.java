@@ -22,7 +22,7 @@ import java.util.Map;
 @Slf4j
 public class Com7060ServiceImpl implements Com7060Service {
 
-    private final Com7060Mapper memberMapper;
+    private final Com7060Mapper com7060Mapper;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -35,6 +35,8 @@ public class Com7060ServiceImpl implements Com7060Service {
     public Map<String, Object> insertMember(Map<String, Object> param) {
         int result = 0;
         log.info("[구성원 서비스단] param : {}", param);
+
+        // 사용자 ID 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String createdId = "";
         if (authentication != null && authentication.isAuthenticated()) {
@@ -51,17 +53,25 @@ public class Com7060ServiceImpl implements Com7060Service {
             }
         }
 
+        // 이메일의 ID를 userId로
+        String userId = "";
+        String email = param.get("email").toString();
+        if (email.contains("@")) {
+            userId = email.substring(0, email.indexOf("@"));
+        }
 
-        // job_start_date를 기준으로 'yyyyMMdd' 형식으로 변환
-        String datePart = param.get("hireDate").toString();
-//        String datePart = param.get("hireDate").toString().replaceAll("-", "");
+        log.info("INSERT email = {}", email);
+        log.info("INSERT userId = {}", userId);
+        
+        int duplicateEmail = com7060Mapper.duplicateEmail(email);
 
-        // 동일한 날짜에 입사한 인원 수 조회 (예: 2024102901, 2024102902 ...)
-        int count = memberMapper.countUsersByStartDate(datePart);
+        if(duplicateEmail != 0){
+            // 중복 여부를 Map에 추가
+            param.put("duplicateEmail", true);
+            return param;
+        }
 
-        // user_id 생성 (2024102901, 2024102902 ...)
-        String generatedUserId = datePart.replaceAll("-", "") + String.format("%02d", count + 1);
-        log.info("########## generatedUserId : {}", generatedUserId);
+
         // 비밀번호 암호화
         String defaultPassword = "1234";
         String hashedPassword = passwordEncoder.encode(defaultPassword);
@@ -71,16 +81,17 @@ public class Com7060ServiceImpl implements Com7060Service {
         String currentDate = dateTimeFormat.format(new Date());
 
         // 사용자 정보 설정
-        param.put("userId", generatedUserId);
+        param.put("userId", userId);
         param.put("password", hashedPassword);
         param.put("createdId", createdId);
         param.put("updatedId", createdId);
         param.put("currentDate", currentDate);
         log.info("[구성원 서비스단] INSERT 전 param : {}", param);
         // DB에 유저 정보 삽입
-        result = memberMapper.insertMember(param);
-
+        result = com7060Mapper.insertMember(param);
+        param.put("duplicateEmail", false);
         param.put("result", result);
+        log.info("등록 결과 :: {}", param);
 
         return param;
     }
@@ -88,15 +99,29 @@ public class Com7060ServiceImpl implements Com7060Service {
     @Override
     public Map<String, Object> updateMember(Map<String, Object> param) {
         log.info("[구성원 서비스단] UPDATE 전 param : {}", param);
-        memberMapper.updateMember(param);
-        return Map.of();
+        int result = 0;
+
+        String email = param.get("email").toString();
+        int duplicateEmail = com7060Mapper.duplicateEmail(email);
+
+        if(duplicateEmail != 0){
+            // 중복 여부를 Map에 추가
+            param.put("duplicateEmail", true);
+            return param;
+        }
+
+        result = com7060Mapper.updateMember(param);
+        param.put("duplicateEmail", false);
+        log.info("수정 결과 :: {}", param);
+        param.put("result", result);
+        return param;
     }
 
 
     @Override
     public int deleteMember(Map<String, Object> param) {
         int result = 0;
-        result = memberMapper.deleteMember(param);
+        result = com7060Mapper.deleteMember(param);
         if (result == 0) {
             // 예외 발생: 삭제 대상 구성원을 찾을 수 없는 경우
             throw new RuntimeException("삭제할 구성원을 찾을 수 없습니다.");
@@ -122,7 +147,7 @@ public class Com7060ServiceImpl implements Com7060Service {
         param.put("userId", userId);                    // userId
         param.put("password", encryptedPassword);       // 비밀번호
 
-        result = memberMapper.resetPassword(param);
+        result = com7060Mapper.resetPassword(param);
         if (result == 0) {
             // 예외 발생: 삭제 대상 구성원을 찾을 수 없는 경우
             throw new RuntimeException("비밀번호 초기화를 실패하였습니다.");
@@ -155,7 +180,7 @@ public class Com7060ServiceImpl implements Com7060Service {
     @Override
     public List<CommonDTO> departmentList() {
 
-        List<CommonDTO> list = memberMapper.departmentList();
+        List<CommonDTO> list = com7060Mapper.departmentList();
 
         log.info("#### [departmentList] 부서 : {}",list);
 
@@ -164,7 +189,7 @@ public class Com7060ServiceImpl implements Com7060Service {
 
     @Override
     public List<CommonDTO> positionList() {
-        List<CommonDTO> list = memberMapper.positionList();
+        List<CommonDTO> list = com7060Mapper.positionList();
 
         log.info("#### [positionList] 부서 : {}",list);
 
@@ -173,7 +198,7 @@ public class Com7060ServiceImpl implements Com7060Service {
 
     @Override
     public List<CommonDTO> roleList() {
-        List<CommonDTO> list = memberMapper.roleList();
+        List<CommonDTO> list = com7060Mapper.roleList();
 
         log.info("#### [roleList] 부서 : {}",list);
 

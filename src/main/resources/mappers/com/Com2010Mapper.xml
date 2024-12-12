@@ -22,7 +22,7 @@
                  inner join user u
                             on d.created_id = u.user_id
         where 1 = 1
-          and d.doc_status = '03'
+          and d.doc_status IN ('02', '03')
         UNION ALL
         select distinct(d.doc_id) as docId
                       , u.user_id as userId

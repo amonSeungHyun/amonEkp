@@ -18,6 +18,12 @@ public interface Com7060Mapper {
     // 구성원 삭제
     int deleteMember(Map<String, Object> param);
 
+    // 아이디 중복 체크
+    int duplicateUserId(String param);
+
+    // 이메일 중복 체크
+    int duplicateEmail(String param);
+
     // 입사일 같은거잇는지 카운트
     int countUsersByStartDate(String param);
 

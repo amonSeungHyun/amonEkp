@@ -14,14 +14,14 @@
 <link rel="stylesheet" type="text/css" href="/css/common.css">
 
 <style>
-	/* 기본 스타일 */
-	#calendar {
-		width: 80%;
-		margin-top: 20px; /* 위 여백 */
-		margin-bottom: 50px; /* 아래 여백 */
-		margin-left: 50px; /* 위 여백 */
-		height: 600px;
-	}
+    /* 기본 스타일 */
+    #calendar {
+        width: 80%;
+        margin-top: 20px; /* 위 여백 */
+        margin-bottom: 50px; /* 아래 여백 */
+        margin-left: 50px; /* 위 여백 */
+        height: 500px;
+    }
 
     /*#calendar {*/
     /*    width: 80%;*/
@@ -36,77 +36,77 @@
         height: 500px;
     }
 
-	/* 스타일 최적화 */
-	.fc-day-sun a {
-		color: red;
-	}
+    /* 스타일 최적화 */
+    .fc-day-sun a {
+        color: red;
+    }
 
-	.fc-day-sat a {
-		color: blue;
-	}
+    .fc-day-sat a {
+        color: blue;
+    }
 
-	/* 반응형 스타일 */
-	@media (max-width: 1024px) {
-		#calendar {
-			width: 90%;
-			margin-left: 5%;
-		}
-	}
+    /* 반응형 스타일 */
+    @media (max-width: 1024px) {
+        #calendar {
+            width: 90%;
+            margin-left: 5%;
+        }
+    }
 
-	@media (max-width: 768px) {
-		#calendar {
-			width: 100%;
-			margin-left: 0;
-		}
-	}
+    @media (max-width: 768px) {
+        #calendar {
+            width: 100%;
+            margin-left: 0;
+        }
+    }
 
-	/* 캘린더 높이 조정 */
-	@media (max-width: 480px) {
-		#calendar {
-			height: 600px;
-		}
-	}
+    /* 캘린더 높이 조정 */
+    @media (max-width: 480px) {
+        #calendar {
+            height: 600px;
+        }
+    }
 
-	/* 날짜 칸의 기본 높이 고정 */
-	.fc-daygrid-day-events {
-		height: 80px; /* 칸 높이 고정 */
-		position: relative;
-		/*overflow-x: visible !important; !* 가로 넘침 표시 *!*/
-		overflow-y: auto;
-		padding: 3px; /* 날짜 칸 내부 여백 */
-	}
+    /* 날짜 칸의 기본 높이 고정 */
+    .fc-daygrid-day-events {
+        height: 80px; /* 칸 높이 고정 */
+        position: relative;
+        /*overflow-x: visible !important; !* 가로 넘침 표시 *!*/
+        overflow-y: auto;
+        padding: 3px; /* 날짜 칸 내부 여백 */
+    }
 
-	/* 캘린더 내부 요소의 위아래 간격 추가 */
-	.fc {
-		margin-top: 20px; /* 위 여백 */
-		margin-bottom: 20px; /* 아래 여백 */
-	}
+    /* 캘린더 내부 요소의 위아래 간격 추가 */
+    .fc {
+        margin-top: 20px; /* 위 여백 */
+        margin-bottom: 20px; /* 아래 여백 */
+    }
 
 
-	#calendarLegend {
-		display: flex;
-		justify-content: flex-end; /* 범례를 오른쪽 정렬 */
-		align-items: center;
-		margin-top: 10px;
-		width: 80%;
-	}
+    #calendarLegend {
+        display: flex;
+        justify-content: flex-end; /* 범례를 오른쪽 정렬 */
+        align-items: center;
+        margin-top: 10px;
+        width: 80%;
+    }
 
-	.legend-item {
-		display: flex;
-		align-items: center;
-		margin-right: 15px; /* 항목 간 간격 */
-		font-size: 14px;
-	}
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 15px; /* 항목 간 간격 */
+        font-size: 14px;
+    }
 
-	.legend-color {
-		display: inline-block;
-		width: 12px;
-		height: 12px;
-		margin-right: 5px;
-		/*border-radius: 3px; !* 색상 박스 둥근 모서리 *!*/
+    .legend-color {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-right: 5px;
+        /*border-radius: 3px; !* 색상 박스 둥근 모서리 *!*/
         border-radius: 50%; /* 원형으로 설정 */
-		border: 1px solid #ccc; /* 테두리 추가 */
-	}
+        border: 1px solid #ccc; /* 테두리 추가 */
+    }
 
     .tooltip {
         position: absolute;
@@ -156,8 +156,8 @@
 </style>
 
 <script>
-	$(document).ready(function () {
-		let calendarEl = $('#calendar')[0];
+    $(document).ready(function () {
+        let calendarEl = $('#calendar')[0];
 
         // 대한민국 공휴일 배열
         const koreanHolidays = [
@@ -188,7 +188,7 @@
             allDay: true
         }));
 
-		// FullCalendar 설정
+        // FullCalendar 설정
         let calendar = new FullCalendar.Calendar(calendarEl, {
             selectable: true,
             locale: 'ko',
@@ -279,6 +279,21 @@
                 }
             ],
 
+            // 캘린더 렌더링 후 마지막 줄 숨기기
+            datesSet: function () {
+                let rows = document.querySelectorAll('.fc-daygrid-body tr'); // 모든 주를 나타내는 행
+
+                // 모든 줄을 초기화 (숨기거나 변경된 스타일을 초기화)
+                rows.forEach(row => {
+                    row.style.display = ''; // 모든 행을 초기화하여 다시 표시
+                });
+
+                // 6줄일 때만 마지막 줄 숨기기
+                if (rows.length === 6) {
+                    rows[5].style.display = 'none';
+                }
+            },
+
             // 공휴일 날짜 옆 텍스트 추가
             dayCellDidMount: function (info) {
                 // info.date를 YYYY-MM-DD 형식으로 변환
@@ -306,14 +321,24 @@
             },
             eventDidMount: function (info) {
                 $(info.el).tooltip('dispose'); // 기존 툴팁 제거
-                const title = '<div class="tooltip-inner">' +
-                    '<div class="tooltip-title">' + info.event.title + '</div>' +
-                    '<div class="tooltip-content">' +
-                    '<div class="tooltip-subtitle">작성자: ' + (info.event.extendedProps.userName || "정보 없음") + '</div>' +
-                    '<div class="tooltip-subtitle">결재: ' + (info.event.extendedProps.docTypeNm || "내용 없음") + '</div>' +
-                    '<div class="tooltip-subtitle">내용: ' + (info.event.extendedProps.content || "내용 없음") + '</div>' +
-                    '</div>' +
-                    '</div>';
+
+                let title;
+
+                if(info.event.extendedProps.docType !== null && info.event.extendedProps.docType !== undefined){
+                    title = '<div class="tooltip-inner">' +
+                        '<div class="tooltip-title">' + info.event.title + '</div>' +
+                        '<div class="tooltip-content">' +
+                        '<div class="tooltip-subtitle">작성자: ' + (info.event.extendedProps.userName || "정보 없음") + '</div>' +
+                        '<div class="tooltip-subtitle">결재: ' + (info.event.extendedProps.docTypeNm || "내용 없음") + '</div>' +
+                        '<div class="tooltip-subtitle">내용: ' + (info.event.extendedProps.content || "내용 없음") + '</div>' +
+                        '</div>' +
+                        '</div>';
+                } else{
+                    title = '<div class="tooltip-inner">' +
+                        '<div class="tooltip-title">' + info.event.title + '</div>' +
+                        '</div>';
+                }
+
 
                 $(info.el).tooltip({
                     html: true,
@@ -340,7 +365,7 @@
                     // 페이지 이동
                     window.location.href = goToUrl;
                 } else {
-                    alert("유효하지 않은 docType입니다.");
+                    // alert("유효하지 않은 docType입니다.");
                 }
             }
 
@@ -362,39 +387,42 @@
         }
 
 
-	});
+    });
 </script>
 
 <div id="peopleContent">
-<%--	<div id="header">--%>
-<%--		<div id="header_title">--%>
-<%--			<a class="current" href="/admin/calendar/com2010"><span class="memberTitle">캘린더</span></a>--%>
-<%--		</div>--%>
+    <%--	<div id="header">--%>
+    <%--		<div id="header_title">--%>
+    <%--			<a class="current" href="/admin/calendar/com2010"><span class="memberTitle">캘린더</span></a>--%>
+    <%--		</div>--%>
 
 
 
-<%--	</div>--%>
+    <%--	</div>--%>
 
-	<div id="calendarLegend" class="mb-3">
-    <span class="legend-item">
+    <div id="calendarLegend" class="mb-3">
+    <span class="legend-item" onclick="location.href='/admin/doc/doc1010/annualLeave'" style="cursor: pointer;">
         <span class="legend-color" style="background-color: #FF6F7A;"></span> 휴가
     </span>
-	<span class="legend-item">
-        <span class="legend-color" style="background-color: #81D98E;"></span> 지출
+    <span class="legend-item" onclick="location.href='/doc/expenseDetailWrite'" style="cursor: pointer;">
+        <span class="legend-color" style="background-color: #81D98E;"></span> 개인지출증빙내역서
     </span>
-	<span class="legend-item">
-        <span class="legend-color" style="background-color: #73C2F0;"></span> 출장
-    </span>
-	<span class="legend-item">
+    <span class="legend-item" onclick="location.href='/doc/doc1060'" style="cursor: pointer;">
         <span class="legend-color" style="background-color: #B573FF;"></span> 교통비 청구서
     </span>
-	<span class="legend-item">
+    <span class="legend-item" onclick="location.href='/doc/doc1040'" style="cursor: pointer;">
         <span class="legend-color" style="background-color: #F3E76D;"></span> 품의서
     </span>
-	<span class="legend-item">
-        <span class="legend-color" style="background-color: #89848a;"></span> 기타
+    <span class="legend-item" onclick="location.href='/doc/doc1050'" style="cursor: pointer;">
+        <span class="legend-color" style="background-color: #81D98E;"></span> 법인카드사용내역서
     </span>
-	</div>
-		<div id="calendar"></div>
+<%--    <span class="legend-item">--%>
+<%--        <span class="legend-color" style="background-color: #73C2F0;"></span> 출장--%>
+<%--    </span>--%>
+<%--    <span class="legend-item">--%>
+<%--        <span class="legend-color" style="background-color: #89848a;"></span> 기타--%>
+<%--    </span>--%>
+    </div>
+    <div id="calendar"></div>
 
 </div>

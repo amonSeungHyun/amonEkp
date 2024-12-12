@@ -10,6 +10,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
 	$(document).ready (function(){
+		addCommaOnInput();
+		
 		const today = new Date();
 	    const year = today.getFullYear();
 	    const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -46,7 +48,7 @@
 				corpItem: $('#corpItem_' + i).val(),
 				storeName: $('#storeName_' + i).val(),
 				usageDetail: $('#usageDetail_' + i).val(),
-				corpAmount: $('#corpAmount_' + i).val(),
+				corpAmount: $('#corpAmount_' + i).val().replace(/,/g, ''),
 				remark: $('#remark_' + i).val(),
 				corporateCardNumber : $("#corporateCardNumber").val()
 			};
@@ -79,13 +81,26 @@
 		return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
 
+	/* 입력 필드에서 천 단위 추가 */
+	  function addCommaOnInput() {
+	    $('[id^=corpAmount_]').on('input', function () {
+	      let value = $(this).val().replace(/,/g, ''); // 기존 콤마 제거
+	      if (!isNaN(value) && value !== '') {
+	        $(this).val(formatNumberWithCommas(value));
+	      } else {
+	        $(this).val(''); // 숫자가 아니면 초기화
+	      }
+	      calculateTotal(); // 입력값 변경 시 총합 업데이트
+	    });
+	  }
+	
 	/*합계 계산 함수*/
 	function calculateTotal() {
 		let total = 0;
 
 		// Loop through all `textarea` elements with id starting `expenseAmount_`
 		$('[id^=corpAmount_]').each(function () {
-			const value = $(this).val();
+			const value = $(this).val().replace(/,/g, '');
 			total += parseInt(value) || 0;
 		});
 
@@ -103,8 +118,8 @@
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
-						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<strong><span class="font-malgungothic" style="color:#000000">법인카드 사용내역서</span></strong>
+						<p class="a7" style="text-align:center; line-height:normal; font-size:30px">
+							<strong><span class="font-malgungothic" style="color:#000000;font-size: 35px;">법인카드 사용내역서</span></strong>
 						</p>
 					</td>
 					<td class="col1">

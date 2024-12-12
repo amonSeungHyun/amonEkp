@@ -4,6 +4,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 <style type="text/css">
 a.link:link {color: #cccccc;}
 a:visited {text-decoration: none; color: #cccccc;}
@@ -606,7 +607,12 @@ a:active {text-decoration: none; color: #cccccc;}
 		<i class="bi bi-send" style="margin-right: 10px;"></i>
 		목록
 	</button>
-	<button type="button" class="headerBtn" onclick="printTable();">
+	<button type="button" class="headerBtn" onclick="printJS({
+			printable: 'printableTable',
+			type: 'html',
+			css: ['/css/print.css'],
+			scanStyles: false
+	})">
 		<i class="bi bi-send" style="margin-right: 10px;"></i>
 		인쇄
 	</button>

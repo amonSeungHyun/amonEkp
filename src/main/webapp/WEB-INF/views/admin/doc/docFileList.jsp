@@ -148,6 +148,7 @@
                 // 삭제 버튼
                 var $deleteButton = $('<button class="delete-btn">-</button>').on('click', function () {
                     $fileItem.remove();
+                    $('#fileInput').val("");
                 });
 
                 // 파일 아이템에 파일명, 다운로드, 삭제 버튼 추가

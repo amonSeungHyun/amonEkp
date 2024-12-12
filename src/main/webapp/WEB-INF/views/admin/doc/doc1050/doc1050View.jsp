@@ -111,8 +111,8 @@
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
-						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
-							<strong><span class="font-malgungothic" style="color:#000000" id="Ymtitle">법인카드 사용내역서</span></strong>
+						<p class="a7" style="text-align:center; line-height:normal; font-size:30px">
+							<strong><span class="font-malgungothic" style="color:#000000;font-size: 35px" id="Ymtitle">법인카드 사용내역서</span></strong>
 						</p>
 					</td>
 					<td class="col1">
@@ -235,7 +235,7 @@
 						<td class="detail-col1 header-cell font-malgungothic text-center">
 							<c:if test="${i <= doc1050Details.size()}">
 								<input type="hidden" id="corpAmount_${i}" value="${doc1050Details[i - 1].corpAmount}">
-								${doc1050Details[i - 1].corpAmount}
+								<fmt:formatNumber value="${doc1050Details[i - 1].corpAmount}" type="number" groupingUsed="true" />
 							</c:if>
 						</td>
 						<td class="detail-col1 header-cell font-malgungothic text-center">

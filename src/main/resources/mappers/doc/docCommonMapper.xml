@@ -99,6 +99,7 @@
             AND d.created_date BETWEEN #{startDate} AND #{endDate}
         </if>
         ORDER BY d.created_date DESC
+        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="findDocumentsPendingApprovalTotalCountByUserId" parameterType="map" resultType="int">

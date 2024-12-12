@@ -3,10 +3,11 @@
 <mapper namespace="kr.co.amonsoft.mapper.doc.Doc1070Mapper">
 
     <select id="findResignationDetailsByDocId" resultType="camelcasemap">
-        SELECT doc_id
+        SELECT d.doc_id
              , resignation_detail_id
              , resignation_date
              , resignation_reason
+             , doc_title
              , u.user_name
              , u.job_start_date
              , p.code_detail_name as position_name
@@ -16,7 +17,9 @@
              , CONCAT(SUBSTR(rd.created_date, 1, 4), '년', ' ', SUBSTR(rd.created_date, 5, 2), '월', ' ', SUBSTR(rd.created_date, 7, 2), '일') as created_date
              , rd.updated_id
              , rd.updated_date
-        FROM resignation_detail rd
+        FROM document d
+       INNER JOIN resignation_detail rd
+          ON d.doc_id = rd.doc_id
         LEFT OUTER JOIN user u
           on rd.created_id = u.user_id
         LEFT OUTER JOIN
@@ -39,7 +42,7 @@
                WHERE cc.code_number = 'COM02'
              ) p
           ON u.position_code = p.code_detail_number
-       WHERE doc_id = #{docId}
+       WHERE d.doc_id = #{docId}
     </select>
 
     <insert id="insertResignationDetail" parameterType="map">
@@ -83,5 +86,31 @@
                   AND A.doc_status = '04'
               )
     </select>
+    
+    <select id="selectResignedUserList" resultType="camelcasemap">
+
+        SELECT u.user_id
+             , rd.resignation_date as job_end_date
+          FROM document d
+         INNER JOIN resignation_detail rd
+            ON d.doc_id = rd.doc_id
+         INNER JOIN user u
+            ON rd.created_id = u.user_id
+         WHERE d.current_step = d.total_step
+           AND d.doc_type = 04
+           AND d.doc_status = 03
+    </select>
+
+    <update id="updateUserStatus" parameterType="java.util.List">
+        
+        <foreach collection="list" item="item" separator=";">
+        UPDATE user
+           SET job_end_date = #{item.jobEndDate}
+             , employment_status = '02'
+             , updated_id = 'admin'
+             , updated_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+         WHERE USER_ID = #{item.userId}
+        </foreach>
+    </update>
 
 </mapper>
