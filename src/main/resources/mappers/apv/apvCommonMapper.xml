@@ -6,7 +6,7 @@
              , o.organization_name
              , posi_detail.code_detail_name               as positionName
              , d.doc_status
-             , DATE_FORMAT(STR_TO_DATE(d.created_date, '%Y%m%d %H%i%s'), '%Y-%m-%d') AS createdDate
+             , DATE_FORMAT(STR_TO_DATE(d.created_date, '%Y%m%d %H%i%s'), '%Y년 %m월 %d일 %H:%i') AS createdDate
              , d.doc_title
         FROM user u
                  INNER JOIN document d
