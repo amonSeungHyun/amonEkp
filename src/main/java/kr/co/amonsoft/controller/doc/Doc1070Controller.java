@@ -58,14 +58,12 @@ public class Doc1070Controller {
         List<Map<String,Object>> approvalSteps = apvCommonService.findApprovalStepsByDocId(docId);
         Map<String,Object> resignationDetails = doc1070Service.findResignationDetailsByDocId(docId);
         Map<String,Object> documentCreatorInfo = apvCommonService.findDocumentCreatorInfo(docId);
-        Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
         Map<String, Object> currentStepNo = apvCommonService.findCurrentStepNo(docId);
         Map<String, Object> userStepNo = apvCommonService.findStepNoByDocIdAndUserId(docId, customUserDetails.getUserId());
 
         model.addAttribute("approvalSteps", approvalSteps);
         model.addAttribute("documentCreatorInfo", documentCreatorInfo);
         model.addAttribute("resignationDetails", resignationDetails);
-        model.addAttribute("leaderInfo", teamLeadersByUserOrganization);
         model.addAttribute("currentStepNo",currentStepNo);
         model.addAttribute("userStepNo",userStepNo);
         model.addAttribute("docId", docId);

@@ -4,7 +4,7 @@ spring:
     hikari:
       maximum-pool-size: 4
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://211.180.247.168:3307/amon
+    url: jdbc:mariadb://211.180.247.168:3307/amon?allowMultiQueries=true
     username: amon
     password: dpdlahs12
   devtools:
@@ -27,3 +27,6 @@ spring:
 tiles:
   config:
     path: /WEB-INF/tiles/tiles-definitions.xml
+
+file:
+  uploadPath: "/var/services/homes/admin/web/file"

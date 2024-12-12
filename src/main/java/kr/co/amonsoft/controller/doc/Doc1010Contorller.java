@@ -43,8 +43,6 @@ public class Doc1010Contorller {
     private final ApvCommonService apvCommonService;
     private final FileService fileService;
 
-    private final String UPLOAD_PATH = "C:\\test";
-
     /** ##########################################################################################################################
      * 휴가계
      */
@@ -103,7 +101,7 @@ public class Doc1010Contorller {
         BigInteger docId = doc1010Service.insertApprovalDocument(param);
         param.put("referenceId",docId);
         if(files != null && !files.isEmpty()) {
-            fileService.uploadFiles(files, UPLOAD_PATH, param);
+            fileService.uploadFiles(files, param);
         }
 
         return ResponseEntity.ok(docId);

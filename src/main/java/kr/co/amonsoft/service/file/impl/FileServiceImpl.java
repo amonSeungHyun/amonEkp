@@ -3,6 +3,7 @@ package kr.co.amonsoft.service.file.impl;
 import kr.co.amonsoft.mapper.file.FileMapper;
 import kr.co.amonsoft.service.file.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,20 +13,28 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class FileServiceImpl implements FileService {
 
+    @Value("${file.uploadPath}")
+    private String uploadDir;
+
     private final FileMapper fileMapper;
 
 
     @Override
-    public void uploadFiles(List<MultipartFile> files, String uploadDir, Map<String,Object> param) throws IOException {
-
+    public void uploadFiles(List<MultipartFile> files, Map<String,Object> param) throws IOException {
+        Date from = new Date();
+        SimpleDateFormat nowDateymd = new SimpleDateFormat("yyyyMMdd");
+        String nowymd = nowDateymd.format(from);
+        String realPath = uploadDir + "/" + nowymd.substring(0, 4) + '/' + nowymd.substring(4, 6) + '/' + nowymd.substring(nowymd.length() - 2, nowymd.length());
         // 업로드 디렉토리가 존재하지 않으면 생성
-        Path uploadPath = Paths.get(uploadDir);
+        Path uploadPath = Paths.get(realPath);
+
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -37,7 +46,7 @@ public class FileServiceImpl implements FileService {
                 String fileExtension = getFileExtension(file.getOriginalFilename());
                 String uploadFilename = UUID.randomUUID().toString() + (fileExtension.isEmpty() ? "" : "." + fileExtension);
 
-                String filePath = uploadDir + File.separator + uploadFilename;
+                String filePath = uploadPath + File.separator + uploadFilename;
                 Map<String,Object> fileData = new HashMap<>();
                 fileData.put("originalFileName", file.getOriginalFilename());
                 fileData.put("storedFileName", uploadFilename);

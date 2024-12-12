@@ -42,9 +42,7 @@ public class Doc1040Contorller {
     private final DocCommonService docCommonService;
     private final ApvCommonService apvCommonService;
     private final FileService fileService;
-    
-    private final String UPLOAD_PATH = "C:\\test";
-    
+
     @GetMapping("/doc/doc1040")
     public String selectWrite(@RequestParam(defaultValue = "1", required = false) int pageNum, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
     	Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
@@ -83,7 +81,7 @@ public class Doc1040Contorller {
         BigInteger docId = doc1040Service.insertApprovalRequest(param);
         param.put("referenceId",docId);
         if(files != null && !files.isEmpty()) {
-            fileService.uploadFiles(files, UPLOAD_PATH, param);
+            fileService.uploadFiles(files, param);
         }
 
         return ResponseEntity.ok(docId);

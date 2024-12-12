@@ -32,8 +32,6 @@ public class Doc1020Controller {
     private final ApvCommonService apvCommonService;
     private final FileService fileService;
 
-    private final String UPLOAD_PATH = "C:\\test";
-
     @ResponseBody
     @PostMapping("/approval/insertExpenseDetail")
     public  ResponseEntity<BigInteger> insertExpenseDetail(
@@ -48,7 +46,7 @@ public class Doc1020Controller {
         BigInteger docId = doc1020Service.insertApprovalDocument(param);
         param.put("referenceId",docId);
         if(files != null && !files.isEmpty()) {
-            fileService.uploadFiles(files, UPLOAD_PATH, param);
+            fileService.uploadFiles(files, param);
         }
         return ResponseEntity.ok(docId);
     }

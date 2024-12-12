@@ -41,8 +41,6 @@ public class Com1010Controller {
 	private final DocCommonService docCommonService;
 	private final ApvCommonService apvCommonService;
     private final FileService fileService;
-    
-    private final String UPLOAD_PATH = "C:\\test";
 
 	@GetMapping(value = "/amonsoft/controller/com/com1010")
     public String com1010(HttpServletRequest request, Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws Exception {
@@ -84,7 +82,7 @@ public class Com1010Controller {
     	param.put("referenceType", "board");
     	
     	if(files != null && !files.isEmpty()) {
-            fileService.uploadFiles(files, UPLOAD_PATH, param);
+            fileService.uploadFiles(files, param);
         }
     	
         return result;

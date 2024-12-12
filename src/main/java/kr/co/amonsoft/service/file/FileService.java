@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface FileService {
 
-    void uploadFiles(List<MultipartFile> files, String uploadDir, Map<String,Object> param) throws IOException;
+    void uploadFiles(List<MultipartFile> files, Map<String,Object> param) throws IOException;
 
     List<Map<String,Object>> findFileDatas(BigInteger referenceId, String referenceType);
 

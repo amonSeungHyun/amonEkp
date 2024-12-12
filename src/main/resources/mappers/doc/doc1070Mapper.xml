@@ -99,6 +99,13 @@
          WHERE d.current_step = d.total_step
            AND d.doc_type = 04
            AND d.doc_status = 03
+           AND NOT EXISTS
+               (
+                SELECT 1
+                  FROM user A
+                  WHERE u.user_id = A.user_id
+                    AND A.employment_status = '02'
+               )
     </select>
 
     <update id="updateUserStatus" parameterType="java.util.List">

@@ -40,9 +40,7 @@ public class Doc1050Controller {
     private final DocCommonService docCommonService;
     private final ApvCommonService apvCommonService;
     private final FileService fileService;
-    
-    private final String UPLOAD_PATH = "C:\\test";
-    
+
     @RequestMapping(value = "/doc/doc1050")
     public String doc1050( HttpServletRequest request,@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         Map<String, Object> teamLeadersByUserOrganization = docCommonService.findTeamLeadersByUserOrganization(customUserDetails.getUserId());
@@ -64,7 +62,7 @@ public class Doc1050Controller {
         BigInteger docId = doc1050Service.insertDoc1050(param);
         param.put("referenceId",docId);
         if(files != null && !files.isEmpty()) {
-            fileService.uploadFiles(files, UPLOAD_PATH, param);
+            fileService.uploadFiles(files, param);
         }
 
         return ResponseEntity.ok(docId);
