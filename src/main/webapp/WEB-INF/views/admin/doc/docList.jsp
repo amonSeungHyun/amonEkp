@@ -574,7 +574,7 @@
 						}
 
 						var rowHtml = $('<tr>')
-								.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType +","+ approvalStatus + ")") // 클릭 시 상세보기 함수 호출
+								.attr('onclick', "documentDetailView(" + doc.docId + ", " + doc.docType +",'"+ approvalStatus + "')") // 클릭 시 상세보기 함수 호출
 								.append('<td>' + doc.docTypeName + '</td>') // 결재 분류
 								.append('<td>' + doc.docTitle + '</td>')    // 결재 제목
 								.append('<td>' + doc.createdDate + '</td>') // 작성일

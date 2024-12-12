@@ -249,7 +249,7 @@
 			<p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
 			<p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 사용내역서 첨부</p>
 			<p class="a7 font-malgungothic text-center">${documentCreatorInfo.createdDate}</p>
-			<p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
+			<p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
 		</div>
 		<!-- File upload area -->
 		<jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>

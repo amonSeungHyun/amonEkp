@@ -336,7 +336,7 @@
 			<table class="first-table">
 				<tr style="height:17.1pt">
 					<td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
-						<p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
+						<p class="a7" style="text-align:center; line-height:normal; font-size:40pt">
 							<strong><span class="font-malgungothic" style="color:#000000">품의서</span></strong>
 						</p>
 					</td>

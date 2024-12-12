@@ -292,7 +292,7 @@
       <table class="first-table">
         <tr style="height:17.1pt">
           <td rowspan="3" style="width:211.45pt; border-right:0.75pt solid #000000; padding-right:0.22pt; padding-left:0.6pt; vertical-align:middle">
-            <p class="a7" style="text-align:center; line-height:normal; font-size:20pt">
+            <p class="a7" style="text-align:center; line-height:normal; font-size:40pt">
               <strong><span class="font-malgungothic" style="color:#000000">지출결의서</span></strong>
             </p>
           </td>
@@ -430,7 +430,7 @@
       <p class="a7 font-malgungothic text-center">* 날짜순으로 순차적으로 작성.</p>
       <p class="a7 font-malgungothic text-center">* 영수증 및 인터넷으로 확인 가능한 증빙 첨부</p>
       <p class="a7 font-malgungothic text-center">${documentCreatorInfo.createdDate}</p>
-      <p class="a7 font-malgungothic text-right" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
+      <p class="a7 font-malgungothic text-center" style="margin-right:9pt;">작성자 : ${documentCreatorInfo.userName}</p>
     </div>
     <!-- File upload area -->
     <jsp:include page="/WEB-INF/views/admin/doc/docFileList.jsp"></jsp:include>
